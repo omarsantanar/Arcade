@@ -59,3 +59,10 @@ Pruebas: simulaciones de múltiples semillas y rutas completadas; ejecución CI 
 Resultado: diseño multirruta preparado en PR #1; no fusionar a main antes de CI y pruebas manuales.
 Riesgos: respuesta táctil y dificultad percibida no validadas por jugadores.
 Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la revisión visual de niveles 1, 3, 6 y 10.
+
+
+#### Comprobación de integración v0.4.0
+- Commit de código verificado: f6f030ce4e92e7c45c4af77ae198c81beb45e702.
+- CI GitHub Actions: ejecución 40383943632, 11 pruebas satisfactorias y build Vite/TypeScript exitoso.
+- Preview Vercel: estado Ready en la rama feat/initial-web-portal.
+- Falta validar con usuarios y dispositivos físicos que las distintas soluciones sean perceptibles y el control responda adecuadamente.

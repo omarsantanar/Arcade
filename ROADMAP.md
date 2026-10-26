@@ -34,3 +34,7 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] Orden/posición/forma de obstáculos y aparición temporal más aleatorios.
 - [x] Comprobación conservadora de todas las rutas alcanzables y barreras verticales de cada tercer nivel.
 - [ ] Revisión física en iOS/Android y balanceo por jugadores.
+
+
+- [x] CI validado para v0.4.0, ejecución 40383943632: 11 pruebas y build satisfactorios.
+- [ ] Validar en móvil rutas alternativas y equilibrio de niveles 1, 3, 6 y 10.

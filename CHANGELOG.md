@@ -6,6 +6,7 @@
 **Cambios:** nuevas aberturas y familias de patrón, conservación de alternativas alcanzables, aparición con intervalos variables, figuras con siluetas más distinguibles y obstáculos altos cada tres niveles.
 **Pruebas:** simulación local previa al commit: 188.344 oleadas en 150 partidas de diez minutos; 4.200 eventos verticales sin soluciones imposibles en modelo geométrico. **Pendiente** validar los cambios definitivos en CI GitHub y en un móvil físico.
 **Riesgos:** patrones visibles todavía necesitan evaluación humana de dificultad; el modelo usa rectángulos conservadores. Cambios en rama de revisión, no en producción.
+**Validación final de código:** commit `f6f030ce4e92e7c45c4af77ae198c81beb45e702`: GitHub Actions ejecución 40383943632 — 11/11 pruebas aprobadas y TypeScript/Vite compilados correctamente; Vercel informa preview Ready. Pruebas manuales en móviles pendientes.
 
 
 ## 2026-10-26 — v0.3.0 — Obstáculos imprevisibles y pilares verticales
