@@ -3,6 +3,8 @@ import { loadGame } from '../games/registry';
 import type { ControlDirection, GameHandle, GameManifest, GameStatus } from '../games/types';
 import { readBestScore } from '../games/neon-drift/logic';
 import { readPulseBestScore } from '../games/pulse-core/logic';
+import { PULSE_GUIDE_KEY } from '../games/pulse-core/guide';
+import PulseGuide from './PulseGuide';
 
 interface Props { manifest: GameManifest; onClose: () => void }
 
@@ -16,6 +18,28 @@ export default function GameView({ manifest, onClose }: Props) {
   const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [guideOpen, setGuideOpen] = useState(() => {
+    if (manifest.id !== 'pulse-core') return false;
+    try { return window.localStorage.getItem(PULSE_GUIDE_KEY) !== 'done'; }
+    catch { return true; }
+  });
+  const guideOpenRef = useRef(guideOpen);
+  const resumeAfterGuide = useRef(guideOpen);
+
+  const openGuide = () => {
+    if (loading || error) return;
+    resumeAfterGuide.current = status === 'playing';
+    guideOpenRef.current = true;
+    setGuideOpen(true);
+    if (status === 'playing') gameRef.current?.pause();
+  };
+  const closeGuide = () => {
+    guideOpenRef.current = false;
+    setGuideOpen(false);
+    try { window.localStorage.setItem(PULSE_GUIDE_KEY, 'done'); }
+    catch { /* Keep the tutorial available even when storage is blocked. */ }
+    if (resumeAfterGuide.current) gameRef.current?.resume();
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -29,10 +53,12 @@ export default function GameView({ manifest, onClose }: Props) {
           onScore: setScore,
           onStatus: (nextStatus) => {
             setStatus(nextStatus);
+            if (nextStatus === 'playing' && guideOpenRef.current) gameRef.current?.pause();
             if (nextStatus === 'gameover') setBest(manifest.id === 'pulse-core' ? readPulseBestScore() : readBestScore());
           },
         });
         gameRef.current = game;
+        if (guideOpenRef.current) game.pause();
         setLoading(false);
       })
       .catch(() => { if (!cancelled) { setError('No pudimos iniciar el juego. Intenta abrirlo de nuevo.'); setLoading(false); } });
@@ -46,7 +72,11 @@ export default function GameView({ manifest, onClose }: Props) {
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      if (guideOpenRef.current) closeGuide();
+      else onClose();
+    };
     window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = previousOverflow;
@@ -77,7 +107,8 @@ export default function GameView({ manifest, onClose }: Props) {
           <button className="icon-button" onClick={onClose} aria-label="Cerrar juego">←</button>
           <div className="game-bar-title"><strong>{manifest.title}</strong><span>ARCADE / EN PARTIDA</span></div>
           <div className="game-toolbar">
-            <button className="icon-button" disabled={loading || status === 'gameover'} onClick={togglePause} aria-label={status === 'paused' ? 'Reanudar' : 'Pausar'} title={status === 'paused' ? 'Reanudar' : 'Pausar'}>{status === 'paused' ? '▶' : 'Ⅱ'}</button>
+            {manifest.id === 'pulse-core' && <button className="icon-button pulse-help-button" disabled={loading || !!error} onClick={openGuide} aria-label="Cómo jugar Pulse Core" title="Cómo jugar">?</button>}
+            <button className="icon-button" disabled={loading || status === 'gameover' || guideOpen} onClick={togglePause} aria-label={status === 'paused' ? 'Reanudar' : 'Pausar'} title={status === 'paused' ? 'Reanudar' : 'Pausar'}>{status === 'paused' ? '▶' : 'Ⅱ'}</button>
             <button className="icon-button" onClick={() => gameRef.current?.restart()} disabled={loading} aria-label="Reiniciar juego" title="Reiniciar">↻</button>
             <button className="icon-button" onClick={toggleAudio} aria-label={muted ? 'Activar sonido' : 'Silenciar'} title="Sonido">{muted ? '♪̸' : '♫'}</button>
             <button className="icon-button" onClick={() => void toggleFullscreen()} aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
@@ -88,12 +119,13 @@ export default function GameView({ manifest, onClose }: Props) {
             <div className="game-stage" ref={mountRef} aria-label="Área de juego" />
             {loading && <div className="game-overlay"><span>Cargando juego…</span></div>}
             {error && <div className="game-overlay error-message">{error}</div>}
-            {status === 'paused' && !loading && <div className="game-overlay"><strong>EN PAUSA</strong><button className="primary-button" onClick={() => gameRef.current?.resume()}>Continuar</button></div>}
-            {status === 'gameover' && !loading && <div className="game-overlay"><span>FIN DE PARTIDA</span><strong>{score} PUNTOS</strong><button className="primary-button" onClick={() => gameRef.current?.restart()}>Jugar otra vez ↗</button></div>}
+            {status === 'paused' && !guideOpen && !loading && <div className="game-overlay"><strong>EN PAUSA</strong><button className="primary-button" onClick={() => gameRef.current?.resume()}>Continuar</button></div>}
+            {status === 'gameover' && !guideOpen && !loading && <div className="game-overlay"><span>FIN DE PARTIDA</span><strong>{score} PUNTOS</strong><button className="primary-button" onClick={() => gameRef.current?.restart()}>Jugar otra vez ↗</button></div>}
+            {manifest.id === 'pulse-core' && guideOpen && !loading && !error && <PulseGuide onExit={closeGuide} />}
           </div>
           <div className="game-aside">
             <div className="game-metrics"><div><span>PUNTUACIÓN</span><strong>{score.toString().padStart(4, '0')}</strong></div><div><span>MEJOR MARCA</span><strong>{best.toString().padStart(4, '0')}</strong></div></div>
-            <div className="instructions"><h3>Cómo jugar</h3>{manifest.id === 'pulse-core' ? <><p>Gira los anillos para conectar tres símbolos idénticos en una línea radial o un arco, antes de que el reactor se llene.</p><p>Toca un anillo para seleccionarlo; desliza horizontalmente para girar. En teclado, <kbd>↑</kbd> <kbd>↓</kbd> cambian el anillo y <kbd>←</kbd> <kbd>→</kbd> lo giran.</p></> : <><p>Esquiva los obstáculos rosas. Cuanto más sobrevivas, más puntos sumarás.</p><p><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte. En móviles, toca los botones o desliza el dedo sobre el juego.</p></>}</div>
+            <div className="instructions"><h3>Cómo jugar</h3>{manifest.id === 'pulse-core' ? <><p>Objetivo: gira anillos completos para reunir tres símbolos iguales, ya sea alineados entre los tres anillos o contiguos sobre uno. Cada trío desaparece y suma puntos.</p><p>Cada pulso añade una ficha al exterior. Si ese anillo se bloquea tres veces, acaba la partida.</p><button className="pulse-aside-guide" onClick={openGuide}>Ver guía con ejemplos →</button><p>Toca un anillo para seleccionarlo; desliza horizontalmente para girar. En teclado, <kbd>↑</kbd> <kbd>↓</kbd> cambian el anillo y <kbd>←</kbd> <kbd>→</kbd> lo giran.</p></> : <><p>Esquiva los obstáculos rosas. Cuanto más sobrevivas, más puntos sumarás.</p><p><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte. En móviles, toca los botones o desliza el dedo sobre el juego.</p></>}</div>
             <div className="touch-controls" aria-label="Controles táctiles">
               <button type="button" aria-label={manifest.id === 'pulse-core' ? 'Girar anillo hacia la izquierda' : 'Mover a la izquierda'} onPointerDown={(e) => { e.preventDefault(); setDirection(-1); }} onPointerUp={() => setDirection(0)} onPointerLeave={() => setDirection(0)} onPointerCancel={() => setDirection(0)}>←</button>
               <button type="button" aria-label={manifest.id === 'pulse-core' ? 'Girar anillo hacia la derecha' : 'Mover a la derecha'} onPointerDown={(e) => { e.preventDefault(); setDirection(1); }} onPointerUp={() => setDirection(0)} onPointerLeave={() => setDirection(0)} onPointerCancel={() => setDirection(0)}>→</button>
