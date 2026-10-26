@@ -59,3 +59,5 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 **Pruebas:** pruebas Vitest de reglas preparadas. GitHub Actions y Vercel pendientes al redactar este registro.
 **Resultado:** juego experimental añadido solo en rama `feat/neon-balance-concept`; Neon Drift no fue modificado.
 **Riesgos:** modelo de inclinación simplificado, equilibrio por ajustar, falta validación en móviles, accesibilidad y divertimento.
+
+**Validación de la primera implementación:** commit de aplicación `38b70e81c79ed00d9bc7a3d5c6599f957c39cccc`. GitHub Actions [40407527878](https://github.com/omarsantanar/Arcade/actions/runs/40407527878) aprobó **18/18 pruebas** (7 de Neon Balance y 11 de Neon Drift), TypeScript y build Vite. Vercel marcó `Ready` su preview: https://arcade-git-feat-neon-balance-concept-omar-santanas-projects.vercel.app. **No valida todavía jugabilidad táctil en un móvil real.**
