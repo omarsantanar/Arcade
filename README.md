@@ -1,36 +1,27 @@
 # Arcade
 
-Plataforma web mobile-first de videojuegos originales para navegador, con módulos independientes y una interfaz compartida.
+Plataforma de videojuegos originales para jugar directamente en el navegador, con diseño adaptado a celulares y segunda etapa de app móvil.
 
-**Estado:** prototipo v0.1.0 en desarrollo. No desplegado a producción.
+## Estado (2026-10-26)
+**Hito 1 iniciado.** Este repositorio contiene la documentación operativa. **El código del prototipo v0.1.0 está preparado en un ZIP entregado en la conversación, pero todavía NO está sincronizado aquí.** No existe despliegue público, tests completos ni build verificados.
 
-## Instalación
-Requisitos: Node.js 22 y npm.
+## Prototipo preparado
+Portal React/TypeScript/Vite con catálogo y carga diferida de Phaser, primer juego de obstáculos Neon Drift, controles táctiles/teclado, pausa, reinicio, sonido, pantalla completa compatible y récord en almacenamiento local.
+
+## Instalación (después de subir el código del ZIP)
+Requiere Node.js 22 y conexión a npm.
 
 ```bash
-git clone https://github.com/omarsantanar/Arcade.git
-cd Arcade
 npm install
 npm run dev
-```
-
-Ejecutar pruebas y compilación:
-
-```bash
 npm run test
 npm run build
 ```
 
-## Estructura
-- `src/App.tsx`: portal y galería.
-- `src/components/GameView.tsx`: controles comunes y ventana de juego.
-- `src/games/registry.ts`: catálogo y carga diferida.
-- `src/games/neon-drift/`: primer módulo Phaser.
-- `.github/workflows/ci.yml`: validación con GitHub Actions.
+Generar y versionar `package-lock.json`; luego actualizar CI para `npm ci`.
 
-Documentación operativa: `ARCHITECTURE.md`, `CHANGELOG.md`, `CONTINUITY.md`, `ROADMAP.md` y `AGENTS.md`.
+## Continuidad
+Leer `ARCHITECTURE.md`, `CHANGELOG.md`, `CONTINUITY.md`, `ROADMAP.md` y `AGENTS.md` antes de cada sesión. Actualizar bitácora y continuidad después de cada cambio.
 
-**Pendiente:** generar `package-lock.json` con conexión al registro npm y validar CI antes de considerar una release estable. El sitio aún no tiene un despliegue configurado.
-
-## Desarrollo
-Ramas `feat/*`, `fix/*` y `docs/*`; commits semánticos; actualizar CHANGELOG y CONTINUITY tras cada cambio. No incorporar activos protegidos ni monetización sin autorización.
+## Próximo paso
+Subir los archivos del ZIP al repositorio y ejecutar CI, seguido de pruebas en navegadores móviles.
