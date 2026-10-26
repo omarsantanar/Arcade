@@ -66,3 +66,12 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - CI GitHub Actions: ejecución 40383943632, 11 pruebas satisfactorias y build Vite/TypeScript exitoso.
 - Preview Vercel: estado Ready en la rama feat/initial-web-portal.
 - Falta validar con usuarios y dispositivos físicos que las distintas soluciones sean perceptibles y el control responda adecuadamente.
+
+## Estado inmediato — 2026-10-26 — Lumen Circuit
+- **Solicitud:** elaborar juego original inspirado en persecución de laberintos y verificar derechos vigentes de Pac-Man.
+- **Legal:** Bandai Namco reivindica marcas y derechos de Pac-Man; las reglas abstractas no están protegidas igual que la expresión. La Ley 65-00 dominicana fue ampliada en duraciones por Ley 424-06. Evitar nombre, personajes, sonidos, mapas y trade dress; revisar marca y originalidad antes de comercializar.
+- **Desarrollo:** se implementó `src/games/lumen-circuit/` en rama `feat/lumen-circuit-beta`, independiente de Neon Drift; cuatro direcciones móviles/teclado, tres terminales para abrir salida, generación procedural y enemigos distintos.
+- **Archivos afectados:** lógica, Phaser, pruebas, registry, GameView, tipos, estilos, documentación.
+- **Pruebas:** pendientes Vitest/TS/build y Vercel tras PR; pruebas humanas Android/iOS pendientes.
+- **Riesgos:** control móvil, percepción de dificultad y originalidad audiovisual no validados.
+- **Siguiente paso:** revisar CI, preview, balancear niveles y confirmar orientación vertical en móvil. No fusionar a producción antes de revisión.
