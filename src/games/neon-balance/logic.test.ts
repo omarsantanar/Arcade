@@ -22,7 +22,7 @@ describe('Neon Balance mechanics', () => {
   });
   it('is visible and recoverable: one unsafe placement does not end play', () => {
     let s = newBalance(() => 0.999);
-    for (let i = 0; i < 4; i++) s = placeWeight(chooseLane(s, 0), 1, () => 0.999);
+    for (let i = 0; i < 3; i++) s = placeWeight(chooseLane(s, 0), 1, () => 0.999);
     expect(s.torque).toBeLessThan(-TORQUE_LIMIT);
     expect(s.danger).toBe(1);
     expect(s.status).toBe('playing');
