@@ -51,3 +51,11 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - GitHub Actions [ejecución 40372684449](https://github.com/omarsantanar/Arcade/actions/runs/40372684449), commit de código `319428d180a495ac13b951068247b79cfa122d06`: **7/7 tests y build TypeScript/Vite correctos**.
 - Estado del despliegue Vercel: **success**, comprobado para ese commit. La vista previa permanece en la rama de PR #1; no se considera producción.
 - Queda pendiente comprobar dificultad, latencia, percepción de falsos huecos y controles en Safari iOS y Chrome Android.
+
+## 2026-10-26 — Lumen Circuit, nueva beta de laberintos (sin integración a main)
+**Objetivo:** construir juego original de persecución y circuitos sin reutilizar personajes, mapas, música o identidad de Pac-Man.
+**Archivos:** `src/games/lumen-circuit/{logic.ts,logic.test.ts,LumenCircuit.ts,DESIGN.md}`, `src/games/types.ts`, `src/games/registry.ts`, `src/components/GameView.tsx`, `src/styles.css`, test de catálogo y documentación.
+**Cambios:** mapas aleatorios conectados, cristales energéticos, tres terminales de carga, salida condicionada, tres vidas, centinelas angulares, cuatro direcciones táctiles/teclado, dificultad por nivel y récord local. Neon Drift sin cambios jugables.
+**Pruebas:** suite de simulación y comprobaciones Vitest escritas; comprobación de CI/build en GitHub y preview pendientes del PR.
+**Resultado:** rama de trabajo `feat/lumen-circuit-beta`, basada en la beta de Neon Drift, sin fusionar.
+**Riesgos:** controles móviles no probados en dispositivos físicos; revisión de marca para el nombre y valoración jurídica de parecido final antes de distribución comercial. No garantizar ausencia absoluta de infracción.
