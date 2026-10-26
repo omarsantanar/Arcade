@@ -51,3 +51,11 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 
 - [x] Pulse Core: CI GitHub con 17/17 pruebas y build satisfactorio, ejecución 40386833411; Vercel Preview Ready en rama de propuesta.
 - [ ] Pulse Core: probar mecánica y experiencia en móviles físicos y comprobar accesibilidad, tutorial y claridad de anillos.
+
+### Pulse Core — Guía de aprendizaje (2026-10-26)
+- [x] Crear tutorial de 3 pasos, visual y compatible con pantallas pequeñas.
+- [x] Mostrar automáticamente la primera vez y ofrecer reapertura mediante «?».
+- [x] Pausar y reanudar con respeto al estado previo.
+- [ ] Confirmar CI/deploy para los nuevos cambios.
+- [ ] Validar con usuarios nuevos la comprensión de radial vs. arco y el primer combo.
+- [ ] Considerar misión opcional de práctica guiada si el tutorial explicativo no basta.
