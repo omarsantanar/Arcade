@@ -46,3 +46,5 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Confirmar GitHub Actions y despliegue de preview.
 - [ ] Probar iOS/Android: latencia, desplazamiento, señales de terminales, colisiones y balance.
 - [ ] Revisar disponibilidad legal del nombre antes de lanzamiento.
+
+- [x] Lumen Circuit validado por GitHub Actions 40411150897 (19/19 tests, build correcto), Vercel Preview Ready.
