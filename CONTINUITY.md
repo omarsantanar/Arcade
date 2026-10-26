@@ -1,4 +1,13 @@
-# Continuidad operativa de Arcade
+# Continuidad operativa
+
+## Estado inmediato — 2026-10-26 — v0.3.0
+- Rama de desarrollo: `feat/initial-web-portal`; PR #1 abierta, no fusionada a `main`.
+- Se ha subido un generador de oleadas más agresivo, obstáculos con seis siluetas y barreras verticales una vez en niveles 3/6/9…; la dificultad sigue subiendo cada 7 segundos.
+- Simulación geométrica local completada: 131.200 oleadas y 2.800 barreras especiales sin pérdida de corredor viable. **Pendiente** revisar Vitest/build en GitHub y desplegado Vercel de este commit.
+- **Pendientes:** probar los niveles 1–6 en Safari iOS y Chrome Android, comprobar legibilidad de fragmentos y la sensación real de dificultad, y conseguir un `package-lock.json` reproducible.
+- **Siguiente acción:** comprobar CI de v0.3.0 y estado de Vercel, corregir cualquier error de compilación; después revisar equilibrio en celular. No fusionar a producción antes.
+- **Riesgo:** las aberturas engañosas pueden parecer injustas si no quedan claramente delimitadas; no equivale a ausencia de rutas geométricas.
+ de Arcade
 
 **Actualizado:** 2026-10-26  
 **Versión:** 0.1.0 (prototipo de evaluación; no producción)
