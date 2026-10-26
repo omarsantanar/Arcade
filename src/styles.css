@@ -17,3 +17,43 @@
 .accent-cyan .card-art{background:radial-gradient(ellipse at 50% 76%,#a020f04d,transparent 60%),linear-gradient(140deg,#0a0a12,#161027)}
 .accent-cyan .card-big-symbol{color:#00f0ff;filter:drop-shadow(0 0 19px #00f0ff99) drop-shadow(0 0 28px #ff00aa66)}
 @media(max-width:650px){.game-aside{border-top-color:#553068;border-left:none}}
+
+/* Pulse Core first-run guide. Kept independent of Neon Drift's stage. */
+.game-bar-title{min-width:0}.game-bar-title strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.game-toolbar{flex-shrink:0}
+.pulse-help-button{font-weight:800;color:#00f0ff;border-color:#7861bc}
+.pulse-guide-layer{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(3,4,13,.95);overflow:hidden}
+.pulse-guide-card{width:min(100%,440px);max-height:100%;overflow-y:auto;overscroll-behavior:contain;background:#15152a;border:1px solid #8063b5;border-radius:14px;padding:18px;color:#f4f1ff;box-shadow:0 0 28px #a020f033;font-family:'DM Sans',system-ui,sans-serif}
+.pulse-guide-heading{display:flex;justify-content:space-between;gap:8px;align-items:center;font:700 10px 'Space Grotesk',sans-serif;letter-spacing:1.2px}
+.pulse-guide-label{color:#00f0ff}.pulse-guide-count{color:#c3a7e7}
+.pulse-guide-dots{display:flex;gap:6px;margin:11px 0 12px}.pulse-guide-dots span{height:4px;flex:1;border-radius:4px;background:#39304f}.pulse-guide-dots span.active{background:#00f0ff}
+.pulse-guide-card h2{font:700 clamp(19px,3vw,24px) 'Space Grotesk',sans-serif;line-height:1.2;margin:0 0 9px;color:#fff}
+.pulse-guide-card p{margin:0;line-height:1.52}
+.pulse-guide-lead{font-size:13px;color:#e5e0f4}
+.pulse-guide-demo{height:144px;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at center,#252044,#101024 72%);border:1px solid #44365e;border-radius:12px;margin:12px 0}
+.pulse-guide-ring-demo{position:relative;width:156px;height:136px;display:grid;place-items:center}
+.pulse-guide-ring{position:absolute;border:2px solid #655779;border-radius:50%}
+.pulse-guide-ring.outer{width:134px;height:134px}.pulse-guide-ring.middle{width:99px;height:99px;border:4px solid #00f0ff;box-shadow:0 0 14px #00f0ff55}.pulse-guide-ring.inner{width:56px;height:56px}
+.pulse-guide-center{z-index:1;color:#ff00aa;font-size:29px}.pulse-guide-ring-arrow{position:absolute;top:49px;color:#00f0ff;font-weight:800;font-size:25px}
+.pulse-guide-ring-arrow.left{left:-26px}.pulse-guide-ring-arrow.right{right:-26px}
+.pulse-guide-match-examples{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:12px;padding:10px;text-align:center}
+.pulse-guide-match-examples>div{display:flex;flex-direction:column;justify-content:space-between;align-items:center;gap:7px}
+.pulse-guide-match-examples strong{font-size:10px;letter-spacing:1.4px;color:#fff}
+.pulse-guide-match-examples small{font-size:10px;line-height:1.35;color:#cbc1e1;max-width:130px}
+.pulse-guide-node{font-size:23px;line-height:1;text-shadow:0 0 10px currentColor}
+.pulse-guide-node.circle{color:#00f0ff}.pulse-guide-node.diamond{color:#ff00aa}.pulse-guide-node.triangle{color:#a020f0}
+.pulse-guide-symbol-row{display:flex;flex-direction:column;gap:4px;align-items:center;height:78px}
+.pulse-guide-symbol-arc{display:flex;align-items:center;gap:6px;height:78px}
+.pulse-guide-symbol-arc .pulse-guide-node:first-child{transform:translateY(10px)}.pulse-guide-symbol-arc .pulse-guide-node:last-child{transform:translateY(10px)}
+.pulse-guide-pulse-demo{display:flex;flex-direction:column;align-items:center;gap:12px;font-size:10px}
+.pulse-guide-pulse-row{display:flex;align-items:center;gap:11px;color:#afbee0}.pulse-guide-pulse-down{color:#00f0ff;letter-spacing:.4px}
+.pulse-guide-pulse-warning{padding:8px 11px;border:1px solid #ff00aa;border-radius:7px;color:#ffadce}.pulse-guide-pulse-warning b{color:#fff}
+.pulse-guide-detail{font-size:12px;color:#bfc2dc}.pulse-guide-hint{font-size:11px;color:#8cefe9;margin-top:9px!important}
+.pulse-guide-actions{position:sticky;bottom:-18px;margin:15px -18px -18px;padding:12px 18px 18px;display:flex;gap:10px;background:#15152a;border-top:1px solid #403450}
+.pulse-guide-actions button{min-height:42px;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:700;flex:1}
+.pulse-guide-secondary{background:transparent;color:#e3d9f3;border:1px solid #615176}
+.pulse-guide-primary{background:#00f0ff;color:#081421;border:1px solid #00f0ff}
+.pulse-guide-actions button:focus-visible,.pulse-aside-guide:focus-visible{outline:3px solid #ff00aa;outline-offset:3px}
+.pulse-aside-guide{background:transparent;border:1px solid #7c5ca6;color:#00f0ff;border-radius:7px;padding:9px 11px;font-size:12px;font-weight:700;text-align:left;cursor:pointer}
+@media(max-width:650px){.pulse-guide-layer{padding:9px}.pulse-guide-card{padding:13px}.pulse-guide-demo{height:120px;margin:9px 0}.pulse-guide-actions{bottom:-13px;margin:12px -13px -13px;padding:10px 13px 13px}.pulse-guide-lead{font-size:12px}.pulse-guide-detail{font-size:11px}.pulse-guide-hint{font-size:10px}.pulse-guide-ring-demo{transform:scale(.83)}.pulse-guide-match-examples small{font-size:9px}}
+@media(max-height:620px){.pulse-guide-card{padding:10px}.pulse-guide-demo{height:95px;margin:7px 0}.pulse-guide-ring-demo{transform:scale(.72)}.pulse-guide-card h2{margin-bottom:4px}.pulse-guide-dots{margin:7px 0}.pulse-guide-actions{margin-top:8px}}
