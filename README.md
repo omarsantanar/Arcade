@@ -1,27 +1,44 @@
 # Arcade
 
-Plataforma de videojuegos originales para jugar directamente en el navegador, con diseño adaptado a celulares y segunda etapa de app móvil.
+Plataforma original de videojuegos para navegador, diseñada primero para móviles. Segunda etapa: PWA y posible aplicación Android/iOS que reutilice código.
 
 ## Estado (2026-10-26)
-**Hito 1 iniciado.** Este repositorio contiene la documentación operativa. **El código del prototipo v0.1.0 está preparado en un ZIP entregado en la conversación, pero todavía NO está sincronizado aquí.** No existe despliegue público, tests completos ni build verificados.
+**v0.1.0: preview disponible para revisión, todavía no producción.**
 
-## Prototipo preparado
-Portal React/TypeScript/Vite con catálogo y carga diferida de Phaser, primer juego de obstáculos Neon Drift, controles táctiles/teclado, pausa, reinicio, sonido, pantalla completa compatible y récord en almacenamiento local.
+- Repositorio: https://github.com/omarsantanar/Arcade
+- PR #1: https://github.com/omarsantanar/Arcade/pull/1
+- Preview: https://arcade-git-feat-initial-web-portal-omar-santanas-projects.vercel.app
+- GitHub Actions: instalación, tests Vitest y compilación TypeScript/Vite satisfactorios.
+- Pendiente: lockfile versionado, pruebas reales en dispositivos y revisión de PR antes de fusionar.
 
-## Instalación (después de subir el código del ZIP)
-Requiere Node.js 22 y conexión a npm.
+## Instalación local
+Requisitos: Node.js 22 y npm.
 
 ```bash
+git clone https://github.com/omarsantanar/Arcade.git
+cd Arcade
+git checkout feat/initial-web-portal
 npm install
 npm run dev
-npm run test
-npm run build
 ```
 
-Generar y versionar `package-lock.json`; luego actualizar CI para `npm ci`.
+La aplicación se abre normalmente en http://localhost:5173. Para validar:
 
-## Continuidad
-Leer `ARCHITECTURE.md`, `CHANGELOG.md`, `CONTINUITY.md`, `ROADMAP.md` y `AGENTS.md` antes de cada sesión. Actualizar bitácora y continuidad después de cada cambio.
+```bash
+npm run test
+npm run build
+npm run preview
+```
 
-## Próximo paso
-Subir los archivos del ZIP al repositorio y ejecutar CI, seguido de pruebas en navegadores móviles.
+## Estructura
+- `src/App.tsx`: galería, filtros y selección del juego.
+- `src/components/GameView.tsx`: ventana y controles comunes.
+- `src/games/registry.ts`: catálogo y carga diferida.
+- `src/games/types.ts`: contrato de módulo.
+- `src/games/neon-drift/`: primer juego Phaser.
+- `.github/workflows/ci.yml`: pruebas automáticas.
+
+## Desarrollo y continuidad
+Trabajar en ramas `feat/*`, `fix/*`, `docs/*` con PR. Leer y actualizar `ARCHITECTURE.md`, `CHANGELOG.md`, `CONTINUITY.md`, `ROADMAP.md` y `AGENTS.md`. Cada cambio debe registrar propósito, archivos, pruebas, resultado, riesgos y próximo paso.
+
+No incorporar arte ajeno protegido ni monetización sin autorización. Sin backend, usuarios, analítica o anuncios en esta etapa.
