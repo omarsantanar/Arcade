@@ -30,7 +30,6 @@ class ReactorScene extends Phaser.Scene {
   private muted = false;
   private audio?: AudioContext;
   private pointerStart: { x: number; ring: number } | null = null;
-  private prevScore = -1;
   private readonly keyboardDirections: { [key: string]: Phaser.Input.Keyboard.Key } = {};
 
   constructor(callbacks: GameCallbacks) { super('PulseCore'); this.callbacks = callbacks; }
@@ -91,7 +90,6 @@ class ReactorScene extends Phaser.Scene {
     this.elapsed = 0;
     this.untilNextBeat = beatIntervalMs(1);
     this.direction = 0;
-    this.prevScore = -1;
     this.callbacks.onScore(0);
     this.callbacks.onStatus('playing');
     this.renderBoard();
