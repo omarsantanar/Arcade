@@ -1,5 +1,14 @@
 # Bitácora de cambios
 
+## 2026-10-26 — v0.3.0 — Obstáculos imprevisibles y pilares verticales
+**Objetivo:** aumentar la presión desde el nivel 1 y hacer menos evidentes las rutas, preservando al menos una solución basada en las dimensiones y la velocidad de la nave.
+**Archivos afectados:** `src/games/neon-drift/logic.ts`, `logic.test.ts`, `NeonDrift.ts`, `DESIGN.md`, `package.json`, `ARCHITECTURE.md`, `README.md`, `CONTINUITY.md`, `ROADMAP.md` y esta bitácora.
+**Cambios:** velocidad base 250, intervalo inicial 900 ms, corredores de 79–98 px, cuatro patrones (incluyendo pilar) y seis figuras; un bloqueo vertical real en niveles 3/6/9…; objetivos táctiles limitados a la velocidad de la nave.
+**Pruebas:** simulación local con Node ejecutada: 100 sesiones de diez minutos, 131.200 oleadas y 2.800 bloqueos verticales, sin violaciones de hitboxes ni de la cota de movimiento. Pruebas automatizadas de Vitest y build en CI pendientes de comprobar para este commit.
+**Resultado:** código subido a rama `feat/initial-web-portal` dentro de PR #1; pendiente confirmar que Vercel publique el último commit.
+**Riesgos:** falta evaluación de justicia perceptiva y controles en teléfonos reales; la simulación garantiza existencia geométrica de una ruta, no que todas las personas puedan descubrirla con tiempo suficiente.
+
+
 ## 2026-10-26 — v0.2.0 — Neon Drift: escalada y dirección de arte
 - **Objetivo:** escalar dificultad cada siete segundos sin oleadas matemáticamente imposibles y aplicar guía audiovisual 1.0 del usuario.
 - **Archivos:** `src/games/neon-drift/{logic.ts,logic.test.ts,NeonDrift.ts,DESIGN.md}`, `src/components/GameView.tsx`, `src/styles.css`, documentación del repositorio.
