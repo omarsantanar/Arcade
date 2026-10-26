@@ -112,6 +112,26 @@ describe('Neon Drift: multiple valid exits and irregular encounters', () => {
     expect(variants.size).toBeGreaterThan(40);
   });
 
+  it('keeps multiple reachable, not merely visible, exits in most opening levels', () => {
+    let total = 0;
+    let alternatives = 0;
+    for (let seed = 1; seed <= 30; seed++) {
+      const random = seeded(seed);
+      let time = 0;
+      let prior: WaveAnchor = { center: FIELD_WIDTH / 2, arrivalAt: 0, clearanceMs: 0 };
+      while (time < 14000) {
+        time += randomSpawnDelay(time / 1000, random);
+        if (time >= 14000) break;
+        const wave = planWave(time / 1000, time, prior, random);
+        total++;
+        if (wave.reachable.length >= 2) alternatives++;
+        prior = wave;
+      }
+    }
+    expect(total).toBeGreaterThan(300);
+    expect(alternatives / total).toBeGreaterThan(0.85);
+  });
+
   it('randomizes intervals between spawns within controlled bounds', () => {
     const random = seeded(12);
     const values = Array.from({ length: 100 }, () => randomSpawnDelay(0, random));
