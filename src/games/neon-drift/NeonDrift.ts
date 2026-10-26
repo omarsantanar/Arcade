@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { ControlDirection, GameCallbacks, GameHandle } from '../types';
 import {
   FIELD_WIDTH, PLAYER_MAX_X, PLAYER_MIN_X, PLAYER_Y, SHIP_HEIGHT, SHIP_SPEED,
-  SHIP_WIDTH, SPAWN_Y, clamp, difficultyAt, intersects, levelAt,
+  SHIP_WIDTH, SPAWN_Y, clamp, difficultyAt, intersects,
   pieceHitbox, planWave, readBestScore, saveBestScore, shouldSpawnVertical,
   spawnDelay, type ObstaclePiece, type WaveAnchor, type WavePlan,
 } from './logic';
