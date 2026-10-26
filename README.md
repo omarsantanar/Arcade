@@ -54,3 +54,6 @@ Los niveles aumentan cada 7 segundos de juego activo. La velocidad, frecuencia y
 
 ## Neon Drift v0.4.0
 Los obstáculos se distribuyen al azar antes de evaluar la viabilidad temporal de sus rutas. Los niveles 1 y 2 suelen presentar varias salidas; los altos reducen opciones. Las oleadas aparecen con intervalos variables y los bloqueos verticales se mantienen cada tres niveles. Diseño y limitaciones: src/games/neon-drift/DESIGN.md.
+
+## Lumen Circuit — tercer prototipo original (rama de revisión)
+`feat/lumen-circuit-beta`: laberinto de circuitos con tres objetivos de energía, adversarios geométricos y salida desbloqueada. Para jugar, recoge dos cristales, activa cada terminal triangular y luego busca el portal; evita centinelas. Móvil: cruceta táctil y gestos; PC: flechas/WASD. El progreso del récord se guarda localmente. Es un juego original, **no una réplica ni un producto afiliado a Pac-Man/Bandai Namco**. Se deben verificar la marca `Lumen Circuit` y los posibles parecidos audiovisuales antes del lanzamiento comercial. Documento de diseño: `src/games/lumen-circuit/DESIGN.md`.
