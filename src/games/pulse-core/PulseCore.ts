@@ -46,9 +46,9 @@ class ReactorScene extends Phaser.Scene {
     this.scoreText = this.add.text(18, 90, 'ENERGÍA 0000', {fontFamily: 'monospace', fontSize: '14px', color: '#00f0ff'});
     this.levelText = this.add.text(240, 90, 'PULSO 01', {fontFamily: 'monospace', fontSize: '13px', color: '#c792f5'});
     this.warningText = this.add.text(WIDTH / 2, 496, '', {fontFamily: 'monospace', fontSize: '12px', color: '#ff759d'}).setOrigin(0.5);
-    this.add.text(WIDTH / 2, 526, 'TOCA UN ANILLO · DESLIZA PARA GIRAR', {fontFamily: 'monospace', fontSize: '10px', color: '#b8bbd5'}).setOrigin(0.5);
-    this.add.text(WIDTH / 2, 548, 'CONECTA 3 DEL MISMO SÍMBOLO', {fontFamily: 'monospace', fontSize: '10px', color: '#8d95bb'}).setOrigin(0.5);
-    this.add.text(WIDTH / 2, 572, '← → GIRAR  ·  ↑ ↓ CAMBIAR ANILLO', {fontFamily: 'monospace', fontSize: '10px', color: '#7280a6'}).setOrigin(0.5);
+    this.add.text(WIDTH / 2, 526, '1. ELIGE ANILLO · DESLIZA PARA GIRAR', {fontFamily: 'monospace', fontSize: '10px', color: '#b8bbd5'}).setOrigin(0.5);
+    this.add.text(WIDTH / 2, 548, '2. UNE 3 IGUALES: RADIAL O ARCO', {fontFamily: 'monospace', fontSize: '10px', color: '#8d95bb'}).setOrigin(0.5);
+    this.add.text(WIDTH / 2, 572, '3. EVITA 3 BLOQUEOS · AYUDA EN ?', {fontFamily: 'monospace', fontSize: '10px', color: '#7280a6'}).setOrigin(0.5);
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       const distance = Math.hypot(p.x - CX, p.y - CY);
       if (distance < 32 || distance > 166) { this.pointerStart = null; return; }
