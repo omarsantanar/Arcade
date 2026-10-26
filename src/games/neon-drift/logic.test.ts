@@ -167,7 +167,7 @@ describe('Neon Drift: multiple valid exits and irregular encounters', () => {
 describe('Arcade catalog', () => {
   it('preserves independently registered game modules', () => {
     expect(new Set(catalog.map(game => game.id)).size).toBe(catalog.length);
-    expect(catalog.filter(game => game.available)).toHaveLength(1);
+    expect(catalog.filter(game => game.available).map(game => game.id)).toEqual(expect.arrayContaining(['neon-drift', 'pulse-core']));
     expect(findGame('neon-drift')?.title).toBe('Neon Drift');
   });
 });
