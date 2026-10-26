@@ -66,3 +66,13 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - CI GitHub Actions: ejecución 40383943632, 11 pruebas satisfactorias y build Vite/TypeScript exitoso.
 - Preview Vercel: estado Ready en la rama feat/initial-web-portal.
 - Falta validar con usuarios y dispositivos físicos que las distintas soluciones sean perceptibles y el control responda adecuadamente.
+
+## Sesión 2026-10-26 — Retiro de Pulse Core y nueva dirección
+- **Decisión:** Pulse Core descartado por baja claridad óptica, incluso con guía. PR #2 cerrada **sin fusionar**, código histórico permanece en su rama archivada y preview puede seguir accesible; no es parte de la línea activa.
+- **Propuesta:** Neon Balance, objetivo visible: soltar pesos sin volcar una plataforma. Primer prototipo en `feat/neon-balance-concept`, PR #3 hacia `feat/initial-web-portal`.
+- **Afectados:** módulo de reglas y Phaser `src/games/neon-balance`, `registry.ts`, `GameView.tsx`, test de catálogo, documentación; reglas Neon Drift intactas.
+- **Pruebas:** tests de reglas escritos; CI/build y despliegue por verificar.
+- **Riesgos:** confirmar que la inclinación comunica riesgo, y no resultar monótono.
+- **Próximo paso:** verificar checks de GitHub y Vercel, corregir errores y probar comprensión en móvil antes de fusionar.
+
+**Validación confirmada:** CI [40407527878](https://github.com/omarsantanar/Arcade/actions/runs/40407527878) terminó correctamente (18 tests y build TS/Vite) para el commit de código `38b70e81c79ed00d9bc7a3d5c6599f957c39cccc`. Vercel preview Ready: https://arcade-git-feat-neon-balance-concept-omar-santanas-projects.vercel.app. PR #3 sigue como borrador sin merge. Evaluación pendiente: control de un toque, comprensión de la barra, sensación de los distintos pesos y ritmo de partidas en iOS/Android. No fusionar sin revisión.

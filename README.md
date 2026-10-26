@@ -54,3 +54,6 @@ Los niveles aumentan cada 7 segundos de juego activo. La velocidad, frecuencia y
 
 ## Neon Drift v0.4.0
 Los obstáculos se distribuyen al azar antes de evaluar la viabilidad temporal de sus rutas. Los niveles 1 y 2 suelen presentar varias salidas; los altos reducen opciones. Las oleadas aparecen con intervalos variables y los bloqueos verticales se mantienen cada tres niveles. Diseño y limitaciones: src/games/neon-drift/DESIGN.md.
+
+## Segundo juego propuesto — Neon Balance
+Pulse Core fue descartado como prototipo por su escasa claridad visual; [PR #2](https://github.com/omarsantanar/Arcade/pull/2) cerrada sin fusionar. Su código se conserva únicamente en historial. La alternativa experimental es **Neon Balance**: toca una columna para soltar un peso y mantener nivelada una plataforma basculante, sin completar filas ni rotar piezas. Rama `feat/neon-balance-concept`, [PR #3](https://github.com/omarsantanar/Arcade/pull/3), basada en `feat/initial-web-portal`. Ver `src/games/neon-balance/DESIGN.md`. No fusionado a producción.

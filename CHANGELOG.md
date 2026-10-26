@@ -51,3 +51,13 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - GitHub Actions [ejecución 40372684449](https://github.com/omarsantanar/Arcade/actions/runs/40372684449), commit de código `319428d180a495ac13b951068247b79cfa122d06`: **7/7 tests y build TypeScript/Vite correctos**.
 - Estado del despliegue Vercel: **success**, comprobado para ese commit. La vista previa permanece en la rama de PR #1; no se considera producción.
 - Queda pendiente comprobar dificultad, latencia, percepción de falsos huecos y controles en Safari iOS y Chrome Android.
+
+## 2026-10-26 — Nuevo prototipo Neon Balance (reemplaza concepto Pulse Core)
+**Objetivo:** abandonar una mecánica que requiere explicación y explorar un arcade de bloques con objetivo visible en segundos.
+**Archivos afectados:** `src/games/neon-balance/{logic.ts,logic.test.ts,NeonBalance.ts,DESIGN.md}`, `src/games/registry.ts`, `src/components/GameView.tsx`, test de catálogo y documentación.
+**Cambios:** Pulse Core PR #2 cerrada sin merge. Nuevo módulo independiente: soltar bloques de peso variable con un toque, mantener la plataforma equilibrada, puntuar por estabilidad y gestionar saturación de alturas. Se inicia PR #3 sobre la rama de Neon Drift.
+**Pruebas:** pruebas Vitest de reglas preparadas. GitHub Actions y Vercel pendientes al redactar este registro.
+**Resultado:** juego experimental añadido solo en rama `feat/neon-balance-concept`; Neon Drift no fue modificado.
+**Riesgos:** modelo de inclinación simplificado, equilibrio por ajustar, falta validación en móviles, accesibilidad y divertimento.
+
+**Validación de la primera implementación:** commit de aplicación `38b70e81c79ed00d9bc7a3d5c6599f957c39cccc`. GitHub Actions [40407527878](https://github.com/omarsantanar/Arcade/actions/runs/40407527878) aprobó **18/18 pruebas** (7 de Neon Balance y 11 de Neon Drift), TypeScript y build Vite. Vercel marcó `Ready` su preview: https://arcade-git-feat-neon-balance-concept-omar-santanas-projects.vercel.app. **No valida todavía jugabilidad táctil en un móvil real.**
