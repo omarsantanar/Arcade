@@ -89,3 +89,5 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 **Pruebas:** test unitario para el texto/tutorial añadido; falta confirmar CI, build y despliegue de este cambio.
 **Próxima acción:** verificar workflow y Vercel, corregir errores si hay; revisar que el tutorial aparezca la primera vez, se cierre/reabra, conserve el estado y que un usuario nuevo logre descargar energía en móvil.
 **Riesgos:** tutorial explicativo, no jugable; no se ha validado con personas; almacenamiento de indicador de lectura puede no estar disponible en modo privado.
+
+**CI/preview verificados para la guía:** rama `feat/pulse-core-prototype`, commit `1cbd19576f073480e178a98558516b0b25086be0`; [GitHub Actions 40403227040](https://github.com/omarsantanar/Arcade/actions/runs/40403227040) pasó 19/19 tests y compilación TypeScript/Vite; Vercel `success`. Preview: https://arcade-git-feat-pulse-core-prototype-omar-santanas-projects.vercel.app. Sigue en PR #2, no producción. Siguiente: evaluación de lectura, saturación y retorno a partida desde la ayuda en Android/iOS.
