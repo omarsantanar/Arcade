@@ -45,3 +45,5 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] Crear lógica Phaser, pruebas y catálogo en PR #3 experimental.
 - [ ] Validar CI/build, vista previa y percepción de inclinación en móviles.
 - [ ] Realizar pruebas con personas nuevas; no aprobar sin demostrar comprensión y diversión.
+
+- [x] Primer CI Neon Balance validado: 18/18 pruebas y build; preview de Vercel lista (GitHub Actions 40407527878).
