@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { loadGame } from '../games/registry';
 import type { ControlDirection, GameHandle, GameManifest, GameStatus } from '../games/types';
 import { readBestScore } from '../games/neon-drift/logic';
+import { readBalanceBest } from '../games/neon-balance/logic';
 
 interface Props { manifest: GameManifest; onClose: () => void }
 
@@ -10,7 +11,8 @@ export default function GameView({ manifest, onClose }: Props) {
   const gameRef = useRef<GameHandle | null>(null);
   const [status, setStatus] = useState<GameStatus>('playing');
   const [score, setScore] = useState(0);
-  const [best, setBest] = useState(readBestScore);
+  const getBest = manifest.id === 'neon-balance' ? readBalanceBest : readBestScore;
+  const [best, setBest] = useState(getBest);
   const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,7 +29,7 @@ export default function GameView({ manifest, onClose }: Props) {
           onScore: setScore,
           onStatus: (nextStatus) => {
             setStatus(nextStatus);
-            if (nextStatus === 'gameover') setBest(readBestScore());
+            if (nextStatus === 'gameover') setBest(getBest());
           },
         });
         gameRef.current = game;
@@ -91,7 +93,15 @@ export default function GameView({ manifest, onClose }: Props) {
           </div>
           <div className="game-aside">
             <div className="game-metrics"><div><span>PUNTUACIÓN</span><strong>{score.toString().padStart(4, '0')}</strong></div><div><span>MEJOR MARCA</span><strong>{best.toString().padStart(4, '0')}</strong></div></div>
-            <div className="instructions"><h3>Cómo jugar</h3><p>Esquiva obstáculos geométricos de neón. Cada 7 segundos aumenta el nivel: caen más rápido, aparecen con más frecuencia y cambian de tamaño. Siempre queda un corredor viable, pero deberás alcanzarlo a tiempo.</p><p><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte. En móviles, toca los botones o desliza el dedo sobre el juego.</p></div>
+            <div className="instructions"><h3>Cómo jugar</h3>
+              {manifest.id === 'neon-balance' ? <>
+                <p>Coloca cada bloque sobre la plataforma sin volcarla. Los bloques pesados cerca de los extremos inclinan más. El indicador superior muestra el equilibrio.</p>
+                <p>Toca la columna donde quieres soltar el bloque. También puedes usar <kbd>←</kbd> <kbd>→</kbd> para elegir y <kbd>ESPACIO</kbd> para soltar. Dos jugadas consecutivas en peligro terminan la partida.</p>
+              </> : <>
+                <p>Esquiva obstáculos geométricos de neón. Cada 7 segundos aumenta el nivel: caen más rápido, aparecen con más frecuencia y cambian de tamaño. Siempre queda un corredor viable, pero deberás alcanzarlo a tiempo.</p>
+                <p><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte. En móviles, toca los botones o desliza el dedo sobre el juego.</p>
+              </>}
+            </div>
             <div className="touch-controls" aria-label="Controles táctiles">
               <button type="button" aria-label="Mover a la izquierda" onPointerDown={(e) => { e.preventDefault(); setDirection(-1); }} onPointerUp={() => setDirection(0)} onPointerLeave={() => setDirection(0)} onPointerCancel={() => setDirection(0)}>←</button>
               <button type="button" aria-label="Mover a la derecha" onPointerDown={(e) => { e.preventDefault(); setDirection(1); }} onPointerUp={() => setDirection(0)} onPointerLeave={() => setDirection(0)} onPointerCancel={() => setDirection(0)}>→</button>
