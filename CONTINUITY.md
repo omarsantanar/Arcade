@@ -75,3 +75,10 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - Archivos afectados: `src/games/pulse-core/`, `src/games/registry.ts`, `src/components/GameView.tsx`, `README.md`, `ARCHITECTURE.md`, `CHANGELOG.md`, `CONTINUITY.md`, `ROADMAP.md`.
 - Pruebas locales: `tsc` de lógica pura y 250 sesiones de simulación, sin garantía de ergonomía real. Próximo: confirmar Vitest/TypeScript/Vite por GitHub Actions y Vercel, probar controles en móvil y recoger comentarios de diseño.
 - Riesgos: sin tutorial, review de similitud o prueba real en teléfonos. NO anunciar producción; PR #1 de Neon Drift permanece independiente.
+
+
+### Verificación y ubicación — Pulse Core
+- PR experimental: https://github.com/omarsantanar/Arcade/pull/2 (destino `feat/initial-web-portal`, no `main`).
+- GitHub Actions completó 17/17 pruebas y build: https://github.com/omarsantanar/Arcade/actions/runs/40386833411.
+- Vercel informó Ready para la preview https://arcade-git-feat-pulse-core-prototype-omar-santanas-projects.vercel.app.
+- Versión visible solo para evaluación. Siguiente acción: probar controles táctiles/teclado, comprender alinear símbolos antes de saturación y ajustar intervalos. Después preparar tutorial y decidir aceptación editorial del concepto. No fusionar aún a producción.

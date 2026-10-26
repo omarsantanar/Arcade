@@ -48,3 +48,6 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Testeo de curva de aprendizaje en Android/iOS y tutorial interactivo.
 - [ ] Revisión legal/marca y de similitud antes de anunciar un título comercial.
 - [ ] Decidir si incorporar a la beta pública después de revisión.
+
+- [x] Pulse Core: CI GitHub con 17/17 pruebas y build satisfactorio, ejecución 40386833411; Vercel Preview Ready en rama de propuesta.
+- [ ] Pulse Core: probar mecánica y experiencia en móviles físicos y comprobar accesibilidad, tutorial y claridad de anillos.
