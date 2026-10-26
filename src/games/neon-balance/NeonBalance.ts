@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import type { ControlDirection, GameCallbacks, GameHandle } from '../types';
 import { chooseLane, intervalAt, LANES, levelAt, MAX_HEIGHT, newBalance, placeWeight,
-  readBalanceBest, saveBalanceBest, TORQUE_LIMIT, type BalanceState } from './logic';
+  saveBalanceBest, TORQUE_LIMIT, type BalanceState } from './logic';
 
 const W = 360;
 const H = 600;
@@ -21,7 +21,6 @@ function rotatePoint(x: number, y: number, radians: number) {
 class BalanceScene extends Phaser.Scene {
   private model: BalanceState = newBalance();
   private graphics!: Phaser.GameObjects.Graphics;
-  private title!: Phaser.GameObjects.Text;
   private info!: Phaser.GameObjects.Text;
   private stateText!: Phaser.GameObjects.Text;
   private scoreText!: Phaser.GameObjects.Text;
@@ -50,7 +49,7 @@ class BalanceScene extends Phaser.Scene {
       stars.fillCircle(x, y, 0.65 + (i % 3) * 0.2);
     }
     this.graphics = this.add.graphics();
-    this.title = this.add.text(16, 20, 'NEON BALANCE', { fontFamily:'monospace', fontSize:'24px', color:'#66eddd', fontStyle:'bold' });
+    this.add.text(16, 20, 'NEON BALANCE', { fontFamily:'monospace', fontSize:'24px', color:'#66eddd', fontStyle:'bold' });
     this.add.text(17, 55, 'COLOCA BLOQUES SIN VOLCAR LA PLATAFORMA', { fontFamily:'monospace', fontSize:'9px', color:'#c4d4e9' });
     this.scoreText = this.add.text(17, 82, '', { fontFamily:'monospace', fontSize:'13px', color:'#e9f5ff' });
     this.info = this.add.text(17, 115, '', { fontFamily:'monospace', fontSize:'11px', color:'#ffcc75' });
