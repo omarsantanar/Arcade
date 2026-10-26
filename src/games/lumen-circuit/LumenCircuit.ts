@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import type { ControlDirection, GameCallbacks, GameHandle } from '../types';
 import {
-  COLS, ROWS, newCircuit, moveExplorer, readLumenBest, saveLumenBest,
-  stepSentinels, equals, type CircuitState, type Direction, type Cell
+  COLS, ROWS, newCircuit, moveExplorer, saveLumenBest,
+  stepSentinels, type CircuitState, type Direction, type Cell
 } from './logic';
 
 const W = 360, H = 600, CELL = 22, LEFT = (W - COLS * CELL) / 2, TOP = 97;
@@ -185,7 +185,7 @@ class CircuitScene extends Phaser.Scene {
     this.hud.setText('NIVEL '+state.level+'  ·  NODOS '+active+'/3  ·  VIDAS '+state.lives);
     this.hint.setText(active===3?'SALIDA ABIERTA: BUSCA EL PORTAL →':
       'CRISTALES '+state.energy+'/2  ·  NODOS '+active+'/3');
-    this.footer.setText('PUNTOS '+state.score+'  ·  '+(state.invulnerable?'ESCUDO TEMPORAL':'EVITA LOS CENTINELAS'));
+    this.footer.setText('PUNTOS '+state.score+' · '+Math.floor(this.elapsed/1000)+'s · '+(state.invulnerable?'ESCUDO':'EVITA CENTINELAS'));
   }
 
   update(_time:number,delta:number):void {
@@ -213,7 +213,7 @@ class CircuitScene extends Phaser.Scene {
       this.drawBoard();
     }
   }
-  public setMove(direction:Direction){this.touchDirection=direction;this.moveTimer=125;}
+  public setMove(direction:Direction){if(direction!=='none'&&direction!==this.touchDirection)this.tryMove(direction);this.touchDirection=direction;this.moveTimer=125;}
   public setMuted(muted:boolean){this.muted=muted;}
   public restartGame(){this.scene.resume();this.reset();}
   public stopAudio(){void this.audio?.close();}
