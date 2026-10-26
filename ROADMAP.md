@@ -1,9 +1,13 @@
-# Roadmap
+# Roadmap — Arcade
 
-1. **Arquitectura y repositorio:** documentación inicial creada; falta incorporar código del prototipo y validar CI.
-2. **Portal responsive:** diseño y galería preparados en prototipo local; faltan pruebas funcionales móviles.
-3. **Primer juego:** Neon Drift, control táctil, teclado, pausa, reinicio, récord local; falta validación en navegador real.
-4. **Catálogo:** agregar módulos de rompecabezas, aventuras y juegos originales; mantener API común.
-5. **Aplicación:** evaluar PWA y Capacitor para Android/iOS, reutilizando frontend y lógica.
+Actualizado 2026-10-26. Los hitos describen progreso técnico, no aprobación de lanzamiento.
 
-Fuera de alcance hasta nueva indicación: anuncios, pagos, backend, usuarios y multijugador.
+1. **Arquitectura y repositorio:** completada base documental; código subido en PR #1 y CI satisfactorio. Pendientes revisión PR, lockfile y cierre formal del hito.
+2. **Portal responsive:** portada y catálogo listos en preview Vercel; pendientes pruebas reales Android/iOS, accesibilidad, rendimiento.
+3. **Primer juego:** Neon Drift funciona en preview según build y despliegue; controles táctiles, teclado, pausa, reinicio y récord local programados; faltan pruebas manuales.
+4. **Catálogo:** implementar más juegos originales como módulos independientes, con navegación y controles compartidos.
+5. **Aplicación:** evaluar PWA y Capacitor para iOS/Android, reusando interfaz y lógica, luego validar límites de sonido, fullscreen y almacenamiento.
+
+Preview: https://arcade-git-feat-initial-web-portal-omar-santanas-projects.vercel.app
+
+Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y multijugador.
