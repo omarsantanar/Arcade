@@ -22,3 +22,11 @@ La preview puede requerir acceso según ajustes del proyecto Vercel. Éxito de C
 
 ## Protocolo
 Al iniciar leer seis documentos operativos desde GitHub; al terminar consignar objetivo, archivos, pruebas, resultado, riesgos y próxima acción.
+
+## 2026-10-26 — Actualización Neon Drift v0.2.0
+- **Objetivo:** dificultad escalonada cada 7 s + identidad visual según la guía del usuario.
+- **Archivos:** lógica, escena y pruebas Neon Drift, GameView, estilos y DESIGN.md.
+- **Pruebas:** 156.000 oleadas simuladas sin violar la trayectoria viable; parseo TypeScript correcto. npm inaccesible localmente; esperar CI.
+- **Resultado:** cambio en PR #1 `feat/initial-web-portal`, pendiente de ejecución CI y despliegue Vercel.
+- **Riesgos:** falta comprobación Safari iOS/Chrome Android; falta lockfile.
+- **Siguiente acción:** verificar estado de Actions y preview, ensayar niveles 1-5 en celular, probar controles/tamaño del corredor, recoger incidencias. No fusionar antes.

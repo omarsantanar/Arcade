@@ -11,3 +11,11 @@ Actualizado 2026-10-26. Los hitos describen progreso técnico, no aprobación de
 Preview: https://arcade-git-feat-initial-web-portal-omar-santanas-projects.vercel.app
 
 Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y multijugador.
+
+### 2026-10-26 — Neon Drift v0.2.0 (en revisión)
+- [x] Dificultad cada 7 segundos y corredores transitables con planificación independiente del motor.
+- [x] Paleta oficial, nave triangular con glow, obstáculos variables y efectos de movimiento.
+- [x] Simulación local de 156.000 oleadas.
+- [ ] Validar Vitest/build con GitHub Actions y preview de Vercel.
+- [ ] Balanceo en Safari iOS y Chrome Android; ajustes táctiles.
+- [ ] Hyperdrift/Boost, música por capas y multiplicadores solo en versión posterior.

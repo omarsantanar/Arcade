@@ -15,3 +15,6 @@ TypeScript, React y Vite para la interfaz; Phaser 3 para minijuegos 2D. Catálog
 - `src/games/<id>/`: escenas, lógica y tests independientes.
 
 Alternativas consideradas: Canvas puro aumenta código propio; backend en primera etapa agrega complejidad sin necesidad. Antes de producción: auditorías móvil, accesibilidad, seguridad, rendimiento y licencias. No desplegar ni monetizar sin revisión.
+
+## ADR-002 — Generador de oleadas comprobablemente viable (2026-10-26)
+Se sustituye la dispersión aleatoria independiente por barreras con corredor. `planWave` es puro y acota la distancia entre centros de corredores consecutivos por la velocidad normal de la nave y el tiempo libre entre ventanas de colisión, descontando 70 ms y usando solo el 72 % del desplazamiento disponible. Se evita cambiar violentamente de corredor a medida que suben velocidad, frecuencia y tamaño. La visualización Phaser es independiente de la planificación. Fuente artística: `src/games/neon-drift/DESIGN.md`. Como contrapartida el diseño evita barreras completamente independientes; posteriores patrones necesitarán demostrar de nuevo la accesibilidad temporal.

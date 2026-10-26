@@ -1,5 +1,14 @@
 # Bitácora de cambios
 
+## 2026-10-26 — v0.2.0 — Neon Drift: escalada y dirección de arte
+- **Objetivo:** escalar dificultad cada siete segundos sin oleadas matemáticamente imposibles y aplicar guía audiovisual 1.0 del usuario.
+- **Archivos:** `src/games/neon-drift/{logic.ts,logic.test.ts,NeonDrift.ts,DESIGN.md}`, `src/components/GameView.tsx`, `src/styles.css`, documentación del repositorio.
+- **Implementación:** niveles por tiempo activo (7 s), frecuencia y velocidad ascendentes con límites, tamaño variable de obstáculos, corredor siempre mayor que la nave, continuidad de una trayectoria realizable con margen de movimiento, paleta oficial cian/magenta/violeta, nave oscura triangular, estelas y estrellas en parallax.
+- **Pruebas locales:** TypeScript transpilado sin errores de sintaxis; generador validado en 120 sesiones deterministas de 10 minutos (156.000 oleadas) sin violar la holgura, tiempo de llegada ni desplazamiento máximo. **Pendientes:** `npm run test`, `npm run build` y prueba en teléfonos; npm no pudo acceder a su registro desde el entorno local.
+- **Resultado:** cambios preparados en la rama de revisión `feat/initial-web-portal`, PR #1 (CI y preview a verificar tras commit). No fusionar a main hasta validar.
+- **Riesgos:** la trayectoria existe si el jugador reacciona a tiempo; no equivale a supervivencia automática. Faltan pruebas de latencia táctil, accesibilidad y fps móviles.
+
+
 ## 2026-10-26 — v0.1.0 — Portal inicial y preview
 
 **Objetivo:** establecer plataforma modular y disponer de una primera versión jugable para revisión desde navegador y celulares.
