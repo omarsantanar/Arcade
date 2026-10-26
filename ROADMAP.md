@@ -38,3 +38,10 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 
 - [x] CI validado para v0.4.0, ejecución 40383943632: 11 pruebas y build satisfactorios.
 - [ ] Validar en móvil rutas alternativas y equilibrio de niveles 1, 3, 6 y 10.
+
+### Segundo título — Cambio de concepto (2026-10-26)
+- [x] Descartar Pulse Core por falta de claridad visual; PR #2 cerrada sin merge.
+- [x] Preparar alternativa Neon Balance, una balanza de bloques que se maneja con un toque.
+- [x] Crear lógica Phaser, pruebas y catálogo en PR #3 experimental.
+- [ ] Validar CI/build, vista previa y percepción de inclinación en móviles.
+- [ ] Realizar pruebas con personas nuevas; no aprobar sin demostrar comprensión y diversión.
