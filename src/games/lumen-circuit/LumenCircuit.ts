@@ -213,7 +213,7 @@ class CircuitScene extends Phaser.Scene {
       this.drawBoard();
     }
   }
-  public setMove(direction:Direction){if(direction!=='none'&&direction!==this.touchDirection)this.tryMove(direction);this.touchDirection=direction;this.moveTimer=125;}
+  public setMove(direction:Direction){if(direction!=='none'&&direction!==this.touchDirection)this.tryMove(direction);this.touchDirection=direction;}
   public setMuted(muted:boolean){this.muted=muted;}
   public restartGame(){this.scene.resume();this.reset();}
   public stopAudio(){void this.audio?.close();}
