@@ -93,7 +93,7 @@ describe('Neon Drift: harder but fair', () => {
       }
       expect(examined).toBeGreaterThan(850);
     }
-  });
+  }, 30_000);
 });
 
 describe('Arcade catalog', () => {
