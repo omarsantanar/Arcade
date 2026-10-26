@@ -60,3 +60,6 @@ Los obstáculos se distribuyen al azar antes de evaluar la viabilidad temporal d
 Rama `feat/pulse-core-prototype`, aún no fusionada. Un rompecabezas de reactor circular: gira tres anillos con teclas o gestos, conecta tríos de frecuencias en líneas radiales o arcos y libera espacio antes de saturarte. No se completan filas ni se usan piezas de cuatro bloques.
 
 Para probar esta rama: `git checkout feat/pulse-core-prototype && npm install && npm run dev`. Abre el catálogo y pulsa «Jugar» en Pulse Core. La especificación está en `src/games/pulse-core/DESIGN.md`. Falta validar el despliegue y controles en móviles físicos.
+
+### Cómo entender Pulse Core (guía 0.1.1)
+En la primera apertura se muestra una guía de tres pasos: girar anillos completos, formar tríos **radiales** o **arcos** de símbolos iguales, y liberar espacio antes de la saturación. Usa «?» dentro del juego para verla de nuevo sin perder la partida. La primera guía vista se recuerda localmente; si el almacenamiento está bloqueado puede mostrarse otra vez. Rama `feat/pulse-core-prototype`, aún experimental. Ver `src/games/pulse-core/DESIGN.md`.
