@@ -38,3 +38,11 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 
 - [x] CI validado para v0.4.0, ejecución 40383943632: 11 pruebas y build satisfactorios.
 - [ ] Validar en móvil rutas alternativas y equilibrio de niveles 1, 3, 6 y 10.
+
+### 2026-10-26 — Lumen Circuit, laberintos originales
+- [x] Documentar límites de propiedad intelectual y diseño audiovisual original.
+- [x] Crear lógica de laberintos conectados, objetivos energéticos, centinelas y controles de cuatro direcciones.
+- [x] Integrar módulo independiente y tests en el catálogo del portal (rama `feat/lumen-circuit-beta`).
+- [ ] Confirmar GitHub Actions y despliegue de preview.
+- [ ] Probar iOS/Android: latencia, desplazamiento, señales de terminales, colisiones y balance.
+- [ ] Revisar disponibilidad legal del nombre antes de lanzamiento.
