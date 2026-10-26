@@ -18,3 +18,10 @@ Alternativas consideradas: Canvas puro aumenta código propio; backend en primer
 
 ## ADR-002 — Generador de oleadas comprobablemente viable (2026-10-26)
 Se sustituye la dispersión aleatoria independiente por barreras con corredor. `planWave` es puro y acota la distancia entre centros de corredores consecutivos por la velocidad normal de la nave y el tiempo libre entre ventanas de colisión, descontando 70 ms y usando solo el 72 % del desplazamiento disponible. Se evita cambiar violentamente de corredor a medida que suben velocidad, frecuencia y tamaño. La visualización Phaser es independiente de la planificación. Fuente artística: `src/games/neon-drift/DESIGN.md`. Como contrapartida el diseño evita barreras completamente independientes; posteriores patrones necesitarán demostrar de nuevo la accesibilidad temporal.
+
+
+## ADR-003 — Patrones heterogéneos y barreras verticales (2026-10-26)
+**Objetivo:** elevar la dificultad de entrada y reducir la obviedad de las rutas sin crear situaciones sin solución. Se conservan Phaser, el contrato modular y el generador puro existente en vez de introducir física externa.
+**Decisión:** el planificador produce piezas con hitboxes explícitas (no solo dibujos); admite puertas, fragmentos, obstáculos geométricos y una barrera vertical una vez por cada nivel divisible entre 3. Los obstáculos nunca ocupan el corredor reservado. La ruta testigo usa separación entre ventanas de colisión y velocidad horizontal de 370 px/s con reserva temporal; el movimiento táctil respeta ese límite.
+**Alternativas:** obstáculos libres sin restricciones (mayor variedad pero posibilidad de partidas matemáticamente imposibles); patrones prediseñados (fáciles de probar pero previsibles). Se elige generación aleatoria acotada, comprobable por pruebas deterministas.
+**Riesgos:** un corredor viable en simulación puede ser perceptualmente injusto. Se requieren pruebas reales en Safari iOS y Chrome Android y telemetría voluntaria de fracasos antes de ajustar más.
