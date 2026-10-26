@@ -1,5 +1,16 @@
 # Neon Drift — Identidad, balance y continuidad
 
+## Reglas v0.3.0 — desafío desde el inicio
+- El tiempo activo sigue escalando niveles cada 7 segundos (pausa no cuenta).
+- Nivel 1: velocidad base 250 px/s, intervalos 900 ms y abertura de 79–98 px; a partir de allí escala con límites superiores. Nave 32×34 y velocidad horizontal real 370 px/s.
+- Las oleadas alternan puertas continuas, campos de fragmentos y patrones dispersos. Los fragmentos usan cinco motivos visuales (meteoritos, cristales, prismas, astillas y anillos) y pequeñas aberturas engañosas; sus cajas de colisión son visibles y conservadoras.
+- En el nivel 3 y cada tercer nivel posterior (6, 9, 12…) se genera exactamente una oleada especial de **pilares verticales**, con altura real aproximada 160–258 px, que bloquean una zona durante más tiempo.
+- Todas las figuras quedan fuera de un corredor reservado al jugador. El planificador limita la distancia entre centros según las ventanas de colisión, descontando 70 ms y utilizando solo el 76 % del desplazamiento físico disponible. El corredor no tiene por qué estar en el centro ni ser obvio, pero sí es realizable.
+- El arrastre táctil ahora se mueve como la nave de teclado, limitado a 370 px/s; no teletransporta la nave hasta el punto tocado.
+- Simulación local con Node: 100 partidas de 10 min, 131.200 oleadas, 2.800 barreras verticales, sin contradicciones geométricas ni saltos imposibles para los centros de corredor.
+- Pendientes: test Vitest/build de GitHub Actions, experiencia real en móvil, ajuste de percepción de dificultad y falsos huecos. La prueba geométrica no demuestra una reacción humana suficiente.
+
+
 Fuente: `Neon_Drift_Documentacion_Audiovisual.pptx`, guía audiovisual v1.0 facilitada el 2026-10-26. Esta especificación textual conserva las reglas visuales; el archivo PPTX original no está versionado en el repositorio.
 
 ## Dirección de arte implementada
