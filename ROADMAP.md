@@ -59,3 +59,5 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Confirmar CI/deploy para los nuevos cambios.
 - [ ] Validar con usuarios nuevos la comprensión de radial vs. arco y el primer combo.
 - [ ] Considerar misión opcional de práctica guiada si el tutorial explicativo no basta.
+
+- [x] CI/deploy de la guía Pulse Core verificados: 19/19 tests, build y Vercel `success` (run 40403227040).
