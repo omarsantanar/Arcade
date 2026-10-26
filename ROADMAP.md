@@ -1,9 +1,40 @@
-# Roadmap
+# Roadmap — Arcade
 
-1. **Arquitectura y repositorio:** documentación inicial creada; falta incorporar código del prototipo y validar CI.
-2. **Portal responsive:** diseño y galería preparados en prototipo local; faltan pruebas funcionales móviles.
-3. **Primer juego:** Neon Drift, control táctil, teclado, pausa, reinicio, récord local; falta validación en navegador real.
-4. **Catálogo:** agregar módulos de rompecabezas, aventuras y juegos originales; mantener API común.
-5. **Aplicación:** evaluar PWA y Capacitor para Android/iOS, reutilizando frontend y lógica.
+Actualizado 2026-10-26. Los hitos describen progreso técnico, no aprobación de lanzamiento.
 
-Fuera de alcance hasta nueva indicación: anuncios, pagos, backend, usuarios y multijugador.
+1. **Arquitectura y repositorio:** completada base documental; código subido en PR #1 y CI satisfactorio. Pendientes revisión PR, lockfile y cierre formal del hito.
+2. **Portal responsive:** portada y catálogo listos en preview Vercel; pendientes pruebas reales Android/iOS, accesibilidad, rendimiento.
+3. **Primer juego:** Neon Drift funciona en preview según build y despliegue; controles táctiles, teclado, pausa, reinicio y récord local programados; faltan pruebas manuales.
+4. **Catálogo:** implementar más juegos originales como módulos independientes, con navegación y controles compartidos.
+5. **Aplicación:** evaluar PWA y Capacitor para iOS/Android, reusando interfaz y lógica, luego validar límites de sonido, fullscreen y almacenamiento.
+
+Preview: https://arcade-git-feat-initial-web-portal-omar-santanas-projects.vercel.app
+
+Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y multijugador.
+
+### 2026-10-26 — Neon Drift v0.2.0 (en revisión)
+- [x] Dificultad cada 7 segundos y corredores transitables con planificación independiente del motor.
+- [x] Paleta oficial, nave triangular con glow, obstáculos variables y efectos de movimiento.
+- [x] Simulación local de 156.000 oleadas.
+- [ ] Validar Vitest/build con GitHub Actions y preview de Vercel.
+- [ ] Balanceo en Safari iOS y Chrome Android; ajustes táctiles.
+- [ ] Hyperdrift/Boost, música por capas y multiplicadores solo en versión posterior.
+
+### 2026-10-26 — Neon Drift v0.3.0, más desafiante
+- [x] Nivel inicial más rápido y frecuente; aberturas más estrechas.
+- [x] Nuevas siluetas, campos de fragmentos y huecos señuelo (sin rutas falsas para el corredor testigo).
+- [x] Pilares verticales programados en niveles 3, 6, 9… .
+- [x] Simulación geométrica local de 131.200 oleadas sin violación de las restricciones.
+- [ ] Aprobar tests Vitest/build del último commit y confirmar preview.
+- [ ] Validar físicamente controles táctiles y percepción de justicia en móvil.
+
+
+### 2026-10-26 — Neon Drift v0.4.0
+- [x] Varias rutas posibles en niveles iniciales, aumentando la presión en niveles altos.
+- [x] Orden/posición/forma de obstáculos y aparición temporal más aleatorios.
+- [x] Comprobación conservadora de todas las rutas alcanzables y barreras verticales de cada tercer nivel.
+- [ ] Revisión física en iOS/Android y balanceo por jugadores.
+
+
+- [x] CI validado para v0.4.0, ejecución 40383943632: 11 pruebas y build satisfactorios.
+- [ ] Validar en móvil rutas alternativas y equilibrio de niveles 1, 3, 6 y 10.
