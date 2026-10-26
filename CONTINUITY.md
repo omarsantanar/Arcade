@@ -44,3 +44,9 @@ Al iniciar leer seis documentos operativos desde GitHub; al terminar consignar o
 - Commit de código corregido `ec0d60ad4be8e956176ce62fc7763281ba1148d1`: 6/6 pruebas Vitest y compilación TypeScript/Vite correctas en ejecución 40370131862.
 - Vercel informó estado **success** para el mismo commit; preview: https://arcade-git-feat-initial-web-portal-omar-santanas-projects.vercel.app.
 - Se sincroniza versión a `0.2.0`. La versión sigue **en revisión en PR #1**, no lanzada en producción. Validación manual en móviles pendiente.
+
+
+### Comprobación posterior al cambio v0.3.0 — 2026-10-26
+- GitHub Actions [40372684449](https://github.com/omarsantanar/Arcade/actions/runs/40372684449) pasó las siete pruebas de Vitest y `npm run build` en el commit `319428d180a495ac13b951068247b79cfa122d06`.
+- Vercel reportó **success** para ese mismo commit; la preview permanece asociada a `feat/initial-web-portal`.
+- Próximo paso: ensayar niveles 1, 3 y 6 en móvil real, incluido control por arrastre, claridad de hitboxes y reacciones humanas; ajustar balance si corresponde. No fusionar a `main` sin revisar.
