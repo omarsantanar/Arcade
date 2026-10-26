@@ -74,3 +74,5 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - **Pruebas:** tests de reglas escritos; CI/build y despliegue por verificar.
 - **Riesgos:** confirmar que la inclinación comunica riesgo, y no resultar monótono.
 - **Próximo paso:** verificar checks de GitHub y Vercel, corregir errores y probar comprensión en móvil antes de fusionar.
+
+**Validación confirmada:** CI [40407527878](https://github.com/omarsantanar/Arcade/actions/runs/40407527878) terminó correctamente (18 tests y build TS/Vite) para el commit de código `38b70e81c79ed00d9bc7a3d5c6599f957c39cccc`. Vercel preview Ready: https://arcade-git-feat-neon-balance-concept-omar-santanas-projects.vercel.app. PR #3 sigue como borrador sin merge. Evaluación pendiente: control de un toque, comprensión de la barra, sensación de los distintos pesos y ritmo de partidas en iOS/Android. No fusionar sin revisión.
