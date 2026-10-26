@@ -19,3 +19,11 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Validar Vitest/build con GitHub Actions y preview de Vercel.
 - [ ] Balanceo en Safari iOS y Chrome Android; ajustes táctiles.
 - [ ] Hyperdrift/Boost, música por capas y multiplicadores solo en versión posterior.
+
+### 2026-10-26 — Neon Drift v0.3.0, más desafiante
+- [x] Nivel inicial más rápido y frecuente; aberturas más estrechas.
+- [x] Nuevas siluetas, campos de fragmentos y huecos señuelo (sin rutas falsas para el corredor testigo).
+- [x] Pilares verticales programados en niveles 3, 6, 9… .
+- [x] Simulación geométrica local de 131.200 oleadas sin violación de las restricciones.
+- [ ] Aprobar tests Vitest/build del último commit y confirmar preview.
+- [ ] Validar físicamente controles táctiles y percepción de justicia en móvil.
