@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  FIELD_WIDTH, LEVEL_SECONDS, PLAYER_Y, SHIP_HEIGHT, SHIP_SPEED, SHIP_WIDTH,
+  FIELD_WIDTH, LEVEL_SECONDS, PLAYER_Y, SHIP_HEIGHT, SHIP_WIDTH,
   SAFETY_MARGIN, clamp, difficultyAt, intersects, levelAt, pieceHitbox,
   planWave, randomSpawnDelay, reachableCenters, shouldSpawnVertical, spawnDelay, type WaveAnchor,
 } from './logic';
