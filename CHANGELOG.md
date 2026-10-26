@@ -61,3 +61,5 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 **Riesgos:** controles móviles no probados en dispositivos físicos; revisión de marca para el nombre y valoración jurídica de parecido final antes de distribución comercial. No garantizar ausencia absoluta de infracción.
 
 **Validación inicial confirmada:** GitHub Actions [40411150897](https://github.com/omarsantanar/Arcade/actions/runs/40411150897) verificó el commit de código `c3956040f0162b8b7cd1b6abdfb255dadff2e3b2`: **19/19 pruebas** (8 Lumen Circuit, 11 Neon Drift) y compilación TypeScript/Vite satisfactoria. Vercel informó estado `success` y preview Ready: https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. Las pruebas automatizadas no sustituyen un test en teléfonos físicos ni una autorización jurídica.
+
+**Ajuste táctil:** se corrigió un doble desplazamiento que podía ocurrir al presionar por primera vez la cruceta; el primer toque desplaza una celda y la repetición solo comienza tras el intervalo de movimiento. Archivo: `src/games/lumen-circuit/LumenCircuit.ts`. Requiere revisión final de CI y prueba en dispositivo.
