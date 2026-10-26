@@ -35,3 +35,10 @@
 ## 2026-10-26 — Inicialización documental
 
 Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.md y AGENTS.md al repositorio. Se adoptó React, TypeScript, Vite y Phaser 3 como base técnica.
+
+
+### Validación de v0.3.0 (2026-10-26)
+- Se corrigió el límite de tiempo de una prueba larga de Vitest (30 segundos) y una importación TypeScript no utilizada; sin modificaciones a la regla de dificultad.
+- GitHub Actions [ejecución 40372684449](https://github.com/omarsantanar/Arcade/actions/runs/40372684449), commit de código `319428d180a495ac13b951068247b79cfa122d06`: **7/7 tests y build TypeScript/Vite correctos**.
+- Estado del despliegue Vercel: **success**, comprobado para ese commit. La vista previa permanece en la rama de PR #1; no se considera producción.
+- Queda pendiente comprobar dificultad, latencia, percepción de falsos huecos y controles en Safari iOS y Chrome Android.
