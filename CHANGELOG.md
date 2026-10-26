@@ -1,5 +1,13 @@
 # Bitácora de cambios
 
+## 2026-10-26 — v0.4.0 — Oleadas multirruta y aparición irregular
+**Objetivo:** evitar soluciones únicas y patrones repetitivos, preservando al menos una salida viable.
+**Archivos afectados:** logic.ts, logic.test.ts, NeonDrift.ts, DESIGN.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.md, README.md, package.json.
+**Cambios:** nuevas aberturas y familias de patrón, conservación de alternativas alcanzables, aparición con intervalos variables, figuras con siluetas más distinguibles y obstáculos altos cada tres niveles.
+**Pruebas:** simulación local previa al commit: 188.344 oleadas en 150 partidas de diez minutos; 4.200 eventos verticales sin soluciones imposibles en modelo geométrico. **Pendiente** validar los cambios definitivos en CI GitHub y en un móvil físico.
+**Riesgos:** patrones visibles todavía necesitan evaluación humana de dificultad; el modelo usa rectángulos conservadores. Cambios en rama de revisión, no en producción.
+
+
 ## 2026-10-26 — v0.3.0 — Obstáculos imprevisibles y pilares verticales
 **Objetivo:** aumentar la presión desde el nivel 1 y hacer menos evidentes las rutas, preservando al menos una solución basada en las dimensiones y la velocidad de la nave.
 **Archivos afectados:** `src/games/neon-drift/logic.ts`, `logic.test.ts`, `NeonDrift.ts`, `DESIGN.md`, `package.json`, `ARCHITECTURE.md`, `README.md`, `CONTINUITY.md`, `ROADMAP.md` y esta bitácora.

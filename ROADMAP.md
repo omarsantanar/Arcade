@@ -27,3 +27,10 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] Simulación geométrica local de 131.200 oleadas sin violación de las restricciones.
 - [ ] Aprobar tests Vitest/build del último commit y confirmar preview.
 - [ ] Validar físicamente controles táctiles y percepción de justicia en móvil.
+
+
+### 2026-10-26 — Neon Drift v0.4.0
+- [x] Varias rutas posibles en niveles iniciales, aumentando la presión en niveles altos.
+- [x] Orden/posición/forma de obstáculos y aparición temporal más aleatorios.
+- [x] Comprobación conservadora de todas las rutas alcanzables y barreras verticales de cada tercer nivel.
+- [ ] Revisión física en iOS/Android y balanceo por jugadores.

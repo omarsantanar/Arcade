@@ -50,3 +50,12 @@ Al iniciar leer seis documentos operativos desde GitHub; al terminar consignar o
 - GitHub Actions [40372684449](https://github.com/omarsantanar/Arcade/actions/runs/40372684449) pasó las siete pruebas de Vitest y `npm run build` en el commit `319428d180a495ac13b951068247b79cfa122d06`.
 - Vercel reportó **success** para ese mismo commit; la preview permanece asociada a `feat/initial-web-portal`.
 - Próximo paso: ensayar niveles 1, 3 y 6 en móvil real, incluido control por arrastre, claridad de hitboxes y reacciones humanas; ajustar balance si corresponde. No fusionar a `main` sin revisar.
+
+
+### Sesión 2026-10-26 — v0.4.0
+Objetivo: corregir rutinas predecibles al permitir múltiples escapes y aleatorizar oleadas/obstáculos.
+Archivos: lógica, escena, pruebas, guía de diseño, documentación y paquete.
+Pruebas: simulaciones de múltiples semillas y rutas completadas; ejecución CI de nueva rama pendiente de comprobación tras el commit.
+Resultado: diseño multirruta preparado en PR #1; no fusionar a main antes de CI y pruebas manuales.
+Riesgos: respuesta táctil y dificultad percibida no validadas por jugadores.
+Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la revisión visual de niveles 1, 3, 6 y 10.

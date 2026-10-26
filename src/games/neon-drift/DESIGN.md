@@ -36,3 +36,12 @@ Pendientes de diseño de juego y UX (no simular como funciones activas): Hyperdr
 ## Riesgos
 - La validación matemática usa modelo discreto de barreras y testigo en el centro del corredor. Hacen falta pruebas reales para confirmar visibilidad, latencia, sensibilidad táctil, fps y niveles muy altos.
 - La colisión utiliza una caja rectangular conservadora para la nave; efectos de propulsión no causan impacto.
+
+
+## v0.4.0 — Generación multirruta y variación de encuentros (2026-10-26)
+- La dificultad sigue subiendo cada 7 segundos, pero ya no se genera una sola salida obligatoria.
+- Niveles 1 y 2: dos o tres aberturas por oleada; niveles 3 a 5: entre una y tres; niveles 6 a 8: una o dos; niveles 9+: mayormente una, ocasionalmente dos.
+- Se generan primero posiciones, anchuras y familias de obstáculos al azar; después se calculan **todas** las soluciones físicamente alcanzables. Si una propuesta no tiene solución, se reintenta; al agotar intentos se abre un paso de seguridad y se verifica de nuevo.
+- Apariciones separadas por 76-133% del tiempo base, con seis siluetas (pilar en niveles especiales).
+- Patrones: gate, scatter, fragment-field, islands y vertical. Bloqueo vertical excepcional en niveles 3, 6, 9, etc.
+- No equivale a promesa de reacción humana: verificar legibilidad y control móvil con jugadores reales.

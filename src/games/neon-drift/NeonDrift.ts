@@ -3,8 +3,7 @@ import type { ControlDirection, GameCallbacks, GameHandle } from '../types';
 import {
   FIELD_WIDTH, PLAYER_MAX_X, PLAYER_MIN_X, PLAYER_Y, SHIP_HEIGHT, SHIP_SPEED,
   SHIP_WIDTH, SPAWN_Y, clamp, difficultyAt, intersects,
-  pieceHitbox, planWave, readBestScore, saveBestScore, shouldSpawnVertical,
-  spawnDelay, type ObstaclePiece, type WaveAnchor, type WavePlan,
+  pieceHitbox, planWave, randomSpawnDelay, readBestScore, saveBestScore, shouldSpawnVertical, type ObstaclePiece, type WaveAnchor, type WavePlan,
 } from './logic';
 
 const COLORS = { bg: 0x0a0a12, cyan: 0x00f0ff, pink: 0xff00aa, violet: 0xa020f0 };
@@ -19,7 +18,7 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
   let gameOver = false;
   let score = 0;
   let elapsed = 0;
-  let lastSpawn = 0;
+  let nextSpawnAt = 0;
   let level = 1;
   let waves: FallingWave[] = [];
   let player: Phaser.GameObjects.Container;
@@ -84,9 +83,9 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
       const color = [COLORS.pink, COLORS.cyan, COLORS.violet, COLORS.pink, COLORS.violet][style];
       // Every shape has a visible backing that occupies the actual collision
       // hitbox. Decorative details never secretly extend the hitbox.
-      g.fillStyle(0x190f29, 0.93).fillRect(x, t, w, h);
+      g.fillStyle(0x190f29, shape === 'pillar' ? 0.93 : 0.38).fillRect(x, t, w, h);
       g.lineStyle(7, color, 0.14).strokeRect(x + 1, t + 1, Math.max(1, w - 2), Math.max(1, h - 2));
-      g.lineStyle(2, color, 0.98).strokeRect(x + 1, t + 1, Math.max(1, w - 2), Math.max(1, h - 2));
+      g.lineStyle(1, color, 0.43).strokeRect(x + 1, t + 1, Math.max(1, w - 2), Math.max(1, h - 2));
       if (w < 18 || h < 18) return;
       if (shape === 'pillar') {
         // A tall physical obstruction: glowing vertical ribs, fracture lines
@@ -101,6 +100,7 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
         g.lineStyle(2, color, 0.8).lineBetween(cx, cy - 13, x + w - 7, t + h - 15);
       } else if (shape === 'meteor') {
         const r = Math.min(h * 0.37, w * 0.34);
+        g.fillStyle(color, 0.27).fillCircle(cx, cy, r);
         g.lineStyle(2, color, 0.95).strokeCircle(cx, cy, r);
         g.lineStyle(1, 0xffffff, 0.7).lineBetween(cx - r * 0.7, cy - r * 0.5, cx, cy + r * 0.18);
         g.lineStyle(2, color, 0.55).lineBetween(cx, cy + r * 0.18, cx + r * 0.62, cy + r * 0.56);
@@ -113,6 +113,7 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
         g.lineBetween(cx - rx, cy, cx, cy - ry);
         g.lineStyle(1, 0xffffff, 0.75).lineBetween(cx, cy - ry, cx, cy + ry);
       } else if (shape === 'prism') {
+        g.fillStyle(color, 0.29).fillTriangle(cx, cy - h * 0.36, cx - Math.min(24, w * 0.36), cy + h * 0.3, cx + Math.min(24, w * 0.36), cy + h * 0.3);
         g.lineStyle(2, color, 0.94).strokeTriangle(cx, cy - h * 0.36, cx - Math.min(24, w * 0.36), cy + h * 0.3, cx + Math.min(24, w * 0.36), cy + h * 0.3);
         g.lineStyle(1, 0xffffff, 0.67).lineBetween(cx, cy - h * 0.3, cx + Math.min(24, w * 0.36), cy + h * 0.3);
       } else if (shape === 'shard') {
@@ -143,7 +144,7 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
 
     create() {
       elapsed = 0;
-      lastSpawn = 0;
+      nextSpawnAt = randomSpawnDelay(0);
       level = 1;
       score = 0;
       gameOver = false;
@@ -227,9 +228,9 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
         starfield.fillStyle(0xb6ddff, s.alpha).fillCircle(s.x, s.y, s.radius);
         if (level >= 3) starfield.lineStyle(1, s.x % 2 ? COLORS.violet : COLORS.cyan, s.alpha * 0.35).lineBetween(s.x, s.y - level * 1.5, s.x, s.y);
       }
-      if (elapsed - lastSpawn >= spawnDelay(elapsed / 1000)) {
-        lastSpawn = elapsed;
+      if (elapsed >= nextSpawnAt) {
         this.spawnWave();
+        nextSpawnAt = elapsed + randomSpawnDelay(elapsed / 1000);
       }
       const nextScore = Math.floor(elapsed / 110);
       if (nextScore !== score) {
@@ -252,7 +253,10 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
         }
         if (!wave.nearMiss && wave.y > PLAYER_Y + SHIP_HEIGHT / 2 + wave.plan.height / 2) {
           wave.nearMiss = true;
-          if (Math.min(Math.abs(player.x - wave.plan.left), Math.abs(wave.plan.right - player.x)) < SHIP_WIDTH / 2 + 30) this.nearMiss(player.x, PLAYER_Y - 10);
+          const nearest = Math.min(...wave.plan.openings.flatMap(opening => [
+            Math.abs(player.x - opening.left), Math.abs(opening.right - player.x),
+          ]));
+          if (nearest < SHIP_WIDTH / 2 + 30) this.nearMiss(player.x, PLAYER_Y - 10);
         }
         if (wave.y > 660) {
           wave.graphics.destroy();

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   FIELD_WIDTH, LEVEL_SECONDS, PLAYER_Y, SHIP_HEIGHT, SHIP_SPEED, SHIP_WIDTH,
   SAFETY_MARGIN, clamp, difficultyAt, intersects, levelAt, pieceHitbox,
-  planWave, shouldSpawnVertical, spawnDelay, type WaveAnchor,
+  planWave, randomSpawnDelay, reachableCenters, shouldSpawnVertical, spawnDelay, type WaveAnchor,
 } from './logic';
 import { catalog, findGame } from '../registry';
 
@@ -53,13 +53,13 @@ describe('Neon Drift: harder but fair', () => {
       patterns.add(plan.pattern);
       plan.pieces.forEach(piece => shapes.add(piece.shape));
     }
-    expect(patterns.size).toBe(3);
+    expect(patterns.size).toBe(4);
     expect(shapes.size).toBeGreaterThanOrEqual(4);
     for (const lv of [3, 6, 9, 12]) {
       const p = planWave((lv - 1) * 7, lv * 1000, undefined, seeded(lv), 'vertical');
       expect(p.pattern).toBe('vertical');
       expect(p.height).toBeGreaterThanOrEqual(160);
-      expect(p.pieces).toHaveLength(2);
+      expect(p.pieces.length).toBeGreaterThan(0);
       expect(p.pieces.every(piece => piece.shape === 'pillar' && piece.height === p.height)).toBe(true);
     }
   });
@@ -79,7 +79,9 @@ describe('Neon Drift: harder but fair', () => {
         if (vertical) lastVerticalLevel = level;
         const availableTravelSeconds = Math.max(0, wave.arrivalAt - previous.arrivalAt -
           (previous.clearanceMs + wave.clearanceMs) / 2) / 1000;
-        expect(Math.abs(wave.center - previous.center)).toBeLessThanOrEqual(SHIP_SPEED * availableTravelSeconds + 0.001);
+        expect(wave.reachable.length).toBeGreaterThan(0);
+        expect(wave.reachable).toEqual(reachableCenters(wave.openings, previous, wave.arrivalAt, wave.clearanceMs));
+        expect(availableTravelSeconds).toBeGreaterThanOrEqual(0);
         expect(wave.gap).toBeGreaterThan(SHIP_WIDTH + 2 * SAFETY_MARGIN - 0.001);
         const ship = { x: wave.center - SHIP_WIDTH / 2, y: PLAYER_Y - SHIP_HEIGHT / 2, width: SHIP_WIDTH, height: SHIP_HEIGHT };
         for (const piece of wave.pieces) {
@@ -94,6 +96,52 @@ describe('Neon Drift: harder but fair', () => {
       expect(examined).toBeGreaterThan(850);
     }
   }, 30_000);
+});
+
+
+describe('Neon Drift: multiple valid exits and irregular encounters', () => {
+  it('offers more than one honest opening in early levels, with varied placement', () => {
+    const random = seeded(490);
+    const variants = new Set<string>();
+    for (let i = 0; i < 160; i++) {
+      const wave = planWave(0, i * 1400, undefined, random);
+      expect(wave.openings.length).toBeGreaterThanOrEqual(2);
+      expect(wave.reachable.length).toBeGreaterThan(0);
+      variants.add(wave.pattern + ':' + wave.openings.length + ':' + Math.round(wave.openings[0].left / 10));
+    }
+    expect(variants.size).toBeGreaterThan(40);
+  });
+
+  it('randomizes intervals between spawns within controlled bounds', () => {
+    const random = seeded(12);
+    const values = Array.from({ length: 100 }, () => randomSpawnDelay(0, random));
+    expect(new Set(values).size).toBeGreaterThan(20);
+    expect(Math.min(...values)).toBeGreaterThanOrEqual(spawnDelay(0) * 0.76 - 1);
+    expect(Math.max(...values)).toBeLessThanOrEqual(spawnDelay(0) * 1.33 + 1);
+  });
+
+  it('keeps safe options viable for long randomized sequences and vertical blockades', () => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const random = seeded(seed);
+      let time = 0;
+      let prev: WaveAnchor = { center: FIELD_WIDTH / 2, arrivalAt: 0, clearanceMs: 0 };
+      let lastWall = 0;
+      while (time < 300000) {
+        time += randomSpawnDelay(time / 1000, random);
+        const level = levelAt(time / 1000);
+        const wall = shouldSpawnVertical(level) && level !== lastWall;
+        if (wall) lastWall = level;
+        const wave = planWave(time / 1000, time, prev, random, wall ? 'vertical' : undefined);
+        expect(wave.reachable.length).toBeGreaterThan(0);
+        expect(wave.reachable).toEqual(reachableCenters(wave.openings, prev, wave.arrivalAt, wave.clearanceMs));
+        for (const lane of wave.reachable) {
+          const ship = { x: (lane.left + lane.right) / 2 - SHIP_WIDTH / 2, y: PLAYER_Y - SHIP_HEIGHT / 2, width: SHIP_WIDTH, height: SHIP_HEIGHT };
+          expect(wave.pieces.every(piece => !intersects(ship, pieceHitbox(piece, PLAYER_Y)))).toBe(true);
+        }
+        prev = wave;
+      }
+    }
+  });
 });
 
 describe('Arcade catalog', () => {

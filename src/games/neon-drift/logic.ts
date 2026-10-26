@@ -12,6 +12,7 @@ export const SAFETY_MARGIN = 9; // extra pixels per side, beyond the ship hitbox
 export const VERTICAL_LEVEL_STEP = 3;
 
 export interface Hitbox { x: number; y: number; width: number; height: number }
+export interface Interval { left: number; right: number }
 export interface Difficulty {
   level: number;
   speed: number;
@@ -21,7 +22,7 @@ export interface Difficulty {
   minHeight: number;
   maxHeight: number;
 }
-export type WavePattern = 'gate' | 'scatter' | 'fragment-field' | 'vertical';
+export type WavePattern = 'gate' | 'scatter' | 'fragment-field' | 'islands' | 'vertical';
 export type ObstacleShape = 'meteor' | 'crystal' | 'prism' | 'shard' | 'ring' | 'pillar';
 export interface ObstaclePiece {
   x: number;
@@ -42,9 +43,11 @@ export interface WavePlan {
   right: number;
   style: number;
   pattern: WavePattern;
+  openings: Interval[];
+  reachable: Interval[];
   pieces: ObstaclePiece[];
 }
-export interface WaveAnchor { center: number; arrivalAt: number; clearanceMs: number }
+export interface WaveAnchor { center: number; arrivalAt: number; clearanceMs: number; reachable?: Interval[] }
 
 export function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(value, max));
@@ -76,6 +79,10 @@ export function difficultyAt(seconds: number): Difficulty {
 
 export function spawnDelay(seconds: number): number {
   return difficultyAt(seconds).interval;
+}
+/** Actual periods between encounters are irregular but bounded. */
+export function randomSpawnDelay(seconds: number, random: () => number = Math.random): number {
+  return Math.round(spawnDelay(seconds) * roll(random, 0.76, 1.33));
 }
 
 /** Exactly one extended vertical blockade on levels 3, 6, 9, ... */
@@ -137,6 +144,101 @@ export function pieceHitbox(piece: ObstaclePiece, waveY: number): Hitbox {
  *
  * 'vertical' is intentionally scheduled by the scene only once on levels 3/6/9…
  */
+
+/** Normalize all valid intervals; never throw away alternative routes. */
+export function mergeIntervals(intervals: Interval[]): Interval[] {
+  const ordered = intervals.filter(i => i.right > i.left).slice().sort((a, b) => a.left - b.left);
+  const result: Interval[] = [];
+  for (const interval of ordered) {
+    const last = result[result.length - 1];
+    if (last && interval.left <= last.right) last.right = Math.max(last.right, interval.right);
+    else result.push({ ...interval });
+  }
+  return result;
+}
+
+function openingCount(level: number, pattern: WavePattern, random: () => number): number {
+  const choices = pattern === 'vertical' ? [1, 1, 2] :
+    level <= 2 ? [2, 2, 3, 3] :
+    level <= 5 ? [1, 2, 2, 3] :
+    level <= 8 ? [1, 1, 2, 2] : [1, 1, 1, 2];
+  return choices[Math.floor(roll(random, 0, choices.length))];
+}
+
+/** Distribute several independent openings before checking their reachability. */
+function randomOpenings(difficulty: Difficulty, pattern: WavePattern, random: () => number): Interval[] {
+  const count = openingCount(difficulty.level, pattern, random);
+  const widths = Array.from({ length: count }, () => roll(random, difficulty.minGap, difficulty.maxGap));
+  const separators = Array.from({ length: count - 1 }, () => roll(random, 17, 31));
+  let required = widths.reduce((a, b) => a + b, 0) + separators.reduce((a, b) => a + b, 0);
+  if (required > FIELD_WIDTH - 12) {
+    const excess = required - (FIELD_WIDTH - 12);
+    const flexible = widths.reduce((sum, width) => sum + width - difficulty.minGap, 0);
+    if (flexible > 0) for (let i = 0; i < count; i++) {
+      widths[i] -= excess * (widths[i] - difficulty.minGap) / flexible;
+    }
+    required = widths.reduce((a, b) => a + b, 0) + separators.reduce((a, b) => a + b, 0);
+  }
+  const slack = Math.max(0, FIELD_WIDTH - required);
+  const weights = Array.from({ length: count + 1 }, () => roll(random, 0.14, 2.1));
+  const total = weights.reduce((a, b) => a + b, 0);
+  const openings: Interval[] = [];
+  let x = slack * weights[0] / total;
+  for (let i = 0; i < count; i++) {
+    openings.push({ left: x, right: x + widths[i] });
+    x += widths[i] + (separators[i] ?? 0) +
+      (i + 1 < count ? slack * weights[i + 1] / total : 0);
+  }
+  return openings;
+}
+
+function piecesAround(openings: Interval[], height: number, pattern: WavePattern,
+  random: () => number): ObstaclePiece[] {
+  let cursor = 0;
+  const pieces: ObstaclePiece[] = [];
+  for (const opening of openings) {
+    pieces.push(...buildSide(cursor, opening.left, height, pattern, random));
+    cursor = opening.right;
+  }
+  pieces.push(...buildSide(cursor, FIELD_WIDTH, height, pattern, random));
+  return pieces;
+}
+
+/** Conservative clearance for the full ship throughout the wave envelope. */
+export function safeCenters(openings: Interval[]): Interval[] {
+  const margin = SHIP_WIDTH / 2 + SAFETY_MARGIN;
+  return mergeIntervals(openings.map(o => ({
+    left: Math.max(PLAYER_MIN_X, o.left + margin),
+    right: Math.min(PLAYER_MAX_X, o.right - margin),
+  })).filter(i => i.right - i.left > 0.001));
+}
+
+/** Propagate every feasible ship-center interval between collision windows. */
+export function reachableCenters(openings: Interval[], previous: WaveAnchor,
+  arrivalAt: number, clearanceMs: number): Interval[] {
+  const freeMs = Math.max(0, arrivalAt - previous.arrivalAt -
+    (previous.clearanceMs + clearanceMs) / 2 - 70);
+  const travel = SHIP_SPEED * freeMs / 1000 * 0.76;
+  const from = previous.reachable?.length ? previous.reachable :
+    [{ left: previous.center, right: previous.center }];
+  const available = mergeIntervals(from.map(i => ({
+    left: Math.max(PLAYER_MIN_X, i.left - travel),
+    right: Math.min(PLAYER_MAX_X, i.right + travel),
+  })));
+  const next: Interval[] = [];
+  for (const safe of safeCenters(openings)) for (const possible of available) {
+    const left = Math.max(safe.left, possible.left);
+    const right = Math.min(safe.right, possible.right);
+    if (right - left > 0.001) next.push({ left, right });
+  }
+  return mergeIntervals(next);
+}
+
+/**
+ * Randomize geometry first and validate ALL its surviving routes afterwards.
+ * Fallback adds a viable gap to random geometry, rather than prescribing one
+ * opening from the outset. High-level rounds may still offer multiple exits.
+ */
 export function planWave(
   seconds: number,
   spawnAtMs: number,
@@ -145,45 +247,41 @@ export function planWave(
   forcedPattern?: 'vertical',
 ): WavePlan {
   const difficulty = difficultyAt(seconds);
-  const speed = difficulty.speed * roll(random, 0.94, 1.06);
-  const gap = roll(random, difficulty.minGap, difficulty.maxGap);
-  const variant = roll(random, 0, 1);
+  const speed = difficulty.speed * roll(random, 0.90, 1.10);
+  const patterns: WavePattern[] = ['gate', 'scatter', 'fragment-field', 'islands'];
   const pattern: WavePattern = forcedPattern ??
-    (variant < 0.18 ? 'gate' : variant < 0.59 ? 'scatter' : 'fragment-field');
+    patterns[Math.floor(roll(random, 0, patterns.length))];
   const height = pattern === 'vertical'
     ? roll(random, Math.min(210, 154 + difficulty.level * 3), Math.min(258, 191 + difficulty.level * 3))
     : roll(random, difficulty.minHeight, difficulty.maxHeight);
   const arrivalAt = spawnAtMs + ((PLAYER_Y - SPAWN_Y) / speed) * 1000;
   const clearanceMs = ((height + SHIP_HEIGHT) / speed) * 1000;
-  const freeMs = Math.max(0, arrivalAt - previous.arrivalAt -
-    (previous.clearanceMs + clearanceMs) / 2 - 70);
-  const reachable = SHIP_SPEED * (freeMs / 1000) * 0.76;
-
-  // Use a *fixed* globally safe center range, even when different waves have
-  // different widths: zero travel time still means sharing a safe location.
-  const widestGap = difficultyAt(0).maxGap;
-  const edge = widestGap / 2 + SHIP_WIDTH / 2 + SAFETY_MARGIN;
-  const minCenter = Math.max(PLAYER_MIN_X, edge);
-  const maxCenter = Math.min(PLAYER_MAX_X, FIELD_WIDTH - edge);
-  // Bias toward the sides, interspersed with middle positions. Most encounters
-  // require planning a movement; no permanent middle-lane solution exists.
-  const choice = roll(random, 0, 1);
-  const desired = choice < 0.43
-    ? roll(random, minCenter, minCenter + 39)
-    : choice < 0.86
-      ? roll(random, maxCenter - 39, maxCenter)
-      : roll(random, minCenter, maxCenter);
-  const center = clamp(clamp(desired, previous.center - reachable, previous.center + reachable), minCenter, maxCenter);
-  const left = center - gap / 2;
-  const right = center + gap / 2;
-  const pieces = [
-    ...buildSide(0, left, height, pattern, random),
-    ...buildSide(right, FIELD_WIDTH, height, pattern, random),
-  ];
-
+  let openings: Interval[] = [];
+  let reachable: Interval[] = [];
+  for (let attempt = 0; attempt < 36; attempt++) {
+    openings = randomOpenings(difficulty, pattern, random);
+    reachable = reachableCenters(openings, previous, arrivalAt, clearanceMs);
+    if (reachable.length) break;
+  }
+  if (!reachable.length) {
+    const choices = previous.reachable?.length ? previous.reachable :
+      [{ left: previous.center, right: previous.center }];
+    const choice = choices[Math.floor(roll(random, 0, choices.length))];
+    const wanted = roll(random, choice.left, choice.right);
+    const width = roll(random, difficulty.minGap, difficulty.maxGap);
+    const left = clamp(wanted - width / 2, 0, FIELD_WIDTH - width);
+    openings = mergeIntervals([...openings, { left, right: left + width }]);
+    reachable = reachableCenters(openings, previous, arrivalAt, clearanceMs);
+  }
+  if (!reachable.length) throw new Error('Neon Drift: unreachable wave');
+  const pieces = piecesAround(openings, height, pattern, random);
+  const route = reachable[Math.floor(roll(random, 0, reachable.length))];
+  const center = roll(random, route.left, route.right);
+  const chosen = openings.find(o => center >= o.left && center <= o.right) ?? openings[0];
   return {
-    center, gap, height, speed, arrivalAt, clearanceMs, left, right,
-    style: Math.floor(roll(random, 0, 5)), pattern, pieces,
+    center, gap: chosen.right - chosen.left, height, speed, arrivalAt, clearanceMs,
+    left: chosen.left, right: chosen.right, style: Math.floor(roll(random, 0, 5)),
+    pattern, openings, reachable, pieces,
   };
 }
 
