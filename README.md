@@ -57,3 +57,5 @@ Los obstáculos se distribuyen al azar antes de evaluar la viabilidad temporal d
 
 ## Lumen Circuit — tercer prototipo original (rama de revisión)
 `feat/lumen-circuit-beta`: laberinto de circuitos con tres objetivos de energía, adversarios geométricos y salida desbloqueada. Para jugar, recoge dos cristales, activa cada terminal triangular y luego busca el portal; evita centinelas. Móvil: cruceta táctil y gestos; PC: flechas/WASD. El progreso del récord se guarda localmente. Es un juego original, **no una réplica ni un producto afiliado a Pac-Man/Bandai Namco**. Se deben verificar la marca `Lumen Circuit` y los posibles parecidos audiovisuales antes del lanzamiento comercial. Documento de diseño: `src/games/lumen-circuit/DESIGN.md`.
+
+**Preview de Lumen Circuit:** https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. **Código:** [PR #4](https://github.com/omarsantanar/Arcade/pull/4). GitHub Actions [40411150897](https://github.com/omarsantanar/Arcade/actions/runs/40411150897) pasó 19/19 pruebas y build en el commit de aplicación. La preview es experimental; no supone autorización para publicación comercial.
