@@ -51,3 +51,12 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - GitHub Actions [ejecución 40372684449](https://github.com/omarsantanar/Arcade/actions/runs/40372684449), commit de código `319428d180a495ac13b951068247b79cfa122d06`: **7/7 tests y build TypeScript/Vite correctos**.
 - Estado del despliegue Vercel: **success**, comprobado para ese commit. La vista previa permanece en la rama de PR #1; no se considera producción.
 - Queda pendiente comprobar dificultad, latencia, percepción de falsos huecos y controles en Safari iOS y Chrome Android.
+
+
+## 2026-10-26 — Pulse Core 0.1-prototype (segundo juego en rama separada)
+**Objetivo:** prototipar un rompecabezas inspirado por la presión de los arcades de bloques, sin reproducir piezas, filas ni reglas de Tetris.
+**Archivos:** `src/games/pulse-core/{logic.ts,logic.test.ts,PulseCore.ts,DESIGN.md}`, `src/games/registry.ts`, `src/components/GameView.tsx`, y documentos del repositorio.
+**Mecánica:** tres anillos de ocho sectores; fuentes energéticas que avanzan hacia el centro; giro de anillos; eliminación de tríos radiales o arcos, puntuación y saturación; ritmo variable y dificultad temporal.
+**Pruebas:** TypeScript de lógica pura validado con `tsc` local; simulación interna 250 partidas con decisiones aleatorias, 250 con descarga y primera descarga media después de 4.69 pulsos. **Pendiente:** Vitest completo, build CI, Android y iOS. La simulación no acredita experiencia humana.
+**Resultado:** código en `feat/pulse-core-prototype`; Neon Drift no modificado; proyecto aún en revisión.
+**Riesgos:** sin tutorial interactivo ni pruebas de usuario, posible uso excesivo de CPU por gráficos, audio condicionado por navegador, revisión de originalidad/mercado pendiente.

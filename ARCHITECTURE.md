@@ -29,3 +29,9 @@ Se sustituye la dispersión aleatoria independiente por barreras con corredor. `
 
 ## ADR-003 — Opciones múltiples y generación sin corredor prescrito (2026-10-26)
 El planificador ahora muestrea un conjunto de aberturas antes de calcular su viabilidad. Mantiene intervalos de posiciones horizontalmente seguras y propagación temporal de **todos** los intervalos alcanzables desde la oleada anterior. Se evita que una ruta fija dicte la ubicación del resto de los obstáculos. La cantidad de opciones se reduce estadísticamente al subir el nivel, sin forzar una única opción. La aparición recibe variación acotada para evitar ritmo de metrónomo. Los sprites muestran siluetas diferenciadas; conservan una caja de colisión visible y conservadora. Riesgo: la viabilidad matemática no prueba jugabilidad humana ni móvil.
+
+
+## ADR-004 — Pulse Core como segundo módulo experimental (2026-10-26)
+**Objetivo:** aprovechar la tensión de rompecabezas clásicos sin copiar el tablero, piezas ni regla central de Tetris. **Decisión:** reactor radial de tres anillos y ocho sectores; el jugador gira anillos completos para alinear nodos iguales radialmente o en arcos. Liberación por circuitos, nunca por filas. La lógica `src/games/pulse-core/logic.ts` es pura y testeable; Phaser dibuja y gestiona la interacción y React reutiliza GameView. Carga diferida independiente de Neon Drift.
+**Alternativas:** cuadrícula ortogonal con fichas que caen (más cercana a juegos existentes); hexágonos con gravedad cambiante (controles táctiles complejos). Se favorece el diseño radial por distinción visual y control gestual.
+**Riesgos:** hace falta enseñanza interactiva de los anillos y validación de curva de aprendizaje, audio móvil y legibilidad del reactor. Revisión de similitud previa a uso comercial.

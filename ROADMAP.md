@@ -38,3 +38,13 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 
 - [x] CI validado para v0.4.0, ejecución 40383943632: 11 pruebas y build satisfactorios.
 - [ ] Validar en móvil rutas alternativas y equilibrio de niveles 1, 3, 6 y 10.
+
+
+### Segundo título: Pulse Core · Prototipo de concepto (2026-10-26)
+- [x] Concepto original documentado; mecánica central distinta de la eliminación de filas.
+- [x] Módulo Phaser con lógica y tests separados; React reutiliza portal y controles; no se modifica Neon Drift.
+- [x] Controles teclado y táctil, marcador, pausa/reinicio y persistencia local implementados en la rama de prototipo.
+- [ ] CI GitHub / build Vite comprobado para la rama.
+- [ ] Testeo de curva de aprendizaje en Android/iOS y tutorial interactivo.
+- [ ] Revisión legal/marca y de similitud antes de anunciar un título comercial.
+- [ ] Decidir si incorporar a la beta pública después de revisión.

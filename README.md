@@ -54,3 +54,9 @@ Los niveles aumentan cada 7 segundos de juego activo. La velocidad, frecuencia y
 
 ## Neon Drift v0.4.0
 Los obstáculos se distribuyen al azar antes de evaluar la viabilidad temporal de sus rutas. Los niveles 1 y 2 suelen presentar varias salidas; los altos reducen opciones. Las oleadas aparecen con intervalos variables y los bloqueos verticales se mantienen cada tres niveles. Diseño y limitaciones: src/games/neon-drift/DESIGN.md.
+
+
+## Segundo juego — Pulse Core (prototipo experimental)
+Rama `feat/pulse-core-prototype`, aún no fusionada. Un rompecabezas de reactor circular: gira tres anillos con teclas o gestos, conecta tríos de frecuencias en líneas radiales o arcos y libera espacio antes de saturarte. No se completan filas ni se usan piezas de cuatro bloques.
+
+Para probar esta rama: `git checkout feat/pulse-core-prototype && npm install && npm run dev`. Abre el catálogo y pulsa «Jugar» en Pulse Core. La especificación está en `src/games/pulse-core/DESIGN.md`. Falta validar el despliegue y controles en móviles físicos.

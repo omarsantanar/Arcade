@@ -66,3 +66,12 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - CI GitHub Actions: ejecución 40383943632, 11 pruebas satisfactorias y build Vite/TypeScript exitoso.
 - Preview Vercel: estado Ready en la rama feat/initial-web-portal.
 - Falta validar con usuarios y dispositivos físicos que las distintas soluciones sean perceptibles y el control responda adecuadamente.
+
+
+## Estado más reciente — 2026-10-26 · Segundo juego: Pulse Core
+- Neon Drift v0.4.0 se mantiene como beta aceptable según valoración del responsable del proyecto; no introducir regresiones ni cambiar su lógica al crear el juego nuevo.
+- Rama experimental: `feat/pulse-core-prototype`, basada en `feat/initial-web-portal`. No fusionada. Incluye módulo `src/games/pulse-core/`, entrada de catálogo y controles genéricos adaptados.
+- Objetivo: validar una propuesta circular, diferente del juego de eliminar líneas; fichas de tres símbolos, giro de anillos y descarga de conexiones.
+- Archivos afectados: `src/games/pulse-core/`, `src/games/registry.ts`, `src/components/GameView.tsx`, `README.md`, `ARCHITECTURE.md`, `CHANGELOG.md`, `CONTINUITY.md`, `ROADMAP.md`.
+- Pruebas locales: `tsc` de lógica pura y 250 sesiones de simulación, sin garantía de ergonomía real. Próximo: confirmar Vitest/TypeScript/Vite por GitHub Actions y Vercel, probar controles en móvil y recoger comentarios de diseño.
+- Riesgos: sin tutorial, review de similitud o prueba real en teléfonos. NO anunciar producción; PR #1 de Neon Drift permanece independiente.
