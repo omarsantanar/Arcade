@@ -75,3 +75,5 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - **Pruebas:** pendientes Vitest/TS/build y Vercel tras PR; pruebas humanas Android/iOS pendientes.
 - **Riesgos:** control móvil, percepción de dificultad y originalidad audiovisual no validados.
 - **Siguiente paso:** revisar CI, preview, balancear niveles y confirmar orientación vertical en móvil. No fusionar a producción antes de revisión.
+
+**Integración verificada:** rama `feat/lumen-circuit-beta`, [PR #4](https://github.com/omarsantanar/Arcade/pull/4) en borrador; GitHub Actions [40411150897](https://github.com/omarsantanar/Arcade/actions/runs/40411150897) ejecutó con éxito 19 tests, tsc y build; Vercel preview `Ready`: https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. Siguiente paso: jugar 3 niveles en móvil, validar captación de energía, activación de 3 nodos, salida, vidas, colisiones y controles en pantalla; mejorar la inteligibilidad del tablero si falla. Revisar marca/propiedad intelectual antes de comercialización. No fusionar a producción todavía.
