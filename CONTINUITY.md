@@ -82,3 +82,10 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - GitHub Actions completó 17/17 pruebas y build: https://github.com/omarsantanar/Arcade/actions/runs/40386833411.
 - Vercel informó Ready para la preview https://arcade-git-feat-pulse-core-prototype-omar-santanas-projects.vercel.app.
 - Versión visible solo para evaluación. Siguiente acción: probar controles táctiles/teclado, comprender alinear símbolos antes de saturación y ajustar intervalos. Después preparar tutorial y decidir aceptación editorial del concepto. No fusionar aún a producción.
+
+## Estado inmediato — 2026-10-26 — Pulse Core: incorporación de ayuda
+**Contexto:** el responsable señala que Pulse Core no explica suficientemente sus reglas, especialmente en el teléfono.
+**Cambios en `feat/pulse-core-prototype` (PR #2):** tres pasos visuales de inicio; aclaración de anillos, descargas radiales/arcos, saturación; acceso repetido con «?»; pausa/reanudación en consulta; instrucciones de tablero. Juego base y Neon Drift intactos.
+**Pruebas:** test unitario para el texto/tutorial añadido; falta confirmar CI, build y despliegue de este cambio.
+**Próxima acción:** verificar workflow y Vercel, corregir errores si hay; revisar que el tutorial aparezca la primera vez, se cierre/reabra, conserve el estado y que un usuario nuevo logre descargar energía en móvil.
+**Riesgos:** tutorial explicativo, no jugable; no se ha validado con personas; almacenamiento de indicador de lectura puede no estar disponible en modo privado.
