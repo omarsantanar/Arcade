@@ -30,3 +30,8 @@ Al iniciar leer seis documentos operativos desde GitHub; al terminar consignar o
 - **Resultado:** cambio en PR #1 `feat/initial-web-portal`, pendiente de ejecución CI y despliegue Vercel.
 - **Riesgos:** falta comprobación Safari iOS/Chrome Android; falta lockfile.
 - **Siguiente acción:** verificar estado de Actions y preview, ensayar niveles 1-5 en celular, probar controles/tamaño del corredor, recoger incidencias. No fusionar antes.
+
+### Verificación CI — 2026-10-26
+- Commit de código corregido `ec0d60ad4be8e956176ce62fc7763281ba1148d1`: 6/6 pruebas Vitest y compilación TypeScript/Vite correctas en ejecución 40370131862.
+- Vercel informó estado **success** para el mismo commit; preview: https://arcade-git-feat-initial-web-portal-omar-santanas-projects.vercel.app.
+- Se sincroniza versión a `0.2.0`. La versión sigue **en revisión en PR #1**, no lanzada en producción. Validación manual en móviles pendiente.

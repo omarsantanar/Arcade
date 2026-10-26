@@ -5,7 +5,7 @@
 - **Archivos:** `src/games/neon-drift/{logic.ts,logic.test.ts,NeonDrift.ts,DESIGN.md}`, `src/components/GameView.tsx`, `src/styles.css`, documentación del repositorio.
 - **Implementación:** niveles por tiempo activo (7 s), frecuencia y velocidad ascendentes con límites, tamaño variable de obstáculos, corredor siempre mayor que la nave, continuidad de una trayectoria realizable con margen de movimiento, paleta oficial cian/magenta/violeta, nave oscura triangular, estelas y estrellas en parallax.
 - **Pruebas locales:** TypeScript transpilado sin errores de sintaxis; generador validado en 120 sesiones deterministas de 10 minutos (156.000 oleadas) sin violar la holgura, tiempo de llegada ni desplazamiento máximo. **Pendientes:** `npm run test`, `npm run build` y prueba en teléfonos; npm no pudo acceder a su registro desde el entorno local.
-- **Resultado:** cambios preparados en la rama de revisión `feat/initial-web-portal`, PR #1 (CI y preview a verificar tras commit). No fusionar a main hasta validar.
+- **Resultado:** PR #1 en `feat/initial-web-portal`, implementación `ec0d60ad4be8` y corrección de TypeScript. GitHub Actions [40370131862](https://github.com/omarsantanar/Arcade/actions/runs/40370131862) con 6/6 pruebas y compilación correctas; Vercel desplegó preview satisfactoriamente. No fusionado a `main`.
 - **Riesgos:** la trayectoria existe si el jugador reacciona a tiempo; no equivale a supervivencia automática. Faltan pruebas de latencia táctil, accesibilidad y fps móviles.
 
 
