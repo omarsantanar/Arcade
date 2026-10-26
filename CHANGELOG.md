@@ -69,3 +69,5 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - **Resultado:** tutorial de tres pasos, ejemplos radiales y de arco, explicación de saturación, ayuda «?» reutilizable, pausa y continuación sin perder estado; mensajes breves en el tablero. La lógica del reactor y Neon Drift no se modificaron.
 - **Pruebas:** nueva prueba del contenido de la guía; CI y despliegue aún por verificar tras el último commit.
 - **Riesgos:** no equivale a una práctica interactiva; falta evaluar comprensión real, lectura en pantallas pequeñas y accesibilidad de foco.
+
+**Verificación posterior al cambio (2026-10-26):** GitHub Actions [40403227040](https://github.com/omarsantanar/Arcade/actions/runs/40403227040) completó **19/19 pruebas** en tres archivos, `tsc --noEmit` y `vite build` con éxito para el commit `1cbd19576f073480e178a98558516b0b25086be0`. Vercel informó estado `success` y una vista previa lista para la rama de Pulse Core. **Sin validar todavía:** navegación por lector de pantalla y usabilidad/ergonomía en móvil real.
