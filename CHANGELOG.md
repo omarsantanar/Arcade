@@ -62,3 +62,10 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 **Riesgos:** sin tutorial interactivo ni pruebas de usuario, posible uso excesivo de CPU por gráficos, audio condicionado por navegador, revisión de originalidad/mercado pendiente.
 
 **Validación del prototipo Pulse Core:** GitHub Actions [40386833411](https://github.com/omarsantanar/Arcade/actions/runs/40386833411) confirmó 17/17 pruebas aprobadas (6 Pulse Core y 11 Neon Drift) y build TypeScript/Vite correcto. El primer CI detectó un test del catálogo que asumía un único juego disponible; se corrigió esa asunción y se retiró un campo de escena no utilizado, sin alterar la lógica jugable de Neon Drift. Vercel informó estado Ready para el commit `d1571642d4f15ec5af05e46f699fefc114fd3c28`; preview de pruebas: https://arcade-git-feat-pulse-core-prototype-omar-santanas-projects.vercel.app. **Pendientes:** pruebas táctiles reales y evaluación de claridad/tutorial.
+
+## 2026-10-26 — Pulse Core 0.1.1 — Guía para primeros jugadores
+- **Objetivo:** eliminar la barrera de comprensión en móviles, donde la ayuda lateral estaba oculta.
+- **Archivos:** `src/components/PulseGuide.tsx`, `src/components/GameView.tsx`, `src/games/pulse-core/guide.ts`, `guide.test.ts`, `PulseCore.ts`, `src/styles.css`, DESIGN.md, README, ARCHITECTURE, CHANGELOG, CONTINUITY y ROADMAP.
+- **Resultado:** tutorial de tres pasos, ejemplos radiales y de arco, explicación de saturación, ayuda «?» reutilizable, pausa y continuación sin perder estado; mensajes breves en el tablero. La lógica del reactor y Neon Drift no se modificaron.
+- **Pruebas:** nueva prueba del contenido de la guía; CI y despliegue aún por verificar tras el último commit.
+- **Riesgos:** no equivale a una práctica interactiva; falta evaluar comprensión real, lectura en pantallas pequeñas y accesibilidad de foco.
