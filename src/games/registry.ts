@@ -6,8 +6,8 @@ export const catalog: readonly GameManifest[] = [
     category: 'reflejos', available: true, accent: 'cyan', symbol: '◢', orientation: 'portrait',
   },
   {
-    id: 'pulse-blocks', title: 'Pulse Blocks', tagline: 'Cada movimiento cuenta.',
-    category: 'puzles', available: false, accent: 'violet', symbol: '▦', orientation: 'portrait',
+    id: 'pulse-core', title: 'Pulse Core', tagline: 'Gira. Conecta. Libera el reactor.',
+    category: 'puzles', available: true, accent: 'violet', symbol: '◎', orientation: 'portrait',
   },
   {
     id: 'nova-run', title: 'Nova Run', tagline: 'Un viaje más allá del borde.',
@@ -20,6 +20,10 @@ export function findGame(id: string): GameManifest | undefined {
 }
 
 export async function loadGame(id: string): Promise<GameFactory> {
+  if (id === 'pulse-core') {
+    const module = await import('./pulse-core/PulseCore');
+    return module.createPulseCore;
+  }
   if (id === 'neon-drift') {
     const module = await import('./neon-drift/NeonDrift');
     return module.createNeonDrift;
