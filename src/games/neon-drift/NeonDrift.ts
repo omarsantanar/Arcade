@@ -2,8 +2,9 @@ import Phaser from 'phaser';
 import type { ControlDirection, GameCallbacks, GameHandle } from '../types';
 import {
   FIELD_WIDTH, PLAYER_MAX_X, PLAYER_MIN_X, PLAYER_Y, SHIP_HEIGHT, SHIP_SPEED,
-  SHIP_WIDTH, SPAWN_Y, clamp, difficultyAt, intersects,
-  planWave, readBestScore, saveBestScore, spawnDelay, type WaveAnchor, type WavePlan,
+  SHIP_WIDTH, SPAWN_Y, clamp, difficultyAt, intersects, levelAt,
+  pieceHitbox, planWave, readBestScore, saveBestScore, shouldSpawnVertical,
+  spawnDelay, type ObstaclePiece, type WaveAnchor, type WavePlan,
 } from './logic';
 
 const COLORS = { bg: 0x0a0a12, cyan: 0x00f0ff, pink: 0xff00aa, violet: 0xa020f0 };
@@ -12,6 +13,8 @@ interface Star { x: number; y: number; speed: number; radius: number; alpha: num
 
 export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks): GameHandle {
   let direction: ControlDirection = 0;
+  let touchTargetX: number | null = null;
+  let pendingVertical = false;
   let muted = false;
   let gameOver = false;
   let score = 0;
@@ -73,37 +76,67 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
       return player;
     }
 
-    drawBlock(graphics: Phaser.GameObjects.Graphics, x: number, width: number, height: number, style: number) {
-      if (width <= 0) return;
-      // A continuous physical barrier, with visual panels of different sizes.
-      const color = [COLORS.pink, COLORS.violet, COLORS.cyan, COLORS.pink, COLORS.violet][style];
-      graphics.fillStyle(0x130c24, 0.96).fillRect(x, -height / 2, width, height);
-      graphics.lineStyle(7, color, 0.09).strokeRect(x + 1, -height / 2 + 1, Math.max(1, width - 2), Math.max(1, height - 2));
-      graphics.lineStyle(2, color, 0.94).strokeRect(x + 1, -height / 2 + 1, Math.max(1, width - 2), Math.max(1, height - 2));
-      const panels = Math.max(1, Math.ceil(width / (29 + style * 6)));
-      for (let i = 1; i < panels; i++) {
-        const xx = x + i * width / panels;
-        graphics.lineStyle(1, color, 0.6).lineBetween(xx, -height / 2 + 4, xx + (style % 2 === 0 ? 8 : -6), height / 2 - 4);
-      }
-      const cx = x + width / 2;
-      if (width > 25) {
-        if (style === 0 || style === 3) {
-          graphics.lineStyle(2, color, 0.8).strokeCircle(cx, 0, Math.min(height * 0.29, width * 0.23));
-          graphics.lineStyle(1, 0xffffff, 0.55).lineBetween(cx - 7, -3, cx + 5, 5);
-        } else if (style === 1 || style === 4) {
-          graphics.lineStyle(1, color, 0.9).strokeTriangle(cx, -height * 0.3, cx - 12, height * 0.25, cx + 12, height * 0.25);
-        } else {
-          graphics.lineStyle(2, color, 0.82).strokeRect(cx - 9, -height * 0.24, 18, height * 0.48);
+    drawObstacle(g: Phaser.GameObjects.Graphics, piece: ObstaclePiece) {
+      const { x, y, width: w, height: h, shape, style } = piece;
+      const t = y - h / 2;
+      const cx = x + w / 2;
+      const cy = y;
+      const color = [COLORS.pink, COLORS.cyan, COLORS.violet, COLORS.pink, COLORS.violet][style];
+      // Every shape has a visible backing that occupies the actual collision
+      // hitbox. Decorative details never secretly extend the hitbox.
+      g.fillStyle(0x190f29, 0.93).fillRect(x, t, w, h);
+      g.lineStyle(7, color, 0.14).strokeRect(x + 1, t + 1, Math.max(1, w - 2), Math.max(1, h - 2));
+      g.lineStyle(2, color, 0.98).strokeRect(x + 1, t + 1, Math.max(1, w - 2), Math.max(1, h - 2));
+      if (w < 18 || h < 18) return;
+      if (shape === 'pillar') {
+        // A tall physical obstruction: glowing vertical ribs, fracture lines
+        // and an energy core. These occur once at each level 3, 6, 9, ...
+        const n = Math.max(1, Math.floor(w / 23));
+        for (let i = 1; i <= n; i++) {
+          const xx = x + i * w / (n + 1);
+          g.lineStyle(i % 2 ? 3 : 1, color, 0.76).lineBetween(xx, t + 9, xx, t + h - 9);
         }
+        g.fillStyle(color, 0.17).fillRect(x + w * 0.27, t + 11, w * 0.46, h - 22);
+        g.lineStyle(2, 0xffffff, 0.6).lineBetween(x + 8, t + 18, cx, cy - 13);
+        g.lineStyle(2, color, 0.8).lineBetween(cx, cy - 13, x + w - 7, t + h - 15);
+      } else if (shape === 'meteor') {
+        const r = Math.min(h * 0.37, w * 0.34);
+        g.lineStyle(2, color, 0.95).strokeCircle(cx, cy, r);
+        g.lineStyle(1, 0xffffff, 0.7).lineBetween(cx - r * 0.7, cy - r * 0.5, cx, cy + r * 0.18);
+        g.lineStyle(2, color, 0.55).lineBetween(cx, cy + r * 0.18, cx + r * 0.62, cy + r * 0.56);
+      } else if (shape === 'crystal') {
+        const rx = Math.min(w * 0.38, 26);
+        const ry = Math.min(h * 0.42, 25);
+        g.lineStyle(2, color, 0.9).lineBetween(cx, cy - ry, cx + rx, cy);
+        g.lineBetween(cx + rx, cy, cx, cy + ry);
+        g.lineBetween(cx, cy + ry, cx - rx, cy);
+        g.lineBetween(cx - rx, cy, cx, cy - ry);
+        g.lineStyle(1, 0xffffff, 0.75).lineBetween(cx, cy - ry, cx, cy + ry);
+      } else if (shape === 'prism') {
+        g.lineStyle(2, color, 0.94).strokeTriangle(cx, cy - h * 0.36, cx - Math.min(24, w * 0.36), cy + h * 0.3, cx + Math.min(24, w * 0.36), cy + h * 0.3);
+        g.lineStyle(1, 0xffffff, 0.67).lineBetween(cx, cy - h * 0.3, cx + Math.min(24, w * 0.36), cy + h * 0.3);
+      } else if (shape === 'shard') {
+        const n = Math.max(2, Math.floor(w / 28));
+        for (let i = 0; i < n; i++) {
+          const xx = x + (i + 0.5) * w / n;
+          g.lineStyle(2, color, 0.9).lineBetween(xx - 7, t + h * 0.82, xx + 3, t + h * 0.16);
+          g.lineBetween(xx + 3, t + h * 0.16, xx + 10, t + h * 0.78);
+        }
+      } else {
+        const r = Math.min(w / 4, h / 3, 16);
+        g.lineStyle(3, color, 0.9).strokeCircle(cx, cy, r);
+        g.lineStyle(1, 0xffffff, 0.65).strokeCircle(cx, cy, r * 0.55);
+        g.lineStyle(2, color, 0.8).lineBetween(cx - r * 1.3, cy - r, cx + r * 1.3, cy + r);
       }
     }
 
     spawnWave() {
-      const plan = planWave(elapsed / 1000, elapsed, previous);
+      const plan = planWave(elapsed / 1000, elapsed, previous, Math.random,
+        pendingVertical ? 'vertical' : undefined);
+      pendingVertical = false;
       previous = plan;
       const graphics = this.add.graphics();
-      this.drawBlock(graphics, 0, plan.left, plan.height, plan.style);
-      this.drawBlock(graphics, plan.right, FIELD_WIDTH - plan.right, plan.height, (plan.style + 2) % 5);
+      for (const piece of plan.pieces) this.drawObstacle(graphics, piece);
       graphics.setPosition(0, SPAWN_Y);
       waves.push({ graphics, plan, y: SPAWN_Y, nearMiss: false });
     }
@@ -115,6 +148,8 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
       score = 0;
       gameOver = false;
       direction = 0;
+      touchTargetX = null;
+      pendingVertical = false;
       waves = [];
       previous = { center: FIELD_WIDTH / 2, arrivalAt: 0, clearanceMs: 0 };
       callbacks.onScore(0);
@@ -138,9 +173,13 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
       levelLabel = this.add.text(15, 32, 'NIVEL 01', { font: 'bold 12px monospace', color: '#FF00AA' });
       nextLabel = this.add.text(15, 49, 'SIGUIENTE NIVEL 7s', { font: '10px monospace', color: '#9E80C0' });
       scoreLabel = this.add.text(344, 12, '0000', { font: 'bold 21px monospace', color: '#E8FBFF' }).setOrigin(1, 0);
-      this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-        if (pointer.isDown && !gameOver) player.x = clamp(pointer.x, PLAYER_MIN_X, PLAYER_MAX_X);
+      this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        if (!gameOver) touchTargetX = clamp(pointer.x, PLAYER_MIN_X, PLAYER_MAX_X);
       });
+      this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+        if (pointer.isDown && !gameOver) touchTargetX = clamp(pointer.x, PLAYER_MIN_X, PLAYER_MAX_X);
+      });
+      this.input.on('pointerup', () => { touchTargetX = null; });
       keys = this.input.keyboard?.createCursorKeys();
       left = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.A);
       right = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -161,17 +200,24 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
       const currentDifficulty = difficultyAt(elapsed / 1000);
       if (currentDifficulty.level !== level) {
         level = currentDifficulty.level;
+        if (shouldSpawnVertical(level)) pendingVertical = true;
         levelLabel.setText(`NIVEL ${String(level).padStart(2, '0')}`);
         levelLabel.setColor(level % 2 ? '#FF00AA' : '#00F0FF');
         ping(370 + level * 12, 0.18);
-        const alert = this.add.text(180, 190, `NIVEL ${level}`, { font: 'bold 28px monospace', color: '#00F0FF' }).setOrigin(0.5).setShadow(0, 0, '#FF00AA', 12);
+        const alert = this.add.text(180, 190, shouldSpawnVertical(level) ? `NIVEL ${level} · PILARES` : `NIVEL ${level}`, { font: 'bold 24px monospace', color: '#00F0FF' }).setOrigin(0.5).setShadow(0, 0, '#FF00AA', 12);
         this.tweens.add({ targets: alert, alpha: 0, y: 157, duration: 850, onComplete: () => alert.destroy() });
       }
       nextLabel.setText(`SIGUIENTE NIVEL ${Math.max(0, Math.ceil(7 - (elapsed / 1000) % 7))}s`);
 
       const moveLeft = direction === -1 || keys?.left?.isDown || left?.isDown;
       const moveRight = direction === 1 || keys?.right?.isDown || right?.isDown;
-      if (moveLeft !== moveRight) player.x = clamp(player.x + (moveLeft ? -1 : 1) * dt * SHIP_SPEED / 1000, PLAYER_MIN_X, PLAYER_MAX_X);
+      if (moveLeft !== moveRight) {
+        touchTargetX = null;
+        player.x = clamp(player.x + (moveLeft ? -1 : 1) * dt * SHIP_SPEED / 1000, PLAYER_MIN_X, PLAYER_MAX_X);
+      } else if (touchTargetX !== null) {
+        const step = dt * SHIP_SPEED / 1000;
+        player.x = clamp(player.x + clamp(touchTargetX - player.x, -step, step), PLAYER_MIN_X, PLAYER_MAX_X);
+      }
       player.rotation += ((moveLeft ? -0.15 : moveRight ? 0.15 : 0) - player.rotation) * Math.min(1, dt / 90);
       shipGlow.alpha = 0.72 + Math.sin(elapsed / 60) * 0.23;
       starfield.clear();
@@ -196,10 +242,7 @@ export function createNeonDrift(element: HTMLElement, callbacks: GameCallbacks):
         const wave = waves[i];
         wave.y += wave.plan.speed * dt / 1000;
         wave.graphics.y = wave.y;
-        const top = wave.y - wave.plan.height / 2;
-        const leftBox = { x: 0, y: top, width: wave.plan.left, height: wave.plan.height };
-        const rightBox = { x: wave.plan.right, y: top, width: FIELD_WIDTH - wave.plan.right, height: wave.plan.height };
-        if (intersects(hitbox, leftBox) || intersects(hitbox, rightBox)) {
+        if (wave.plan.pieces.some(piece => intersects(hitbox, pieceHitbox(piece, wave.y)))) {
           gameOver = true;
           if (score > readBestScore()) saveBestScore(score);
           this.cameras.main.flash(180, 255, 0, 170);
