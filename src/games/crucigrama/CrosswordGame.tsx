@@ -178,7 +178,7 @@ export default function CrosswordGame({callbacks,controller}:Props){
     return incorrect;
   },[showReview,puzzle,fill]);
 
-  return <section className="cruci-game" aria-label="Crucigrama dominicano">
+  return <section className="cruci-game" aria-label="Crucigrama en Español">
     <header className="cruci-head">
       <div><strong>CRUCIGRAMA EN ESPAÑOL</strong><small>{WORD_BANK.length} entradas culturales · {COUNTRY_OPTIONS.length-1} países y territorios</small></div>
       <div className="cruci-timer" aria-label={'Tiempo '+clock(elapsedMs)}>{clock(elapsedMs)}</div>
