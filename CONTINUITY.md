@@ -75,3 +75,6 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 **Pruebas:** nuevos tests implementados; CI/build y Vercel pendientes de confirmar.
 **Riesgos:** escalabilidad del generador en móviles, comprensión del salto 4×4→9×9, revisión de marca según jurisdicción.
 **Siguiente:** verificar CI/Vercel; jugar tres introducciones más cinco niveles aleatorios en Android/iOS, medir tiempo y latencia; no fusionar sin evaluación.
+
+**Resultado verificado:** GitHub Actions 40503888212 completó 21/21 tests y compilación satisfactoria. Vercel rechazó el commit `06a6517bb054e0e45af87dcc94eed1b392b85796` por límite de builds (enlace de estado `upgradeToPro=build-rate-limit`), no por un error del código. Rama y PR #5 continúan disponibles pero la preview no se puede afirmar jugable en este momento. **Último ajuste:** la restauración local del tablero conserva los datos guardados sin generar un puzzle nuevo; pendiente validar este cambio con CI.
+**Siguiente paso:** tras restablecerse la cuota de Vercel, ejecutar `Redeploy` del último commit desde el proyecto Vercel y comprobar estado Ready; probar manualmente cronómetro, pausas, tutorial y entrada táctil antes de fusionar.

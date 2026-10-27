@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { GameCallbacks } from '../types';
 import {
   SUDOKU_LEVEL_KEY,SUDOKU_RECORDS_KEY,SUDOKU_SAVE_KEY,copyGrid,generateSudoku,
+  INTRO_TIPS,
   saveSudokuBestScore,
   qualityFor,safeStoredLevel,isSolved,isValidPlacement,conflictCells,validSavedGame,
   type SudokuPuzzle,type SudokuQuality,type SudokuSave,
@@ -19,9 +20,12 @@ function loadSession():Session{
     const stored=JSON.parse(localGet(SUDOKU_SAVE_KEY)||'null') as unknown;
     if(validSavedGame(stored)){
       const restored=stored as SudokuSave;
-      return {puzzle:{...generateSudoku(restored.level,()=>0.4),puzzle:restored.puzzle,
-        solution:restored.solution,clues:restored.puzzle.flat().filter(Boolean).length,
-        level:restored.level},entered:restored.entered,elapsedMs:restored.elapsedMs};
+      const size=restored.puzzle.length as 4|9;
+      return {puzzle:{level:restored.level,size,box:(size===4?2:3) as 2|3,
+        puzzle:restored.puzzle,solution:restored.solution,
+        clues:restored.puzzle.flat().filter(Boolean).length,
+        intro:restored.level<=3?INTRO_TIPS[restored.level-1]:null},
+        entered:restored.entered,elapsedMs:restored.elapsedMs};
     }
   }catch{/* unreadable old storage */}
   const level=safeStoredLevel(localGet(SUDOKU_LEVEL_KEY));

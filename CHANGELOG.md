@@ -60,3 +60,6 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - **Pruebas:** Vitest de unicidad, variación, enseñanza, calidad temporal y validez de partidas guardadas; CI y Vercel por confirmar tras PR.
 - **Resultado:** rama `feat/sudoku-speed-challenge` sobre `feat/initial-web-portal` sin modificar Neon Drift ni Lumen Circuit.
 - **Riesgos:** usabilidad en móvil, costo de generación de puzzles duros, nombre en jurisdicciones restringidas; sin monetización.
+
+**Verificación posterior:** GitHub Actions [40503888212](https://github.com/omarsantanar/Arcade/actions/runs/40503888212) aprobó las **21 pruebas** (10 Sudoku + 11 Neon Drift) y `tsc --noEmit` / `vite build` en `06a6517bb054e0e45af87dcc94eed1b392b85796`. La primera compilación falló por una coma en el catálogo, corregida antes de la ejecución exitosa.
+**Bloqueo de publicación:** el estado Vercel del mismo commit es `failure` y apunta explícitamente a `upgradeToPro=build-rate-limit`, límite de compilaciones de la cuenta, no fallo de TypeScript. Se optimizó además la recuperación de partidas guardadas para evitar generar otro sudoku innecesariamente al abrir la página; ejecutar CI nuevamente para el commit final. La preview no se debe presentar como actualizada hasta confirmación de Vercel.

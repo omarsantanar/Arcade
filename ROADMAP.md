@@ -47,3 +47,7 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Comprobar GitHub Actions, TypeScript, Vitest y Vercel de rama experimental.
 - [ ] Evaluar aprendizaje de 3 niveles, dificultad 4+, legibilidad y rendimiento del solver en móviles.
 - [ ] Revisar oficialmente marcas por territorio antes de lanzamiento comercial, especialmente Japón.
+
+- [x] CI inicial Sudoku: 21/21 tests, TypeScript y build aprobados en run 40503888212.
+- [ ] Vercel bloqueado por build-rate-limit, sin preview nueva confirmada; redeploy cuando exista cuota.
+- [x] Evitar generación innecesaria de puzzles al recuperar partida local (optimización del último commit).
