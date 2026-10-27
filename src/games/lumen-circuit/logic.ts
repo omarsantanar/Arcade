@@ -5,7 +5,28 @@ export const TERMINAL_COST = 2;
 export type RandomSource = () => number;
 export type Direction = 'up' | 'down' | 'left' | 'right' | 'none';
 export type Cell = { x: number; y: number };
-export type Drone = { position: Cell; previous: Cell };
+export type Drone = { position: Cell; previous: Cell; temporary?: boolean };
+export type PowerKind = 'turbo' | 'spawn' | 'haste' | 'absorb';
+export const POWER_DURATION_MS = 7000;
+export const POWER_COOLDOWN_MS = 3500;
+export const MAX_BLACKOUTS = 6;
+export const POWER_LABELS: Record<PowerKind, string> = {
+  turbo: 'TURBO ELÉCTRICO',
+  spawn: 'INVASIÓN DE APAGONES',
+  haste: 'APAGONES ACELERADOS',
+  absorb: 'CAMPO DE ABSORCIÓN',
+};
+export const POWER_DESCRIPTIONS: Record<PowerKind,string> = {
+  turbo: 'Lumen se mueve más rápido durante 7 segundos.',
+  spawn: 'Surgen apagones adicionales durante 7 segundos.',
+  haste: 'Los apagones se desplazan más rápido durante 7 segundos.',
+  absorb: 'Lumen neutraliza agujeros negros al tocarlos durante 7 segundos.',
+};
+/** Different geometric animation is used for each outcome, not a copy of another game's power-up. */
+export function choosePowerKind(random: RandomSource = Math.random):PowerKind {
+  return (['turbo','spawn','haste','absorb'] as const)[Math.min(3,Math.floor(Math.max(0,Math.min(0.999999,random()))*4))];
+}
+
 export type CircuitStatus = 'playing' | 'cleared' | 'gameover';
 export type WorldId = 'hydro' | 'solar' | 'wind' | 'thermal';
 export interface PowerWorld {
@@ -48,6 +69,10 @@ export interface CircuitState {
   world: PowerWorld;
   steps: number;
   invulnerable: number;
+  powerNode: Cell | null;
+  powerEffect: PowerKind | null;
+  powerRemainingMs: number;
+  powerCooldownMs: number;
   status: CircuitStatus;
 }
 export const vector: Record<Exclude<Direction, 'none'>, Cell> = {
@@ -134,8 +159,11 @@ export function newCircuit(level=1,random:RandomSource=Math.random,previousScore
   const shardPool=pool.filter(p=>!reserved.has(index(p)));
   const shardCount=Math.min(world.energyFragments,shardPool.length);
   const shards=Array.from({length:shardCount},()=>pick(shardPool,random));
+  const powerPool=shardPool.filter(cell=>away(cell,start)>=4);
+  const powerNode=powerPool.length?powerPool[randomIndex(powerPool.length,random)]:null;
   return {walls,start,exit,player:start,terminals,activated:[false,false,false],shards,drones,
-    energy:0,score:previousScore,lives:previousLives,level,world,steps:0,invulnerable:0,status:'playing'};
+    energy:0,score:previousScore,lives:previousLives,level,world,steps:0,invulnerable:0,
+    powerNode,powerEffect:null,powerRemainingMs:0,powerCooldownMs:0,status:'playing'};
 }
 function strike(state:CircuitState):CircuitState {
   if(state.invulnerable>0)return state;
@@ -143,8 +171,73 @@ function strike(state:CircuitState):CircuitState {
   return {...state,lives,status:lives<=0?'gameover':'playing',
     player:lives<=0?state.player:state.start,invulnerable:lives<=0?0:5};
 }
+
+function findPowerSpot(state:CircuitState, random:RandomSource):Cell|null {
+  const blocked=new Set<number>([
+    index(state.start),index(state.exit),index(state.player),
+    ...state.terminals.map(index),...state.shards.map(index),...state.drones.map(d=>index(d.position)),
+  ]);
+  const possible=[...distanceMap(state.walls,state.player).keys()]
+    .filter(i=>!blocked.has(i))
+    .map(i=>({x:i%COLS,y:Math.floor(i/COLS)}))
+    .filter(p=>away(p,state.player)>=4);
+  return possible.length?possible[randomIndex(possible.length,random)]:null;
+}
+
+/** Effect countdown advances only while Phaser gameplay updates, never during pause. */
+export function tickPower(state:CircuitState,dtMs:number,random:RandomSource=Math.random):CircuitState {
+  if(state.status!=='playing'||dtMs<=0)return state;
+  const dt=Math.max(0,Math.min(250,dtMs));
+  if(state.powerEffect!==null) {
+    const nextRemaining=Math.max(0,state.powerRemainingMs-dt);
+    if(nextRemaining>0)return {...state,powerRemainingMs:nextRemaining};
+    return {...state,powerEffect:null,powerRemainingMs:0,powerCooldownMs:POWER_COOLDOWN_MS,
+      drones:state.drones.filter(d=>!d.temporary)};
+  }
+  if(state.powerNode!==null)return state;
+  const time=Math.max(0,state.powerCooldownMs-dt);
+  if(time>0)return {...state,powerCooldownMs:time};
+  return {...state,powerCooldownMs:0,powerNode:findPowerSpot(state,random)};
+}
+
+function extraBlackouts(state:CircuitState,random:RandomSource):Drone[] {
+  const occupied=new Set<number>([index(state.player),index(state.start),index(state.exit),
+    ...state.drones.map(d=>index(d.position)),...state.terminals.map(index)]);
+  const pool=[...distanceMap(state.walls,state.player).keys()]
+    .filter(i=>!occupied.has(i))
+    .map(i=>({x:i%COLS,y:Math.floor(i/COLS)}))
+    .filter(p=>away(p,state.player)>=5);
+  const added:Drone[]=[];
+  const count=Math.min(Math.max(0,MAX_BLACKOUTS-state.drones.length),state.level>=5?2:1,pool.length);
+  for(let i=0;i<count;i++){
+    const pos=pick(pool,random);
+    added.push({position:pos,previous:pos,temporary:true});
+  }
+  return added;
+}
+
+/** Collisions with holes are neutralized only while Lumen's absorption field is active. */
+function resolveBlackoutContact(state:CircuitState):CircuitState {
+  const overlapping=state.drones.filter(d=>equals(d.position,state.player));
+  if(!overlapping.length)return state;
+  if(state.powerEffect==='absorb' && state.powerRemainingMs>0) {
+    const gained=overlapping.length*120;
+    return {...state,score:state.score+gained,
+      drones:state.drones.filter(d=>!equals(d.position,state.player))};
+  }
+  return strike(state);
+}
+
+export function playerStepMs(state:CircuitState):number {
+  return state.powerEffect==='turbo'&&state.powerRemainingMs>0?73:125;
+}
+export function enemyStepMs(state:CircuitState):number {
+  const base=blackoutDelay(state.level,state.world);
+  return state.powerEffect==='haste'&&state.powerRemainingMs>0?Math.max(110,Math.round(base*0.58)):base;
+}
+
 /** A player move can collect a shard, power a terminal or open the exit. */
-export function moveExplorer(state:CircuitState,direction:Direction):CircuitState {
+export function moveExplorer(state:CircuitState,direction:Direction,random:RandomSource=Math.random):CircuitState {
   if(state.status!=='playing'||direction==='none')return state;
   const v=vector[direction],next={x:state.player.x+v.x,y:state.player.y+v.y};
   if(!isOpen(state.walls,next))return state;
@@ -158,11 +251,22 @@ export function moveExplorer(state:CircuitState,direction:Direction):CircuitStat
       activated[i]=true;energy-=TERMINAL_COST;score+=200;
     }
   }
+  let powerNode=state.powerNode;
+  let powerEffect=state.powerEffect;
+  let powerRemainingMs=state.powerRemainingMs;
+  let drones=state.drones;
+  if(powerNode!==null && equals(next,powerNode) && powerEffect===null){
+    powerEffect=choosePowerKind(random);
+    powerRemainingMs=POWER_DURATION_MS;
+    powerNode=null;
+    score+=55;
+    if(powerEffect==='spawn')drones=[...drones,...extraBlackouts(state,random)];
+  }
   const cleared=equals(next,state.exit)&&activated.every(Boolean);
-  let result={...state,player:next,shards,energy,score,activated,
-    steps:state.steps+1,invulnerable:Math.max(0,state.invulnerable-1),
+  let result:CircuitState={...state,player:next,shards,energy,score,activated,
+    powerNode,powerEffect,powerRemainingMs,drones,steps:state.steps+1,invulnerable:Math.max(0,state.invulnerable-1),
     status:cleared?'cleared' as CircuitStatus:'playing' as CircuitStatus};
-  if(!cleared && state.drones.some(d=>equals(d.position,next)))result=strike(result);
+  if(!cleared)result=resolveBlackoutContact(result);
   return result;
 }
 const manhattan=away;
@@ -183,7 +287,7 @@ export function stepSentinels(state:CircuitState,random:RandomSource=Math.random
     return {position:next,previous:drone.position};
   });
   let next={...state,drones,invulnerable:Math.max(0,state.invulnerable-1)};
-  if(drones.some(d=>equals(d.position,state.player)))next=strike(next);
+  next=resolveBlackoutContact(next);
   return next;
 }
 export const LUMEN_BEST_KEY='arcade:lumen-circuit:best';
