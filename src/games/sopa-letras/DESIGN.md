@@ -25,3 +25,6 @@ Lista de respuestas agrupada por tema, opción para expandir cada palabra y leer
 
 ## Riesgos y aceptación
 Generación y algoritmo testados automáticamente, pero se requiere sesión en teléfonos físicos para verificar arrastre diagonal y gestos rápidos; pruebas de teclado/lector de pantalla y una revisión editorial de las 150 pistas. El relleno pseudoaleatorio evita la mayoría de apariciones no previstas, pero puede producir coincidencias alternativas en situaciones excepcionales; mejorar el detector si usuarios lo reportan. No atribuir a DED verificación total ni copiar sus definiciones. No fusionar a producción hasta prueba UX.
+
+## Mejora de accesibilidad implementada
+El tablero se maneja también desde teclado físico: Tab para enfocar casillas, flechas para mover el foco, Enter o Espacio para marcar el inicio y el final. La guía inicial debe explicar también el modo de arrastre y la selección por dos toques. El código pasó 72/72 pruebas y compilación en CI 40580465036, aunque la interacción no ha sido probada con un lector de pantalla ni en móvil físico.
