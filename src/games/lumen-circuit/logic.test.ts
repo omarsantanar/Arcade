@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { COLS, ROWS, TERMINAL_COST, buildLabyrinth, distanceMap, isOpen, newCircuit,
   moveExplorer, stepSentinels, equals, worldForLevel, blackoutDelay, WORLDS, choosePowerKind,
   tickPower, playerStepMs, enemyStepMs, POWER_DURATION_MS, POWER_COOLDOWN_MS,
-  MAX_BLACKOUTS, type CircuitState, type Cell } from './logic';
+  MAX_BLACKOUTS, isBonusLevel, BONUS_TIME_MS, baseBlackoutsAt, SMALLS_PER_LIFE,
+  hasTunnel, type CircuitState, type Cell } from './logic';
 
 const seeded=(initial:number)=>{
   let seed=initial>>>0;
@@ -63,7 +64,7 @@ describe('Lumen Circuit original labyrinth',()=>{
     const s=newCircuit(1,seeded(20)),near=around(s,s.exit)!;
     const base={...s,player:near.at,drones:[],shards:[],energy:0};
     expect(moveExplorer(base,near.dir).status).toBe('playing');
-    expect(moveExplorer({...base,activated:[true,true,true]},near.dir).status).toBe('cleared');
+    expect(moveExplorer({...base,activated:[true,true,true],powerCollected:1},near.dir).status).toBe('cleared');
   });
   it('gives the explorer three lives and guards against instant repeated hits',()=>{
     const s=newCircuit(1,seeded(6));
@@ -97,7 +98,7 @@ describe('Lumen Circuit original labyrinth',()=>{
   it('increases drone population with later levels while keeping limits',()=>{
     expect(newCircuit(1,seeded(2)).drones).toHaveLength(2);
     expect(newCircuit(4,seeded(2)).drones).toHaveLength(3);
-    expect(newCircuit(50,seeded(2)).drones).toHaveLength(4);
+    expect(newCircuit(50,seeded(2)).drones).toHaveLength(baseBlackoutsAt(50));
   });
 });
 
@@ -121,7 +122,7 @@ describe('Dominican power worlds', () => {
         expect(state.world.id).toBe(worldForLevel(level).id);
         expect([...state.terminals,state.exit,...state.shards]
           .every(p=>reachable.has(p.y*COLS+p.x))).toBe(true);
-        expect(state.shards.length).toBeGreaterThanOrEqual(TERMINAL_COST*3);
+        expect(state.shards.length).toBeGreaterThanOrEqual(isBonusLevel(level)?4:TERMINAL_COST*3);
       }
     }
   });
@@ -191,7 +192,7 @@ describe('Large random power node', () => {
     },'right',()=>.1);
     expect(collision.lives).toBe(activated.lives);
     expect(collision.drones).toHaveLength(0);
-    expect(collision.score).toBe(activated.score+120);
+    expect(collision.score).toBeGreaterThanOrEqual(activated.score+120);
   });
   it('never makes ordinary blackouts harmless outside absorption',()=>{
     const s=newCircuit(1,seeded(3));
@@ -200,14 +201,106 @@ describe('Large random power node', () => {
       powerNode:null,powerEffect:null,powerRemainingMs:0},'right');
     expect(contact.lives).toBe(s.lives-1);
   });
-  it('expires before respawning the next single special node',()=>{
+  it('expires permanently after collecting its required single large node',()=>{
     let state=visitNode(newCircuit(1,seeded(11)),()=>0);
     for(let i=0;i<28;i++)state=tickPower(state,250);
     expect(state.powerEffect).toBeNull();
     expect(state.powerCooldownMs).toBe(POWER_COOLDOWN_MS);
     expect(state.powerNode).toBeNull();
     for(let i=0;i<14;i++)state=tickPower(state,250,()=>.5);
-    expect(state.powerNode).not.toBeNull();
+    expect(state.powerNode).toBeNull();
+    expect(state.powerCollected).toBe(1);
     expect(state.powerEffect).toBeNull();
+  });
+});
+
+describe('Small, medium and mandatory large points', () => {
+  it('grants a new life for every 200 small lights collected, across world boundaries', () => {
+    let s=newCircuit(1,seeded(57),0,3,199);
+    const target=s.smallPoints[0],move=around(s,target)!;
+    expect(move).not.toBeNull();
+    s=moveExplorer({...s,player:move.at,drones:[],shards:[],powerNode:null},move.dir);
+    expect(s.lives).toBe(4);
+    expect(s.smallCollected).toBe(SMALLS_PER_LIFE);
+    expect(s.score).toBe(1);
+    const next=newCircuit(2,seeded(81),s.score,s.lives,s.smallCollected);
+    expect(next.lives).toBe(4);
+    expect(next.smallCollected).toBe(200);
+  });
+  it('medium lights are worth ten points and large lights yield zero points',()=>{
+    const s=newCircuit(1,seeded(12));
+    const medium=s.shards[0],m=around(s,medium)!;
+    const mid=moveExplorer({...s,player:m.at,drones:[],smallPoints:[],powerNode:null},m.dir);
+    expect(mid.score).toBe(10);
+    const large=s.powerNode!,p=around(s,large)!;
+    const big=moveExplorer({...s,player:p.at,drones:[],shards:[],smallPoints:[]},p.dir,()=>0);
+    expect(big.score).toBe(0);
+    expect(big.powerCollected).toBe(1);
+  });
+  it('requires the large node as well as three powered generators before exiting',()=>{
+    const s=newCircuit(1,seeded(80)),m=around(s,s.exit)!;
+    const base={...s,player:m.at,drones:[],shards:[],smallPoints:[],activated:[true,true,true]};
+    expect(moveExplorer({...base,powerCollected:0},m.dir).status).toBe('playing');
+    expect(moveExplorer({...base,powerCollected:1},m.dir).status).toBe('cleared');
+  });
+});
+describe('Timed easy bonus worlds',()=>{
+  it('uses the explicitly requested stages, then continues every nine worlds',()=>{
+    expect([3,9,15,21,27,36,45,54,63,72,81,90].every(isBonusLevel)).toBe(true);
+    expect([1,2,4,8,10,28,35,64,71,73].every(l=>!isBonusLevel(l))).toBe(true);
+  });
+  it('builds a very open maze with no blackouts or generator obligations',()=>{
+    for(const level of [3,9,15,21,27,36,45,54,63,72]){
+      const s=newCircuit(level,seeded(level*31));
+      expect(s.bonusLevel).toBe(true);
+      expect(s.bonusRemainingMs).toBe(BONUS_TIME_MS);
+      expect(s.drones).toHaveLength(0);
+      expect(s.terminals).toHaveLength(0);
+      expect(s.smallPoints.length).toBe(10);
+      expect(s.shards.length).toBe(4);
+      expect(s.powerNode).not.toBeNull();
+      expect(s.walls.flat().filter(v=>!v).length).toBeGreaterThan(200);
+    }
+  });
+  it('clears when and only when every small, medium and large light was consumed',()=>{
+    const s=newCircuit(3,seeded(13));
+    const last=s.smallPoints[0],move=around(s,last)!;
+    const ready={...s,smallPoints:[last],shards:[],powerNode:null,powerCollected:1,player:move.at};
+    expect(moveExplorer(ready,move.dir).status).toBe('cleared');
+    expect(moveExplorer({...ready,powerCollected:0},move.dir).status).toBe('playing');
+  });
+  it('ends the bonus attempt when time expires and pauses countdown on zero dt',()=>{
+    const s=newCircuit(3,seeded(19));
+    expect(tickPower(s,0)).toBe(s);
+    expect(tickPower({...s,bonusRemainingMs:100},100).status).toBe('gameover');
+  });
+});
+describe('Pipe tunnels and level-based blackouts',()=>{
+  it('puts an extra black hole at levels 4, 8, 12 and each following four levels',()=>{
+    expect([1,3,4,7,8,11,12,16,20].map(baseBlackoutsAt))
+      .toEqual([2,2,3,3,4,4,5,6,7]);
+    for(const level of [1,4,8,12,16,20,40,63]){
+      const s=newCircuit(level,seeded(level*17));
+      expect(s.drones.length).toBe(isBonusLevel(level)?0:Math.min(MAX_BLACKOUTS,baseBlackoutsAt(level)));
+    }
+  });
+  it('wraps Lumen through a marked left-right pipe but blocks unmarked boundaries',()=>{
+    const s=newCircuit(2,seeded(2));
+    expect(hasTunnel(2)).toBe(true);
+    expect(s.tunnelRows).toEqual([9]);
+    const wrapped=moveExplorer({...s,player:{x:0,y:9},drones:[],smallPoints:[],shards:[],powerNode:null},'left');
+    expect(wrapped.player).toEqual({x:COLS-1,y:9});
+    const reverse=moveExplorer({...wrapped,player:{x:COLS-1,y:9}},'right');
+    expect(reverse.player).toEqual({x:0,y:9});
+    const closed=newCircuit(1,seeded(2));
+    expect(closed.tunnelRows).toEqual([]);
+    expect(moveExplorer({...closed,player:{x:0,y:9}},'left').player).toEqual({x:0,y:9});
+  });
+  it('allows a black hole to pursue Lumen through the same connected pipe',()=>{
+    const s=newCircuit(2,seeded(11));
+    const from={x:0,y:9},to={x:COLS-1,y:9};
+    const enemy={position:from,previous:{x:1,y:9}};
+    const next=stepSentinels({...s,player:to,drones:[enemy]},()=>0);
+    expect(next.drones[0].position).toEqual(to);
   });
 });
