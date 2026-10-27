@@ -67,7 +67,7 @@ class CircuitScene extends Phaser.Scene {
     }
     this.board=this.add.graphics();
     this.add.text(16,14,'LUMEN CIRCUIT',{fontFamily:'monospace',fontSize:'22px',fontStyle:'bold',color:'#79ffe1'});
-    this.add.text(16,44,'ENCIENDE 3 GENERADORAS · EVITA LOS APAGONES',
+    this.add.text(16,44,'NODO GRANDE = EFECTO SORPRESA · ENCIENDE GENERADORAS',
       {fontFamily:'monospace',fontSize:'9px',color:'#b7cbe3'});
     this.hud=this.add.text(16,66,'',{fontFamily:'monospace',fontSize:'12px',color:'#fafcff'});
     this.hint=this.add.text(W/2,535,'',{fontFamily:'monospace',fontSize:'10px',color:'#86f6e8'}).setOrigin(0.5);
@@ -256,6 +256,11 @@ class CircuitScene extends Phaser.Scene {
       this.droneTimer=0;
       const before=this.model;
       this.model=stepSentinels(before);
+      if(this.model.score!==before.score){
+        this.callbacks.onScore(this.model.score);
+        saveLumenBest(this.model.score);
+        this.cameras.main.flash(125,85,225,205);
+      }
       if(this.model.lives<before.lives)this.cameras.main.flash(140,255,60,85);
       if(this.model.status==='gameover'){
         saveLumenBest(this.model.score);
