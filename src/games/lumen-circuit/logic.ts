@@ -155,7 +155,7 @@ const pick = (pool:Cell[],random:RandomSource):Cell => pool.splice(randomIndex(p
 const away = (a:Cell,b:Cell) => Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
 
 /** Build a solvable field: 3 connected terminals, enough shards, and a reachable exit. */
-export function newCircuit(level=1,random:RandomSource=Math.random,previousScore=0,previousLives=3):CircuitState {
+export function newCircuit(level=1,random:RandomSource=Math.random,previousScore=0,previousLives=3,previousSmallCollected=0):CircuitState {
   const world=worldForLevel(level);
   const bonusLevel=isBonusLevel(level);
   const walls=bonusLevel
@@ -195,7 +195,7 @@ export function newCircuit(level=1,random:RandomSource=Math.random,previousScore
     && (!bonusLevel || away(p,start)<=7));
   const smallPoints=Array.from({length:Math.min(bonusLevel?10:65,smallPool.length)},()=>pick(smallPool,random));
   return {walls,start,exit,player:start,terminals,activated:terminals.map(()=>false),shards,smallPoints,
-    smallCollected:0,drones,tunnelRows,bonusLevel,bonusRemainingMs:bonusLevel?BONUS_TIME_MS:0,
+    smallCollected:previousSmallCollected,drones,tunnelRows,bonusLevel,bonusRemainingMs:bonusLevel?BONUS_TIME_MS:0,
     powerRequired:1,powerCollected:0,
     energy:0,score:previousScore,lives:previousLives,level,world,steps:0,invulnerable:0,
     powerNode,powerEffect:null,powerRemainingMs:0,powerCooldownMs:0,status:'playing'};
