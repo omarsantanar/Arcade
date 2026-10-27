@@ -146,11 +146,12 @@ class CircuitScene extends Phaser.Scene {
       this.beep(this.model.activated.filter(Boolean).length>old.activated.filter(Boolean).length?740:480);
     }
     if(this.model.lives<old.lives)this.cameras.main.flash(150,255,90,90);
+    else if(this.model.lives>old.lives){this.cameras.main.flash(190,80,255,160);this.beep(1030);}
     if(this.model.status==='cleared'){
       const nextLevel=this.model.level+1;
       const bonus=350+nextLevel*50;
       const score=this.model.score+bonus;
-      this.model=newCircuit(nextLevel,Math.random,score,this.model.lives);
+      this.model=newCircuit(nextLevel,Math.random,score,this.model.lives,this.model.smallCollected);
       this.callbacks.onScore(score);
       saveLumenBest(score);
       this.cameras.main.flash(240,20,240,170);
@@ -178,7 +179,12 @@ class CircuitScene extends Phaser.Scene {
         g.fillStyle((x+y)%2?palette.floor:palette.alternate,0.94);g.fillRect(xx+1,yy+1,CELL-2,CELL-2);
       }
     }
-    // Energy fragments are angular sparks instead of food-like circles.
+    // Tiny pale points count toward an extra life every 200 collected across worlds.
+    for(const p of state.smallPoints){
+      const {x,y}=POS(p);
+      g.fillStyle(0xdbfcff,0.9);g.fillCircle(x,y,2.1);
+    }
+    // Middle-sized energy crystals: each is worth exactly ten points.
     for(const p of state.shards){
       const {x,y}=POS(p);
       drawLightning(g,x,y,0xffec92,0.42);
@@ -199,13 +205,25 @@ class CircuitScene extends Phaser.Scene {
       g.fillStyle(0x0c2435,1);g.fillCircle(p.x,p.y,7);
       drawLightning(g,p.x,p.y,0xfff8d1,0.73);
     }
-    // Exit has its own gate glyph and only opens after all three terminals.
-    const exit=POS(state.exit),open=state.activated.every(Boolean);
-    g.lineStyle(3,open?0x70f5ad:0x7387a6,0.96);
-    g.strokeRect(exit.x-8,exit.y-8,16,16);
-    g.lineBetween(exit.x-4,exit.y,exit.x+5,exit.y);
-    g.lineBetween(exit.x+1,exit.y-4,exit.x+5,exit.y);
-    g.lineBetween(exit.x+1,exit.y+4,exit.x+5,exit.y);
+    // Some worlds connect both sides of the board through a visible pipe.
+    for(const row of state.tunnelRows){
+      const y=TOP+(row+0.5)*CELL;
+      g.fillStyle(0x9ef9ff,0.25);
+      g.fillRoundedRect(LEFT-5,y-8,12,16,3);
+      g.fillRoundedRect(LEFT+COLS*CELL-7,y-8,12,16,3);
+      g.lineStyle(3,0xb8ffff,1);
+      g.lineBetween(LEFT,y,LEFT+7,y);
+      g.lineBetween(LEFT+COLS*CELL-7,y,LEFT+COLS*CELL,y);
+    }
+    // Normal levels: the portal needs all three generators AND the large node.
+    if(!state.bonusLevel){
+      const exit=POS(state.exit),open=state.activated.every(Boolean)&&state.powerCollected>=state.powerRequired;
+      g.lineStyle(3,open?0x70f5ad:0x7387a6,0.96);
+      g.strokeRect(exit.x-8,exit.y-8,16,16);
+      g.lineBetween(exit.x-4,exit.y,exit.x+5,exit.y);
+      g.lineBetween(exit.x+1,exit.y-4,exit.x+5,exit.y);
+      g.lineBetween(exit.x+1,exit.y+4,exit.x+5,exit.y);
+    }
     for(const blackout of state.drones){
       const pos=POS(blackout.position);
       drawBlackout(g,pos.x,pos.y,palette.blackout);
@@ -227,12 +245,18 @@ class CircuitScene extends Phaser.Scene {
       }
     }
     const active=state.activated.filter(Boolean).length;
-    this.hud.setText('MUNDO '+state.level+' · '+state.world.name.toUpperCase()+' · VIDAS '+state.lives);
+    this.hud.setText(state.bonusLevel?
+      ('BONO NIVEL '+state.level+' · '+Math.ceil(state.bonusRemainingMs/1000)+'s · VIDAS '+state.lives):
+      ('MUNDO '+state.level+' · '+state.world.name.toUpperCase()+' · VIDAS '+state.lives));
     const effectMessage=state.powerEffect?POWER_LABELS[state.powerEffect]+' · '+(state.powerRemainingMs/1000).toFixed(1)+'s':null;
-    this.hint.setText(effectMessage ?? (active===3?'SALIDA ABIERTA: BUSCA EL PORTAL →':
-      'ENERGÍA '+state.energy+'/2 · GENERADORAS '+active+'/3'));
+    const bonusRemaining='PEQ '+state.smallPoints.length+' · MED '+state.shards.length+
+      ' · GRAN '+(state.powerRequired-state.powerCollected);
+    this.hint.setText(effectMessage ?? (state.bonusLevel?bonusRemaining:
+      (active===3 && state.powerCollected>=state.powerRequired?'SALIDA ABIERTA → PORTAL':
+        'ENERGÍA '+state.energy+'/2 · GEN '+active+'/3 · GRAN '+state.powerCollected+'/1')));
     this.footer.setText(state.powerEffect?POWER_DESCRIPTIONS[state.powerEffect].toUpperCase():
-      ('PUNTOS '+state.score+' · '+state.world.region.toUpperCase()+' · '+(state.invulnerable?'ESCUDO':'EVITA APAGONES')));
+      (state.bonusLevel?'RECOGE TODOS LOS PUNTOS ANTES DEL TIEMPO':
+        'PEQUEÑOS '+(state.smallCollected%200)+'/200 → VIDA EXTRA · APAGONES '+state.drones.length));
   }
 
   update(_time:number,delta:number):void {
@@ -242,7 +266,13 @@ class CircuitScene extends Phaser.Scene {
     const oldEffect=this.model.powerEffect;
     const oldNode=this.model.powerNode;
     this.model=tickPower(this.model,dt);
-    if(oldEffect!==this.model.powerEffect || oldNode!==this.model.powerNode)this.drawBoard();
+    if(this.model.status==='gameover'){
+      this.callbacks.onStatus('gameover');this.scene.pause();this.drawBoard();return;
+    }
+    if(oldEffect!==this.model.powerEffect || oldNode!==this.model.powerNode ||
+      (this.model.bonusLevel && Math.floor(this.elapsed/250)!==Math.floor((this.elapsed-dt)/250))){
+      this.drawBoard();
+    }
     if(this.moveTimer>=playerStepMs(this.model)){
       let dir:Direction=this.touchDirection;
       if(keys.UP?.isDown || keys.W?.isDown)dir='up';
