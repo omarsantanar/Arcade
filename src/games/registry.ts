@@ -13,6 +13,11 @@ export const catalog: readonly GameManifest[] = [
     id: 'lumen-circuit', title: 'Lumen Circuit', tagline: 'Enciende generadoras. Huye de los apagones.',
     category: 'aventura', available: true, accent: 'coral', symbol: '⚡', orientation: 'portrait',
   },
+  {
+    id: 'crucigrama-dominicano', title: 'Crucigrama Dominicano',
+    tagline: 'De la guagua al merengue: descubre nuestras palabras e historias.',
+    category: 'puzles', available: true, accent: 'cyan', symbol: '✎', orientation: 'portrait',
+  },
 ];
 
 export function findGame(id: string): GameManifest | undefined {
@@ -31,6 +36,10 @@ export async function loadGame(id: string): Promise<GameFactory> {
   if (id === 'lumen-circuit') {
     const module = await import('./lumen-circuit/LumenCircuit');
     return module.createLumenCircuit;
+  }
+  if (id === 'crucigrama-dominicano') {
+    const module = await import('./crucigrama/Crossword');
+    return module.createDominicanCrossword;
   }
   throw new Error(`Juego no disponible: ${id}`);
 }

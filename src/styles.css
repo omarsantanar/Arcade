@@ -94,3 +94,61 @@
   .touch-controls.maze-touch{grid-template-rows:repeat(2,36px)}
   .touch-controls.maze-touch button{min-height:36px}
 }
+
+
+/* Crucigrama Dominicano — tactile crossword, scrollable inside game viewport */
+.cruci-game{height:100%;width:100%;box-sizing:border-box;min-width:0;min-height:0;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;background:radial-gradient(circle at 50% 0%,#293b4b,#0b1623 65%);display:flex;flex-direction:column;gap:8px;padding:12px 14px 24px;color:#f4f9fb;scrollbar-width:thin}
+.cruci-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cruci-head strong{display:block;font:800 15px 'Space Grotesk',sans-serif;letter-spacing:1px;color:#9bffec}
+.cruci-head small{display:block;font-size:10px;color:#b0cbd1;margin-top:3px}
+.cruci-timer{font-variant-numeric:tabular-nums;font:800 19px 'Space Grotesk',sans-serif;color:#ffdb88}
+.cruci-options{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cruci-options label{font-size:11px;color:#bad2df}
+.cruci-options select{flex:1;min-width:125px;max-width:260px;padding:7px 8px;background:#162b40;color:#ecfff6;border:1px solid #477389;border-radius:8px;font-size:12px}
+.cruci-options button,.cruci-actions button{border:1px solid #527784;border-radius:7px;background:#263d51;color:#eafff8;padding:7px 10px;font-size:11px;font-weight:700}
+.cruci-board{align-self:center;display:grid;grid-template-columns:repeat(15,minmax(0,1fr));width:min(100%,390px);aspect-ratio:1;gap:1px;padding:2px;border:2px solid #8ce6cc;border-radius:6px;background:#244254;flex:none;box-shadow:0 8px 32px #04111c78}
+.cruci-block{display:block;background:#0b1b28}
+.cruci-cell{position:relative;border:0;border-radius:0;min-width:0;min-height:0;width:100%;height:100%;padding:0;background:#f2efe6;color:#132b34;font:800 clamp(10px,1.7vw,17px) 'Space Grotesk',sans-serif;display:grid;place-items:center;cursor:pointer}
+.cruci-cell.cruci-word{background:#c6efdf}
+.cruci-cell.cruci-focus{background:#ffd37a;color:#172839;outline:2px solid #ca7d13;outline-offset:-2px;z-index:1}
+.cruci-cell.cruci-wrong{background:#f4acb2;color:#5f1118}
+.cruci-cell.cruci-checked:not(.cruci-focus){color:#135942}
+.cruci-number{position:absolute;font-size:clamp(5px,.9vw,8px);font-weight:700;top:0;left:2px;line-height:1.1}
+.cruci-cell:focus-visible{outline:2px solid #ab5726;outline-offset:-2px;z-index:2}
+.cruci-progress{display:flex;justify-content:space-between;gap:8px;font:600 10px 'DM Sans',sans-serif;color:#a6d5ce}
+.cruci-current{border:1px solid #416a70;border-radius:9px;background:#163040;min-height:69px;padding:10px 11px;display:flex;flex-direction:column;gap:4px}
+.cruci-current b{font-size:10px;letter-spacing:.6px;color:#ffe4a2}
+.cruci-current span{font-size:12px;line-height:1.35;color:#f0f8ff}
+.cruci-keyboard{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
+.cruci-keyboard button{min-height:32px;padding:0;min-width:0;background:#285060;color:#fff;border:1px solid #5c91a2;border-radius:6px;font:700 13px 'Space Grotesk',sans-serif;touch-action:manipulation}
+.cruci-keyboard button:active:not(:disabled){background:#edc878;color:#13212b}
+.cruci-keyboard button:disabled{opacity:.4}
+.cruci-keyboard .cruci-delete{grid-column:span 1;color:#ffdc9c;background:#5b3742}
+.cruci-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.cruci-actions span{font-size:10px;margin-left:auto;color:#f4d99b}
+.cruci-lists{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-bottom:5px}
+.cruci-lists h4{font:800 12px 'Space Grotesk',sans-serif;color:#92fff0;margin:8px 0 6px}
+.cruci-lists button{width:100%;text-align:left;display:block;border:0;border-bottom:1px solid #3b5262;background:transparent;color:#c6d8e3;padding:7px 6px;font-size:10.5px;line-height:1.38}
+.cruci-lists button.active{background:#294c58;color:#fff}
+.cruci-lists button.solved{color:#89dabe}
+.cruci-lists button b{color:#ffe1a5}
+.cruci-lists button small{display:block;opacity:.7;margin-top:3px;font-size:9px}
+.cruci-finish{position:absolute;inset:0;z-index:10;background:#091b27f2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;gap:14px;text-align:center}
+.cruci-finish strong{font:800 24px 'Space Grotesk',sans-serif;color:#a5f7cb}
+.cruci-finish p{color:#f5d58f}
+.cruci-finish button{background:#91f5dc;border:0;padding:14px 18px;border-radius:8px;font-weight:800;color:#102632}
+.game-dialog:has(.cruci-game) .game-stage{touch-action:pan-y}
+@media(max-width:650px){
+  .game-dialog:has(.cruci-game) .game-aside{display:none}
+  .cruci-game{padding:9px 10px 18px;gap:6px}
+  .cruci-head strong{font-size:13px}
+  .cruci-head small{font-size:9px}
+  .cruci-timer{font-size:17px}
+  .cruci-board{width:min(100%,350px)}
+  .cruci-cell{font-size:clamp(10px,3.2vw,16px)}
+  .cruci-number{font-size:clamp(5px,1.5vw,7px)}
+  .cruci-keyboard button{min-height:34px}
+  .cruci-current{min-height:62px;padding:8px}
+  .cruci-lists{gap:7px}
+}
+@media(max-height:620px){.cruci-board{width:min(100%,300px)}.cruci-game{gap:5px}}
