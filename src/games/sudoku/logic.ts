@@ -6,6 +6,13 @@ export interface SudokuQuality {label:string; stars:number; points:number; targe
 export const SUDOKU_SAVE_KEY = 'arcade:sudoku:save-v1';
 export const SUDOKU_RECORDS_KEY = 'arcade:sudoku:records-v1';
 export const SUDOKU_LEVEL_KEY = 'arcade:sudoku:level-v1';
+export const SUDOKU_BEST_SCORE_KEY = 'arcade:sudoku:best-score-v1';
+export function readSudokuBestScore():number {
+  try{const n=Number(window.localStorage.getItem(SUDOKU_BEST_SCORE_KEY));return Number.isFinite(n)&&n>0?n:0;}catch{return 0;}
+}
+export function saveSudokuBestScore(score:number):void {
+  try{if(score>readSudokuBestScore())window.localStorage.setItem(SUDOKU_BEST_SCORE_KEY,String(score));}catch{/* optional */}
+}
 export const INTRO_TIPS = [
   'PASO 1 · FILAS: coloca del 1 al 4 sin repetir números en una misma fila.',
   'PASO 2 · COLUMNAS: ahora revisa también que cada columna tenga números distintos.',
