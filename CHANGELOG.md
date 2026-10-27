@@ -89,3 +89,9 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - **Riesgos:** mundos muy altos con muchos apagones y 90 s de bonificación deben comprobarse con usuarios, especialmente controles táctiles. La interpretación de «etc.» se documenta como +9 después del 63; es modificable.
 
 **Validación confirmada (2026-10-27):** ejecución [GitHub Actions 40498530032](https://github.com/omarsantanar/Arcade/actions/runs/40498530032), commit funcional `0a34487d673310fb8aee3d0f8339bcc98dbce194`: 40/40 pruebas, comprobación TypeScript y compilación Vite exitosas. Estado Vercel: `success` para esa misma revisión. Antes de aprobar una beta pública falta jugar los mundos especiales/tuberías en teléfonos reales, valorar el tiempo de 90 segundos y medir rendimiento con más de diez apagones.
+
+## 2026-10-27 — Lumen Circuit: corredores sin callejones y escape ante emboscada
+**Objetivo:** evitar laberintos con entradas sin salida y situaciones de inicio en esquina con apagón frontal sin ruta de escape, **sin bajar dificultad**.
+**Archivos afectados:** `src/games/lumen-circuit/logic.ts`, `logic.test.ts`, `LumenCircuit.ts`, `DESIGN.md` y documentación README, ARCHITECTURE, CHANGELOG, CONTINUITY, ROADMAP, AGENTS.
+**Implementación:** bucles mínimos conectan callejones (todas las casillas transitables, incluyendo tubos, tienen al menos dos salidas); emboscadas ocasionales en mundos normales desde nivel 4 con un apagón delante, tubería en el mismo renglón inicial al lado contrario de pantalla y salida normal adicional. El perseguidor también puede recorrer la tubería. Se comunica la maniobra inicial en HUD.
+**Pruebas:** tests específicos sobre 1.100 mapas de 20 niveles/55 semillas más cientos de escenarios de amenaza; 45/45 tests, TypeScript y Vite aprobados en el primer commit de código (GitHub Actions 40500246484). **Riesgos:** garantía geométrica no equivale a asegurar éxito de una maniobra; hace falta test de latencia/reacción con jugadores.
