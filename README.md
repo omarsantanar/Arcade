@@ -65,3 +65,12 @@ El protagonista es un **rayo eléctrico luminoso** y sus perseguidores son **apa
 
 ### Nodos de alta tensión — Lumen Circuit (2026-10-27)
 Además de los cristales pequeños y las tres generadoras, existe **un gran nodo dorado** que activa **un resultado al azar y solo uno a la vez**: Lumen más rápido, aparición de apagones adicionales, apagones más rápidos o un campo capaz de neutralizarlos por contacto. Dura siete segundos activos y luego aparece otro nodo tras una espera corta. El efecto seleccionado y el tiempo restante se ven durante la partida. El objetivo de encender las tres generadoras por mundo no cambia. Consultar `src/games/lumen-circuit/DESIGN.md`. Las modificaciones se trabajan en la preview de la PR #4, no en producción.
+
+### Nuevas reglas de Lumen Circuit (2026-10-27)
+- **Luces pequeñas:** valen 1 punto. Cada **200 luces pequeñas recogidas** concede una vida adicional; se conserva el contador entre mundos.
+- **Luces medianas:** valen **10 puntos** y aportan una carga eléctrica. Usa dos cargas para encender cada generadora.
+- **Gran nodo:** vale **0 puntos**, produce un buff/debuff aleatorio y debe recogerse para completar el nivel normal. Después de los tres generadores encendidos y el nodo grande, busca la salida.
+- **Niveles especiales:** 3, 9, 15, 21, 27, 36, 45, 54, 63 y 72/81/90…: tablero abierto sin perseguidores, 90 segundos para recoger **todos** los puntos; el punto grande concede Turbo para que la bonificación resulte fácil. Avanza inmediatamente al completar la recogida.
+- **Túneles:** algunos mapas abren tuberías a izquierda y derecha para Lumen **y** los agujeros negros.
+- **Enemigos:** 2 de inicio y +1 por cada cuatro niveles (3 desde el 4; 4 desde el 8; etc.); no hay en los niveles especiales. Máximo técnico de 24 agujeros negros.
+Ver [PR #4](https://github.com/omarsantanar/Arcade/pull/4) y [preview Vercel](https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app).
