@@ -10,8 +10,8 @@ export const catalog: readonly GameManifest[] = [
     category: 'puzles', available: true, accent: 'violet', symbol: '▦', orientation: 'portrait',
   },
   {
-    id: 'nova-run', title: 'Nova Run', tagline: 'Un viaje más allá del borde.',
-    category: 'aventura', available: false, accent: 'coral', symbol: '✦', orientation: 'landscape',
+    id: 'lumen-circuit', title: 'Lumen Circuit', tagline: 'Enciende generadoras. Huye de los apagones.',
+    category: 'aventura', available: true, accent: 'coral', symbol: '⚡', orientation: 'portrait',
   },
 ];
 
@@ -27,6 +27,10 @@ export async function loadGame(id: string): Promise<GameFactory> {
   if (id === 'sudoku') {
     const module = await import('./sudoku/Sudoku');
     return module.createSudoku;
+  }
+  if (id === 'lumen-circuit') {
+    const module = await import('./lumen-circuit/LumenCircuit');
+    return module.createLumenCircuit;
   }
   throw new Error(`Juego no disponible: ${id}`);
 }

@@ -77,3 +77,20 @@
   .sudoku-board{max-width:min(100%,310px)}
   .sudoku-board.sudoku-four{max-width:min(100%,230px)}
 }
+
+
+/* Lumen Circuit four-way input. Other games retain their existing controls. */
+.touch-controls.maze-touch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,46px);width:100%;gap:7px;touch-action:none}
+.touch-controls.maze-touch button{min-height:44px;font-size:23px;background:#122c3e;color:#8afee9;border:1px solid #378e90;box-shadow:0 0 8px #00e5c322}
+.touch-controls.maze-touch button:active{background:#24616c}
+.maze-up{grid-column:2;grid-row:1}.maze-left{grid-column:1;grid-row:2}.maze-down{grid-column:2;grid-row:2}.maze-right{grid-column:3;grid-row:2}
+@media(max-width:650px){
+  .touch-controls.maze-touch{position:relative;bottom:auto;right:auto;z-index:4;width:min(100%,265px);margin:0 auto;grid-template-rows:repeat(2,42px);gap:5px}
+  .touch-controls.maze-touch button{min-height:42px}
+  .game-aside:has(.maze-touch){padding:5px 10px 9px}
+  .game-aside:has(.maze-touch) .game-metrics>div{padding:5px 10px}
+}
+@media(max-height:700px) and (max-width:650px){
+  .touch-controls.maze-touch{grid-template-rows:repeat(2,36px)}
+  .touch-controls.maze-touch button{min-height:36px}
+}

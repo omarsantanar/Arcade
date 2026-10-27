@@ -3,6 +3,7 @@ import { loadGame } from '../games/registry';
 import type { ControlDirection, GameHandle, GameManifest, GameStatus } from '../games/types';
 import { readBestScore } from '../games/neon-drift/logic';
 import { readSudokuBestScore } from '../games/sudoku/logic';
+import { readLumenBest } from '../games/lumen-circuit/logic';
 
 interface Props { manifest: GameManifest; onClose: () => void }
 
@@ -11,7 +12,8 @@ export default function GameView({ manifest, onClose }: Props) {
   const gameRef = useRef<GameHandle | null>(null);
   const [status, setStatus] = useState<GameStatus>('playing');
   const [score, setScore] = useState(0);
-  const [best, setBest] = useState(() => manifest.id === 'sudoku' ? readSudokuBestScore() : readBestScore());
+  const [best, setBest] = useState(() => manifest.id === 'sudoku' ? readSudokuBestScore() :
+    manifest.id === 'lumen-circuit' ? readLumenBest() : readBestScore());
   const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -25,10 +27,15 @@ export default function GameView({ manifest, onClose }: Props) {
       .then((factory) => {
         if (cancelled) return;
         const game = factory(mount, {
-          onScore: (value) => { setScore(value); if (manifest.id === 'sudoku') setBest(current => Math.max(current,value)); },
+          onScore: (value) => {
+            setScore(value);
+            if (manifest.id === 'sudoku' || manifest.id === 'lumen-circuit')
+              setBest(current => Math.max(current,value));
+          },
           onStatus: (nextStatus) => {
             setStatus(nextStatus);
-            if (nextStatus === 'gameover') setBest(manifest.id === 'sudoku' ? readSudokuBestScore() : readBestScore());
+            if (nextStatus === 'gameover') setBest(manifest.id === 'sudoku' ? readSudokuBestScore() :
+              manifest.id === 'lumen-circuit' ? readLumenBest() : readBestScore());
           },
         });
         gameRef.current = game;
@@ -54,6 +61,7 @@ export default function GameView({ manifest, onClose }: Props) {
   }, [onClose]);
 
   const setDirection = (next: ControlDirection) => gameRef.current?.setDirection(next);
+  const setMove = (next: 'up' | 'down' | 'left' | 'right' | 'none') => gameRef.current?.setMove?.(next);
   const togglePause = () => status === 'paused' ? gameRef.current?.resume() : gameRef.current?.pause();
   const toggleAudio = () => {
     const next = !muted;
@@ -97,12 +105,29 @@ export default function GameView({ manifest, onClose }: Props) {
                 <p><strong>Niveles 1–3:</strong> descubre las filas, columnas y bloques con ejemplos 4×4, teclado y opciones de ayuda.</p>
                 <p><strong>Desde el 4:</strong> tableros 9×9 aleatorios de solución única; desaparece la ayuda y se reducen las cifras iniciales. Cada nivel exige más concentración.</p>
                 <p>Selecciona una casilla y escribe del 1 al 9. En escritorio usa las flechas y los números. <strong>La calidad se mide únicamente por el tiempo de solución.</strong> Puedes detener el cronómetro con Pausa.</p>
+              </> : manifest.id === 'lumen-circuit' ? <>
+                <p><strong>Objetivo:</strong> enciende las tres generadoras y recoge el nodo grande para abrir la salida. Las luces pequeñas suman 1 punto; cada 200 dan una vida extra. Los cristales medianos suman 10 puntos y aportan energía.</p>
+                <p><strong>Persecución:</strong> esquiva apagones. El nodo grande activa un efecto aleatorio; ciertos laberintos tienen tuberías de extremo a extremo. En los mundos de bonificación, recoge todos los puntos antes de 90 segundos.</p>
+                <p><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> o <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>. En móvil usa la cruceta o desliza sobre el mapa.</p>
               </> : <>
                 <p>Esquiva obstáculos geométricos de neón. Cada 7 segundos aumenta el nivel: caen más rápido, aparecen con más frecuencia y cambian de tamaño. Siempre queda un corredor viable, pero deberás alcanzarlo a tiempo.</p>
                 <p><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte. En móviles, toca los botones o desliza el dedo sobre el juego.</p>
               </>}
             </div>
-            {manifest.id !== 'sudoku' && <div className="touch-controls" aria-label="Controles táctiles">
+            {manifest.id === 'lumen-circuit' ? (
+              <div className="touch-controls maze-touch" aria-label="Cruceta táctil de cuatro direcciones">
+                {(['up','left','down','right'] as const).map((direction) =>
+                  <button key={direction} type="button" className={`maze-${direction}`}
+                    aria-label={`Mover hacia ${({up:'arriba',down:'abajo',left:'izquierda',right:'derecha'} as const)[direction]}`}
+                    onPointerDown={(event) => { event.preventDefault(); setMove(direction); }}
+                    onPointerUp={() => setMove('none')}
+                    onPointerLeave={() => setMove('none')}
+                    onPointerCancel={() => setMove('none')}>
+                    {({up:'↑',down:'↓',left:'←',right:'→'} as const)[direction]}
+                  </button>
+                )}
+              </div>
+            ) : manifest.id === 'neon-drift' && <div className="touch-controls" aria-label="Controles táctiles">
               <button type="button" aria-label="Mover a la izquierda" onPointerDown={(e) => { e.preventDefault(); setDirection(-1); }} onPointerUp={() => setDirection(0)} onPointerLeave={() => setDirection(0)} onPointerCancel={() => setDirection(0)}>←</button>
               <button type="button" aria-label="Mover a la derecha" onPointerDown={(e) => { e.preventDefault(); setDirection(1); }} onPointerUp={() => setDirection(0)} onPointerLeave={() => setDirection(0)} onPointerCancel={() => setDirection(0)}>→</button>
             </div>}
