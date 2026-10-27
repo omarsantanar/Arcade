@@ -64,3 +64,18 @@ La clasificación **Relámpago / Oro / Plata / Bronce / Completado** depende exc
 
 
 **Preview de Sudoku Beta publicada (27-oct-2026):** https://arcade-git-feat-sudoku-speed-challenge-omar-santanas-projects.vercel.app. Fuente y revisión: https://github.com/omarsantanar/Arcade/pull/5. El último código de jugabilidad aprobó 21/21 pruebas y build en GitHub Actions 40509409402, y Vercel confirmó `Ready`. Aún no se ha validado con jugadores reales ni se ha fusionado a `main`.
+
+## Catálogo unificado — 27 de octubre de 2026
+La vista previa de Arcade presenta **exactamente tres juegos jugables**: `Neon Drift` (reflejos), `Sudoku` (puzles) y `Lumen Circuit` (aventura/energía). **Nova Run** se retiró del catálogo hasta contar con un concepto definido; no es un juego disponible. Cada título se carga de manera independiente mediante `src/games/registry.ts`.
+
+**Preview unificada:** https://arcade-git-feat-sudoku-speed-challenge-omar-santanas-projects.vercel.app (rama `feat/sudoku-speed-challenge`, PR #5). Ejecutar localmente con:
+```bash
+git switch feat/sudoku-speed-challenge
+npm ci
+npm run dev
+npm run test
+npm run build
+```
+El código actualizado de Lumen procede de `feat/lumen-circuit-beta` (PR #4), incorporando mundos regionales, apagones, bonificaciones, tubos, tres tamaños de puntos, nodos y protección frente a encerronas. Su fuente se encuentra en `src/games/lumen-circuit/`.
+
+**Validación del commit funcional `c9bf05304f08171394a72588d5317978eff59135`:** GitHub Actions [40513226150](https://github.com/omarsantanar/Arcade/actions/runs/40513226150), 55 pruebas satisfactorias (3 suites), comprobación TypeScript y build Vite aprobados; Vercel devolvió `success` para esa revisión. Esta es una **preview de prueba**, no producción; aún faltan pruebas de interacción en móviles físicos.

@@ -61,3 +61,11 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] 2026-10-27: bloqueo de Vercel levantado para Sudoku Beta; Vercel Ready confirmado para commit `61213fe3`.
 - [x] 2026-10-27: últimas 21/21 pruebas automatizadas, TypeScript y Vite aprobados ([Actions 40509409402](https://github.com/omarsantanar/Arcade/actions/runs/40509409402)).
 - [ ] PENDIENTE: prueba humana y visual de tutorial, navegación, cronómetro y scroll móvil en iOS/Android antes de merge.
+
+### Catálogo integrado — 2026-10-27
+- [x] Portada con Neon Drift, Sudoku y Lumen Circuit listados como disponibles.
+- [x] Nova Run eliminado del catálogo sin crear nuevas mecánicas.
+- [x] Lumen Circuit importado con lógica, tests, assets geométricos y controles táctiles; módulos independientes conservados.
+- [x] Integración verificada con 55/55 pruebas y build TypeScript/Vite (Actions 40513226150), estado Vercel `success`.
+- [ ] Validar apertura consecutiva de los tres juegos en Chrome móvil y Safari iOS y confirmar accesibilidad del menú.
+- [ ] Revisar y fusionar PR #5 al flujo de producción después de aceptación funcional; no se modifica `main` por ahora.
