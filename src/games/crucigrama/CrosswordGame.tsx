@@ -1,7 +1,7 @@
 import {useCallback,useEffect,useMemo,useState} from 'react';
 import type {GameCallbacks} from '../types';
 import {TOPIC_LABELS,normalizeAnswer,WORD_BANK} from './bank';
-import {generateCrossword,seedRandom,emptyFill,entryCells,filledProgress,isCrosswordSolved,
+import {generateCrossword,emptyFill,entryCells,filledProgress,isCrosswordSolved,
   findEntryAt,validSave,CROSSWORD_SAVE_KEY,CROSSWORD_BEST_KEY,
   type CrosswordTheme,type CrosswordSaved,type CrosswordPuzzle,type PlacedWord} from './logic';
 
