@@ -6,7 +6,7 @@ export const catalog: readonly GameManifest[] = [
     category: 'reflejos', available: true, accent: 'cyan', symbol: '◢', orientation: 'portrait',
   },
   {
-    id: 'sudoku', title: 'Sudoku', tagline: 'Aprende las reglas. Supera tu tiempo.'
+    id: 'sudoku', title: 'Sudoku', tagline: 'Aprende las reglas. Supera tu tiempo.',
     category: 'puzles', available: true, accent: 'violet', symbol: '▦', orientation: 'portrait',
   },
   {
