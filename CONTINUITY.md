@@ -78,3 +78,10 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 
 **Resultado verificado:** GitHub Actions 40503888212 completó 21/21 tests y compilación satisfactoria. Vercel rechazó el commit `06a6517bb054e0e45af87dcc94eed1b392b85796` por límite de builds (enlace de estado `upgradeToPro=build-rate-limit`), no por un error del código. Rama y PR #5 continúan disponibles pero la preview no se puede afirmar jugable en este momento. **Último ajuste:** la restauración local del tablero conserva los datos guardados sin generar un puzzle nuevo; pendiente validar este cambio con CI.
 **Siguiente paso:** tras restablecerse la cuota de Vercel, ejecutar `Redeploy` del último commit desde el proyecto Vercel y comprobar estado Ready; probar manualmente cronómetro, pausas, tutorial y entrada táctil antes de fusionar.
+
+## Seguimiento inmediato 2026-10-27 — Sudoku / Vercel
+- Comprobada PR #5 `feat/sudoku-speed-challenge` con CI anterior 21/21 exitoso; Vercel bot rechazó despliegue: `Resource is limited - try again in 24 hours (more than 100, code: "api-deployments-free-per-day")`.
+- Hecho: optimizar UX de Sudoku para pantallas pequeñas y facilitar entrada a la primera casilla; destacar por separado la regla enseñada en los tres niveles.
+- Pruebas: comprobar último CI tras commit, y volver a verificar despliegue cuando Vercel acepte nuevos builds.
+- Riesgo: no se ha observado partida física; nunca etiquetar Preview Ready sin evidencia del SHA exacto.
+- Próximo paso: abrir https://vercel.com/omar-santanas-projects/arcade y hacer Redeploy del último commit cuando se restablezca la cuota, después ensayar cuatro niveles y tomar datos reales de tiempo/errores de comprensión.

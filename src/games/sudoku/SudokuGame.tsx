@@ -63,7 +63,7 @@ function nextEmpty(grid:number[][],initialRow:number,initialCol:number):[number,
 }
 export default function SudokuGame({callbacks,controller}:Props){
   const [session,setSession]=useState<Session>(loadSession);
-  const [selected,setSelected]=useState<[number,number]>([0,0]);
+  const [selected,setSelected]=useState<[number,number]>(()=>nextEmpty(session.entered,0,session.entered.length-1));
   const [paused,setPaused]=useState(false);
   const [finish,setFinish]=useState<SudokuQuality|null>(null);
   const [candidateHelp,setCandidateHelp]=useState(false);
@@ -75,6 +75,7 @@ export default function SudokuGame({callbacks,controller}:Props){
   const digits=Array.from({length:puzzle.size},(_,i)=>i+1);
   const options=digits.filter(n=>isValidPlacement(entered,row,col,n));
   const difficulty=puzzle.level<=3?'APRENDIZAJE':puzzle.level<=5?'EXIGENTE':puzzle.level<=7?'AVANZADO':'EXTREMO';
+  const lessonRule=puzzle.level===1?'FILA':puzzle.level===2?'COLUMNA':puzzle.level===3?'BLOQUE':null;
 
   useEffect(()=>{
     controller.pause=()=>{setPaused(true);callbacks.onStatus('paused');};
@@ -146,7 +147,7 @@ export default function SudokuGame({callbacks,controller}:Props){
     const next=generateSudoku(level);
     localSet(SUDOKU_LEVEL_KEY,String(level));
     setSession({puzzle:next,entered:copyGrid(next.puzzle),elapsedMs:0});
-    setSelected([0,0]);setFinish(null);setCandidateHelp(false);
+    setSelected(nextEmpty(next.puzzle,0,next.size-1));setFinish(null);setCandidateHelp(false);
     callbacks.onScore(0);callbacks.onStatus('playing');
   };
   const saveTime=seconds(elapsedMs);
@@ -167,7 +168,9 @@ export default function SudokuGame({callbacks,controller}:Props){
           Math.floor(c/puzzle.box)===Math.floor(col/puzzle.box);
         const active=row===r&&col===c;
         const wrong=conflicts.has(r*puzzle.size+c);
-        const related=!active&&(r===row||c===col||box);
+        const related=!active&&(lessonRule==='FILA'?r===row:
+          lessonRule==='COLUMNA'?c===col:
+          lessonRule==='BLOQUE'?box:(r===row||c===col||box));
         const same=n!==0&&n===entered[row][col];
         const classes=['sudoku-cell',original?'given':'editable',active?'selected':'',
           related?'related':'',wrong?'conflict':'',same?'same':'',
@@ -181,7 +184,7 @@ export default function SudokuGame({callbacks,controller}:Props){
     </div>
     <div className="sudoku-help-line" aria-live="polite">
       {puzzle.level<=3?(candidateHelp?'En esta casilla caben: '+(options.join(', ')||'ninguno; revisa otras cifras'):
-       'Aprende las reglas en el tablero · toca «Ver opciones»'):(
+       'Área resaltada: '+(lessonRule||'REGLAS')+' · Toca «Ver opciones» para aprender'):(
        conflicts.size?'Hay números repetidos. Comprueba las casillas resaltadas.':
        'Cada acierto depende de tu lógica. El cronómetro determina tu clasificación.')}
     </div>

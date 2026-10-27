@@ -63,3 +63,11 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 
 **Verificación posterior:** GitHub Actions [40503888212](https://github.com/omarsantanar/Arcade/actions/runs/40503888212) aprobó las **21 pruebas** (10 Sudoku + 11 Neon Drift) y `tsc --noEmit` / `vite build` en `06a6517bb054e0e45af87dcc94eed1b392b85796`. La primera compilación falló por una coma en el catálogo, corregida antes de la ejecución exitosa.
 **Bloqueo de publicación:** el estado Vercel del mismo commit es `failure` y apunta explícitamente a `upgradeToPro=build-rate-limit`, límite de compilaciones de la cuenta, no fallo de TypeScript. Se optimizó además la recuperación de partidas guardadas para evitar generar otro sudoku innecesariamente al abrir la página; ejecutar CI nuevamente para el commit final. La preview no se debe presentar como actualizada hasta confirmación de Vercel.
+
+## 2026-10-27 — Revisión de publicación y ergonomía Sudoku
+- **Objetivo:** ejecutar la revisión previa al despliegue y asegurar que el tablero sea utilizable en dispositivos pequeños.
+- **Archivos:** `src/games/sudoku/SudokuGame.tsx`, `src/styles.css`, CHANGELOG, CONTINUITY y ROADMAP.
+- **Cambios:** el foco lógico inicial y después del avance señala directamente la primera casilla editable; en los tres niveles iniciales se resalta exactamente la fila, columna o bloque enseñado; ancho del tablero acotado a 400 px; el contenedor permite desplazamiento vertical en pantallas cortas y elimina el panel lateral móvil para reservar espacio al teclado numérico.
+- **Pruebas:** resultado pendiente de CI sobre el último commit. Se mantiene la suite de 21 tests y revisión manual aún pendiente.
+- **Bloqueador externo:** Vercel indicó expresamente `api-deployments-free-per-day`, más de 100 despliegues en 24 h, por lo que no se afirma que la preview esté actualizada. No se forzó una cuota ni se modificaron planes/credenciales.
+- **Riesgos:** aún se necesita prueba visual en teléfonos; interfaz no evaluada con usuarios nuevos.

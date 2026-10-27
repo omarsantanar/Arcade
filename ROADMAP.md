@@ -51,3 +51,8 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] CI inicial Sudoku: 21/21 tests, TypeScript y build aprobados en run 40503888212.
 - [ ] Vercel bloqueado por build-rate-limit, sin preview nueva confirmada; redeploy cuando exista cuota.
 - [x] Evitar generación innecesaria de puzzles al recuperar partida local (optimización del último commit).
+
+- [x] 2026-10-27: diagnóstico del bloqueo real en Vercel: `api-deployments-free-per-day` (100 despliegues en 24 horas).
+- [x] 2026-10-27: selección de primera celda editable, resaltado educativo por fila/columna/bloque y layout adaptable.
+- [ ] Esperar recuperación de cuota, redeploy del último SHA de la rama y confirmar estado Ready.
+- [ ] Prueba visual/táctil manual iOS/Android y revisión de comprensión del tutorial.
