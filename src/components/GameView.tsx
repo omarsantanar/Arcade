@@ -96,8 +96,9 @@ export default function GameView({ manifest, onClose }: Props) {
             <div className="game-metrics"><div><span>PUNTUACIÓN</span><strong>{score.toString().padStart(4, '0')}</strong></div><div><span>MEJOR MARCA</span><strong>{best.toString().padStart(4, '0')}</strong></div></div>
             <div className="instructions"><h3>Cómo jugar</h3>
               {manifest.id === 'lumen-circuit' ? <>
-                <p>Lumen es una chispa eléctrica que recorre generadoras de República Dominicana. Recoge dos cristales para encender cada generadora. Activa las tres y atraviesa el portal de salida.</p>
-                <p>Esquiva los apagones: agujeros negros que persiguen a Lumen. Tienes tres vidas y cada mundo cambia la dificultad y los pasillos del laberinto. Usa <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> o <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>. En móvil usa la cruceta, toca o desliza sobre el mapa.</p>
+                <p><strong>Pequeños:</strong> +1 punto; cada 200 recogidos recibes otra vida. <strong>Medianos:</strong> +10 puntos y energía para encender las tres generadoras. <strong>Grande:</strong> activa un efecto aleatorio, no suma puntos, pero es obligatorio para abrir la salida.</p>
+                <p><strong>Bonos contrarreloj:</strong> en los mundos especiales recoge todos los puntos antes de 90 segundos; no hay apagones ni generadoras. En ciertos laberintos, las tuberías conectan los extremos: ¡también las usan los apagones! Aparece uno más en los niveles 4, 8, 12…</p>
+                <p>Controles: <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> o <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>. En móvil usa la cruceta o desliza sobre el mapa.</p>
               </> : <>
                 <p>Esquiva obstáculos geométricos de neón. Cada 7 segundos aumenta el nivel: caen más rápido, aparecen con más frecuencia y cambian de tamaño. Siempre queda un corredor viable, pero deberás alcanzarlo a tiempo.</p>
                 <p><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte. En móviles, toca los botones o desliza el dedo sobre el juego.</p>
