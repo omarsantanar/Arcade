@@ -6,12 +6,12 @@ export const catalog: readonly GameManifest[] = [
     category: 'reflejos', available: true, accent: 'cyan', symbol: '◢', orientation: 'portrait',
   },
   {
-    id: 'pulse-blocks', title: 'Pulse Blocks', tagline: 'Cada movimiento cuenta.',
-    category: 'puzles', available: false, accent: 'violet', symbol: '▦', orientation: 'portrait',
+    id: 'sudoku', title: 'Sudoku', tagline: 'Aprende las reglas. Supera tu tiempo.',
+    category: 'puzles', available: true, accent: 'violet', symbol: '▦', orientation: 'portrait',
   },
   {
-    id: 'nova-run', title: 'Nova Run', tagline: 'Un viaje más allá del borde.',
-    category: 'aventura', available: false, accent: 'coral', symbol: '✦', orientation: 'landscape',
+    id: 'lumen-circuit', title: 'Lumen Circuit', tagline: 'Enciende generadoras. Huye de los apagones.',
+    category: 'aventura', available: true, accent: 'coral', symbol: '⚡', orientation: 'portrait',
   },
 ];
 
@@ -23,6 +23,14 @@ export async function loadGame(id: string): Promise<GameFactory> {
   if (id === 'neon-drift') {
     const module = await import('./neon-drift/NeonDrift');
     return module.createNeonDrift;
+  }
+  if (id === 'sudoku') {
+    const module = await import('./sudoku/Sudoku');
+    return module.createSudoku;
+  }
+  if (id === 'lumen-circuit') {
+    const module = await import('./lumen-circuit/LumenCircuit');
+    return module.createLumenCircuit;
   }
   throw new Error(`Juego no disponible: ${id}`);
 }

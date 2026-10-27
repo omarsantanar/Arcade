@@ -66,3 +66,37 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - CI GitHub Actions: ejecución 40383943632, 11 pruebas satisfactorias y build Vite/TypeScript exitoso.
 - Preview Vercel: estado Ready en la rama feat/initial-web-portal.
 - Falta validar con usuarios y dispositivos físicos que las distintas soluciones sean perceptibles y el control responda adecuadamente.
+
+## Estado — 2026-10-27 — Sudoku de velocidad
+**Solicitud:** confirmar situación de copyright de Sudoku y crear título «Sudoku» con tres niveles de aprendizaje, dificultad que sube vertiginosamente desde el cuarto, tableros aleatorios y medición de calidad según tiempo.
+**Investigación:** las reglas/métodos abstractos del Sudoku no están sujetos al copyright conforme a la U.S. Copyright Office; Nikoli declara propiedad marcaria de «Sudoku» en Japón y exige precaución en el uso comercial. No se ha hecho búsqueda exhaustiva de ONAPI; título descriptivo para prueba, no para reivindicar exclusividad.
+**Desarrollo:** nueva rama `feat/sudoku-speed-challenge`, base `feat/initial-web-portal` que mantiene Neon Drift independiente. Sudoku de 4×4 en niveles 1–3 (fila/columna/bloque), 9×9 desde el cuarto con puzzles generados y verificación única, clasificación por velocidad (sin penalizaciones adicionales), controles táctiles y teclado, guardado y mejor tiempo por nivel.
+**Archivos:** `src/games/sudoku/`, registry, GameView, styles.css, test de catálogo y documentación. No se ha fusionado.
+**Pruebas:** nuevos tests implementados; CI/build y Vercel pendientes de confirmar.
+**Riesgos:** escalabilidad del generador en móviles, comprensión del salto 4×4→9×9, revisión de marca según jurisdicción.
+**Siguiente:** verificar CI/Vercel; jugar tres introducciones más cinco niveles aleatorios en Android/iOS, medir tiempo y latencia; no fusionar sin evaluación.
+
+**Resultado verificado:** GitHub Actions 40503888212 completó 21/21 tests y compilación satisfactoria. Vercel rechazó el commit `06a6517bb054e0e45af87dcc94eed1b392b85796` por límite de builds (enlace de estado `upgradeToPro=build-rate-limit`), no por un error del código. Rama y PR #5 continúan disponibles pero la preview no se puede afirmar jugable en este momento. **Último ajuste:** la restauración local del tablero conserva los datos guardados sin generar un puzzle nuevo; pendiente validar este cambio con CI.
+**Siguiente paso:** tras restablecerse la cuota de Vercel, ejecutar `Redeploy` del último commit desde el proyecto Vercel y comprobar estado Ready; probar manualmente cronómetro, pausas, tutorial y entrada táctil antes de fusionar.
+
+## Seguimiento inmediato 2026-10-27 — Sudoku / Vercel
+- Comprobada PR #5 `feat/sudoku-speed-challenge` con CI anterior 21/21 exitoso; Vercel bot rechazó despliegue: `Resource is limited - try again in 24 hours (more than 100, code: "api-deployments-free-per-day")`.
+- Hecho: optimizar UX de Sudoku para pantallas pequeñas y facilitar entrada a la primera casilla; destacar por separado la regla enseñada en los tres niveles.
+- Pruebas: comprobar último CI tras commit, y volver a verificar despliegue cuando Vercel acepte nuevos builds.
+- Riesgo: no se ha observado partida física; nunca etiquetar Preview Ready sin evidencia del SHA exacto.
+- Próximo paso: abrir https://vercel.com/omar-santanas-projects/arcade y hacer Redeploy del último commit cuando se restablezca la cuota, después ensayar cuatro niveles y tomar datos reales de tiempo/errores de comprensión.
+
+
+## Resultado comprobado — Sudoku Beta, 2026-10-27
+- **Código:** `feat/sudoku-speed-challenge`, PR #5, commit funcional `61213fe3753b97414dba0a5d75410b42ece9814b`; selección automática de primera casilla libre, enfoque didáctico por fila/columna/bloque en etapas 1–3 y tablero móvil con scroll y espacio para teclado.
+- **Pruebas:** [GitHub Actions 40509409402](https://github.com/omarsantanar/Arcade/actions/runs/40509409402) completó **21/21** tests, TypeScript y Vite sin errores.
+- **Vercel:** la limitación `api-deployments-free-per-day` impedía desplegar pero el estado del último commit cambió a `success`; el bot de Vercel confirmó **Ready** con preview https://arcade-git-feat-sudoku-speed-challenge-omar-santanas-projects.vercel.app.
+- **Pendiente:** verificación manual de teclado numérico y de pausa/continuación en móvil real, accesibilidad por lector de pantalla y comprensión de los primeros tres niveles. No se afirma que se haya completado una prueba física.
+- **Siguiente tarea:** abrir la preview y completar los niveles 1–4 en teléfono, medir facilidad de tutorial y tiempo de carga de 9×9; no fusionar a producción hasta aprobación.
+
+## Estado del portal — 2026-10-27: tres juegos disponibles
+**Solicitud:** retirar Nova Run del portal por tratarse de un concepto indefinido, añadir Lumen Circuit a la preview donde ya estaban Neon Drift y Sudoku y mostrar los tres títulos desarrollados.
+**Implementación:** rama `feat/sudoku-speed-challenge`, PR #5; `registry.ts` presenta solo `neon-drift`, `sudoku`, `lumen-circuit` como disponibles. Importación dinámica por juego. Se copiaron los cuatro archivos de Lumen Circuit (lógica, escena, tests, guía) de la PR #4, y se actualizaron la UI, el contrato opcional `setMove`, controles táctiles, estilos, portada, el test del catálogo y documentación.
+**Verificación:** GitHub Actions [40513226150](https://github.com/omarsantanar/Arcade/actions/runs/40513226150), sobre commit de código `c9bf05304f08171394a72588d5317978eff59135`: 55/55 pruebas, TypeScript y Vite aprobados. Estado Vercel `success` para ese commit. Enlace compartido de preview: https://arcade-git-feat-sudoku-speed-challenge-omar-santanas-projects.vercel.app.
+**Riesgos pendientes:** falta juego manual real de los tres módulos desde galería en móvil y escritorio; Sudoku conserva riesgos de nombre en mercados donde sea marca; aún no fusionar a producción.
+**Próximo paso:** abrir la preview en móvil y PC, lanzar los tres títulos consecutivamente, comprobar montaje/desmontaje, cruceta, teclado, pausa, registros y pantalla completa, y después considerar fusión mediante PR revisada.

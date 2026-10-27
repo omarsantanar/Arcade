@@ -17,3 +17,80 @@
 .accent-cyan .card-art{background:radial-gradient(ellipse at 50% 76%,#a020f04d,transparent 60%),linear-gradient(140deg,#0a0a12,#161027)}
 .accent-cyan .card-big-symbol{color:#00f0ff;filter:drop-shadow(0 0 19px #00f0ff99) drop-shadow(0 0 28px #ff00aa66)}
 @media(max-width:650px){.game-aside{border-top-color:#553068;border-left:none}}
+
+
+/* Sudoku: independently rendered puzzle inside the shared Arcade game stage */
+.sudoku-game{position:relative;width:100%;height:100%;box-sizing:border-box;padding:12px 13px 10px;background:radial-gradient(ellipse at 50% 5%,#262044 0%,#11172d 50%,#0a0f1d 100%);color:#f2f5ff;display:flex;flex-direction:column;gap:7px;font-family:'DM Sans',system-ui,sans-serif;overflow:hidden}
+.sudoku-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sudoku-kicker{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.7px;color:#7ffbec}
+.sudoku-clock{color:#fff;font-size:21px;font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:1.3px}
+.sudoku-level-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10px;color:#b5c0db}
+.sudoku-level-row strong{color:#ed9fff;font-size:11px;letter-spacing:1px}
+.sudoku-instruction{font-size:11px;line-height:1.45;min-height:33px;color:#d6dcf2;margin:0}
+.sudoku-board{width:100%;aspect-ratio:1;display:grid;background:#9b97bf;border:2px solid #7ffbec;border-radius:6px;overflow:hidden;flex:none;box-shadow:0 0 20px #65f2e62d;gap:1px}
+.sudoku-cell{padding:0;min-width:0;min-height:0;width:100%;height:100%;border:0;border-radius:0;background:#222c47;color:#f5f7ff;font-family:'Space Grotesk',sans-serif;font-size:clamp(13px,3.8vw,23px);font-weight:600;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;cursor:pointer}
+.sudoku-cell.given{background:#1c243c;color:#a9adcb;font-weight:800}
+.sudoku-cell.related{background:#33415e}
+.sudoku-cell.same:not(.selected){color:#92ffef}
+.sudoku-cell.selected{background:#34c9ce!important;color:#031922!important;box-shadow:inset 0 0 0 2px #f8feff}
+.sudoku-cell.conflict:not(.selected){background:#672e50;color:#ffcfde}
+.sudoku-cell.box-right{box-shadow:inset -2px 0 0 #b4a6d0}.sudoku-cell.box-bottom{border-bottom:2px solid #b4a6d0}
+.sudoku-cell:focus-visible{outline:2px solid #fff;outline-offset:-3px;z-index:1}
+.sudoku-board.sudoku-four{max-width:290px;align-self:center}
+.sudoku-board.sudoku-four .sudoku-cell{font-size:clamp(26px,7vw,37px)}
+.sudoku-help-line{font-size:10px;line-height:1.3;min-height:15px;color:#8deedb;text-align:center}
+.sudoku-numpad{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;flex:none}
+.sudoku-numpad.intro{grid-template-columns:repeat(4,minmax(0,1fr));width:100%;max-width:290px;align-self:center}
+.sudoku-numpad button{border:1px solid #646289;border-radius:6px;min-width:0;height:38px;background:#2c3452;color:#fff;font-size:17px;font-weight:700;touch-action:manipulation}
+.sudoku-numpad button:disabled{opacity:.35}.sudoku-numpad button:active:not(:disabled){background:#00cec9;color:#031824}
+.sudoku-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sudoku-actions button{border:1px solid #5e6186;border-radius:6px;padding:7px 9px;background:#171f39;color:#e6eaff;font-size:10px;font-weight:700}
+.sudoku-actions button:disabled{opacity:.35}
+.sudoku-best{margin-left:auto;color:#9cadc7;font-size:10px;font-variant-numeric:tabular-nums}
+.sudoku-finish,.sudoku-internal-overlay{position:absolute;z-index:7;inset:0;background:#070c1aF4;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px;text-align:center;gap:12px}
+.sudoku-finish h3{font-family:'Space Grotesk',sans-serif;color:#fff;font-size:29px;margin:0}
+.sudoku-finish p{font-size:13px;color:#d3d9ef;margin:0}
+.sudoku-finish p strong{color:#91ffe8}
+.sudoku-stars{font-size:30px;color:#ffd37b;letter-spacing:2px}
+.sudoku-next{border:0;border-radius:8px;padding:14px 18px;background:#70f1db;color:#07151b;font-size:13px;font-weight:800}
+.sudoku-internal-overlay{font-weight:800;color:#8cfbe5;letter-spacing:2px}
+@media(max-width:650px){.sudoku-game{padding:9px 11px 7px;gap:5px}.sudoku-cell{font-size:clamp(13px,4vw,20px)}.sudoku-numpad button{height:33px}.sudoku-instruction{font-size:10px;min-height:29px}.sudoku-actions button{padding:6px 7px}.sudoku-best{font-size:9px}}
+@media(max-height:610px){.sudoku-game{gap:3px;padding:6px 10px}.sudoku-clock{font-size:18px}.sudoku-instruction{font-size:9px;min-height:24px}.sudoku-numpad button{height:30px}.sudoku-board.sudoku-four{max-width:235px}.sudoku-help-line{font-size:9px}}
+
+/* Sudoku UX pass: scale the grid to the viewport and make all controls reachable. */
+.sudoku-game{overflow-y:auto;overscroll-behavior:contain;align-items:stretch;scrollbar-width:thin}
+.sudoku-board{max-width:min(100%,400px);align-self:center}
+.sudoku-cell{font-size:clamp(14px,2.6vw,22px)}
+.sudoku-board.sudoku-four{max-width:min(100%,290px)}
+.sudoku-actions{margin-top:2px}
+@media(max-width:650px){
+  .game-dialog:has(.sudoku-game) .game-aside{display:none}
+  .game-dialog:has(.sudoku-game) .game-layout{grid-template-rows:minmax(0,1fr)}
+  .sudoku-game{overflow-y:auto;padding:10px 13px 15px;gap:7px}
+  .sudoku-board{max-width:min(100%,350px)}
+  .sudoku-board.sudoku-four{max-width:min(100%,290px)}
+  .sudoku-cell{font-size:clamp(15px,4vw,21px)}
+  .sudoku-numpad button{min-height:38px}
+}
+@media(max-height:570px){
+  .sudoku-game{gap:4px}
+  .sudoku-board{max-width:min(100%,310px)}
+  .sudoku-board.sudoku-four{max-width:min(100%,230px)}
+}
+
+
+/* Lumen Circuit four-way input. Other games retain their existing controls. */
+.touch-controls.maze-touch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,46px);width:100%;gap:7px;touch-action:none}
+.touch-controls.maze-touch button{min-height:44px;font-size:23px;background:#122c3e;color:#8afee9;border:1px solid #378e90;box-shadow:0 0 8px #00e5c322}
+.touch-controls.maze-touch button:active{background:#24616c}
+.maze-up{grid-column:2;grid-row:1}.maze-left{grid-column:1;grid-row:2}.maze-down{grid-column:2;grid-row:2}.maze-right{grid-column:3;grid-row:2}
+@media(max-width:650px){
+  .touch-controls.maze-touch{position:relative;bottom:auto;right:auto;z-index:4;width:min(100%,265px);margin:0 auto;grid-template-rows:repeat(2,42px);gap:5px}
+  .touch-controls.maze-touch button{min-height:42px}
+  .game-aside:has(.maze-touch){padding:5px 10px 9px}
+  .game-aside:has(.maze-touch) .game-metrics>div{padding:5px 10px}
+}
+@media(max-height:700px) and (max-width:650px){
+  .touch-controls.maze-touch{grid-template-rows:repeat(2,36px)}
+  .touch-controls.maze-touch button{min-height:36px}
+}

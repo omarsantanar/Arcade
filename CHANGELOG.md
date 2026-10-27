@@ -51,3 +51,33 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - GitHub Actions [ejecución 40372684449](https://github.com/omarsantanar/Arcade/actions/runs/40372684449), commit de código `319428d180a495ac13b951068247b79cfa122d06`: **7/7 tests y build TypeScript/Vite correctos**.
 - Estado del despliegue Vercel: **success**, comprobado para ese commit. La vista previa permanece en la rama de PR #1; no se considera producción.
 - Queda pendiente comprobar dificultad, latencia, percepción de falsos huecos y controles en Safari iOS y Chrome Android.
+
+## 2026-10-27 — Nuevo título Sudoku, beta de aprendizaje y velocidad
+- **Objetivo:** investigar copyright/marca de Sudoku y crear puzzle integrado en Arcade con tres niveles guiados y dificultad aleatoria ascendente desde el cuarto, medido por tiempo.
+- **Archivos:** `src/games/sudoku/{logic.ts,Sudoku.ts,SudokuGame.tsx,logic.test.ts,DESIGN.md}`, `src/games/registry.ts`, `src/games/neon-drift/logic.test.ts`, `src/components/GameView.tsx`, `src/styles.css` y documentos raíz.
+- **Implementación:** tableros 4×4 de introducción filas/columnas/bloques con candidatos, cambio abrupto a 9×9 en nivel 4, generador aleatorio con verificación de solución única y pistas objetivo descendentes, cronómetro de tiempo activo, cinco categorías de calidad basadas únicamente en tiempo normalizado al nivel, progreso parcial y récords por nivel guardados localmente.
+- **Investigación jurídica:** U.S. Copyright Office distingue método de juego frente a expresión protegida; Nikoli reivindica marca Sudoku en Japón (categorías 9, 28, 41, entre otras); ONAPI explica protección marcaria dominicana. Se usará el nombre únicamente en sentido descriptivo durante beta, con revisión territorial antes de comercializar.
+- **Pruebas:** Vitest de unicidad, variación, enseñanza, calidad temporal y validez de partidas guardadas; CI y Vercel por confirmar tras PR.
+- **Resultado:** rama `feat/sudoku-speed-challenge` sobre `feat/initial-web-portal` sin modificar Neon Drift ni Lumen Circuit.
+- **Riesgos:** usabilidad en móvil, costo de generación de puzzles duros, nombre en jurisdicciones restringidas; sin monetización.
+
+**Verificación posterior:** GitHub Actions [40503888212](https://github.com/omarsantanar/Arcade/actions/runs/40503888212) aprobó las **21 pruebas** (10 Sudoku + 11 Neon Drift) y `tsc --noEmit` / `vite build` en `06a6517bb054e0e45af87dcc94eed1b392b85796`. La primera compilación falló por una coma en el catálogo, corregida antes de la ejecución exitosa.
+**Bloqueo de publicación:** el estado Vercel del mismo commit es `failure` y apunta explícitamente a `upgradeToPro=build-rate-limit`, límite de compilaciones de la cuenta, no fallo de TypeScript. Se optimizó además la recuperación de partidas guardadas para evitar generar otro sudoku innecesariamente al abrir la página; ejecutar CI nuevamente para el commit final. La preview no se debe presentar como actualizada hasta confirmación de Vercel.
+
+## 2026-10-27 — Revisión de publicación y ergonomía Sudoku
+- **Objetivo:** ejecutar la revisión previa al despliegue y asegurar que el tablero sea utilizable en dispositivos pequeños.
+- **Archivos:** `src/games/sudoku/SudokuGame.tsx`, `src/styles.css`, CHANGELOG, CONTINUITY y ROADMAP.
+- **Cambios:** el foco lógico inicial y después del avance señala directamente la primera casilla editable; en los tres niveles iniciales se resalta exactamente la fila, columna o bloque enseñado; ancho del tablero acotado a 400 px; el contenedor permite desplazamiento vertical en pantallas cortas y elimina el panel lateral móvil para reservar espacio al teclado numérico.
+- **Pruebas:** resultado pendiente de CI sobre el último commit. Se mantiene la suite de 21 tests y revisión manual aún pendiente.
+- **Bloqueador externo:** Vercel indicó expresamente `api-deployments-free-per-day`, más de 100 despliegues en 24 h, por lo que no se afirma que la preview esté actualizada. No se forzó una cuota ni se modificaron planes/credenciales.
+- **Riesgos:** aún se necesita prueba visual en teléfonos; interfaz no evaluada con usuarios nuevos.
+
+
+**Resultado de cierre de la revisión del 27-oct-2026:** el commit de jugabilidad `61213fe3753b97414dba0a5d75410b42ece9814b` aprobó 21/21 pruebas y `tsc --noEmit && vite build` en [Actions 40509409402](https://github.com/omarsantanar/Arcade/actions/runs/40509409402). Vercel volvió a aceptar despliegues: estado **success** y comentario del bot **Ready** para el mismo commit, con [preview Sudoku](https://arcade-git-feat-sudoku-speed-challenge-omar-santanas-projects.vercel.app). El límite previo de 100 despliegues en 24 horas quedó superado para esta publicación. **No se pudo ejecutar una comprobación visual interactiva remota desde este entorno**; pendiente probar iOS/Android reales y recorrido completo de niveles 1–4. La PR #5 continúa como borrador sin fusionar.
+
+## 2026-10-27 — Catálogo Arcade unificado con los tres títulos terminados
+**Objetivo:** mostrar en la misma plataforma y galería Neon Drift, Sudoku y Lumen Circuit, retirando el concepto no definido Nova Run.
+**Archivos afectados:** `src/games/registry.ts`, `src/games/types.ts`, `src/components/GameView.tsx`, `src/games/neon-drift/logic.test.ts`, `src/games/lumen-circuit/{logic.ts,logic.test.ts,LumenCircuit.ts,DESIGN.md}`, `src/styles.css`, `src/App.tsx`; documentación README/ARCHITECTURE/CHANGELOG/CONTINUITY/ROADMAP/AGENTS.
+**Cambios:** Lumen Circuit copiado de su rama experimental más reciente con toda su lógica y pruebas; Nova Run retirado; los tres juegos listados como disponibles; carga diferida independiente; GameView con explicaciones y controles por juego; récords independientes; portada explicita los tres títulos.
+**Pruebas:** [CI 40513226150](https://github.com/omarsantanar/Arcade/actions/runs/40513226150), revisión de código `c9bf05304f08171394a72588d5317978eff59135`: **55/55 pruebas aprobadas**, TypeScript y Vite sin errores. Vercel marcó `success` para el mismo commit. Cambios documentales posteriores no modifican lógica.
+**Resultado:** preview unificada en `feat/sudoku-speed-challenge` y PR #5, sin fusionar automáticamente con `main`. **Riesgos:** sin ensayo físico de los tres juegos, interacción multi-dispositivo y contraste accesible pendientes.

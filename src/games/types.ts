@@ -23,6 +23,8 @@ export interface GameHandle {
   resume: () => void;
   restart: () => void;
   setDirection: (direction: ControlDirection) => void;
+  /** Optional four-way movement for labyrinth modules. */
+  setMove?: (direction: 'up' | 'down' | 'left' | 'right' | 'none') => void;
   setMuted: (muted: boolean) => void;
   destroy: () => void;
 }
