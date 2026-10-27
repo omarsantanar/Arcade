@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { COLS, ROWS, TERMINAL_COST, buildLabyrinth, distanceMap, isOpen, newCircuit,
-  moveExplorer, stepSentinels, equals, worldForLevel, blackoutDelay, WORLDS, type CircuitState, type Cell } from './logic';
+  moveExplorer, stepSentinels, equals, worldForLevel, blackoutDelay, WORLDS, choosePowerKind,
+  tickPower, playerStepMs, enemyStepMs, POWER_DURATION_MS, POWER_COOLDOWN_MS,
+  MAX_BLACKOUTS, type CircuitState, type Cell } from './logic';
 
 const seeded=(initial:number)=>{
   let seed=initial>>>0;
@@ -122,5 +124,90 @@ describe('Dominican power worlds', () => {
         expect(state.shards.length).toBeGreaterThanOrEqual(TERMINAL_COST*3);
       }
     }
+  });
+});
+
+describe('Large random power node', () => {
+  function visitNode(state:CircuitState,random:()=>number):CircuitState {
+    expect(state.powerNode).not.toBeNull();
+    const route=around(state,state.powerNode!);
+    expect(route).not.toBeNull();
+    return moveExplorer({...state,player:route!.at,drones:[]},route!.dir,random);
+  }
+  it('is reachable and never overlaps a shard, generator, enemy, start or portal',()=>{
+    for(let level=1;level<=8;level++){
+      for(let seed=1;seed<=30;seed++){
+        const state=newCircuit(level,seeded(seed*93+level));
+        expect(state.powerNode).not.toBeNull();
+        const node=state.powerNode!;
+        expect(distanceMap(state.walls,state.start).has(node.y*COLS+node.x)).toBe(true);
+        const occupied=[state.start,state.exit,...state.shards,...state.terminals,...state.drones.map(d=>d.position)];
+        expect(occupied.some(p=>equals(node,p))).toBe(false);
+      }
+    }
+  });
+  it('selects exactly one of four outcomes, including both benefits and risks',()=>{
+    expect([0,.26,.51,.76].map(v=>choosePowerKind(()=>v)))
+      .toEqual(['turbo','spawn','haste','absorb']);
+  });
+  it('grants acceleration, removes the node and never stacks effects',()=>{
+    const first=visitNode(newCircuit(1,seeded(7)),()=>0);
+    expect(first.powerEffect).toBe('turbo');
+    expect(first.powerNode).toBeNull();
+    expect(first.powerRemainingMs).toBe(POWER_DURATION_MS);
+    expect(playerStepMs(first)).toBeLessThan(playerStepMs({...first,powerEffect:null}));
+    const stillActive=tickPower(first,125,()=>0.77);
+    expect(stillActive.powerEffect).toBe('turbo');
+    expect(stillActive.powerNode).toBeNull();
+  });
+  it('can add only temporary blackouts without spawning on the player',()=>{
+    const initial=newCircuit(5,seeded(8));
+    const s=visitNode(initial,()=>.3);
+    expect(s.powerEffect).toBe('spawn');
+    expect(s.drones.length).toBeGreaterThan(0);
+    expect(s.drones.length).toBeLessThanOrEqual(MAX_BLACKOUTS);
+    expect(s.drones.every(d=>!equals(d.position,s.player))).toBe(true);
+    expect(s.drones.some(d=>d.temporary)).toBe(true);
+    let end=s;
+    for(let i=0;i<28;i++)end=tickPower(end,250);
+    expect(end.powerEffect).toBeNull();
+    expect(end.drones.every(d=>!d.temporary)).toBe(true);
+  });
+  it('can speed up the blackouts, with the effect timed and bounded',()=>{
+    const initial=newCircuit(1,seeded(17));
+    const boosted=visitNode(initial,()=>.52);
+    expect(boosted.powerEffect).toBe('haste');
+    expect(enemyStepMs(boosted)).toBeLessThan(enemyStepMs(initial));
+    expect(enemyStepMs(boosted)).toBeGreaterThanOrEqual(110);
+  });
+  it('enables contact absorption, awarding points without damaging Lumen',()=>{
+    const s=newCircuit(1,seeded(4));
+    const activated=visitNode(s,()=>.88);
+    expect(activated.powerEffect).toBe('absorb');
+    const occupied={x:s.start.x+1,y:s.start.y};
+    const collision=moveExplorer({
+      ...activated,player:s.start,drones:[{position:occupied,previous:occupied}],
+      shards:[],powerNode:null
+    },'right',()=>.1);
+    expect(collision.lives).toBe(activated.lives);
+    expect(collision.drones).toHaveLength(0);
+    expect(collision.score).toBe(activated.score+120);
+  });
+  it('never makes ordinary blackouts harmless outside absorption',()=>{
+    const s=newCircuit(1,seeded(3));
+    const occupied={x:s.start.x+1,y:s.start.y};
+    const contact=moveExplorer({...s,player:s.start,drones:[{position:occupied,previous:occupied}],
+      powerNode:null,powerEffect:null,powerRemainingMs:0},'right');
+    expect(contact.lives).toBe(s.lives-1);
+  });
+  it('expires before respawning the next single special node',()=>{
+    let state=visitNode(newCircuit(1,seeded(11)),()=>0);
+    for(let i=0;i<28;i++)state=tickPower(state,250);
+    expect(state.powerEffect).toBeNull();
+    expect(state.powerCooldownMs).toBe(POWER_COOLDOWN_MS);
+    expect(state.powerNode).toBeNull();
+    for(let i=0;i<14;i++)state=tickPower(state,250,()=>.5);
+    expect(state.powerNode).not.toBeNull();
+    expect(state.powerEffect).toBeNull();
   });
 });
