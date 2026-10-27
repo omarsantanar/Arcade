@@ -66,3 +66,12 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - CI GitHub Actions: ejecución 40383943632, 11 pruebas satisfactorias y build Vite/TypeScript exitoso.
 - Preview Vercel: estado Ready en la rama feat/initial-web-portal.
 - Falta validar con usuarios y dispositivos físicos que las distintas soluciones sean perceptibles y el control responda adecuadamente.
+
+## Estado — 2026-10-27 — Sudoku de velocidad
+**Solicitud:** confirmar situación de copyright de Sudoku y crear título «Sudoku» con tres niveles de aprendizaje, dificultad que sube vertiginosamente desde el cuarto, tableros aleatorios y medición de calidad según tiempo.
+**Investigación:** las reglas/métodos abstractos del Sudoku no están sujetos al copyright conforme a la U.S. Copyright Office; Nikoli declara propiedad marcaria de «Sudoku» en Japón y exige precaución en el uso comercial. No se ha hecho búsqueda exhaustiva de ONAPI; título descriptivo para prueba, no para reivindicar exclusividad.
+**Desarrollo:** nueva rama `feat/sudoku-speed-challenge`, base `feat/initial-web-portal` que mantiene Neon Drift independiente. Sudoku de 4×4 en niveles 1–3 (fila/columna/bloque), 9×9 desde el cuarto con puzzles generados y verificación única, clasificación por velocidad (sin penalizaciones adicionales), controles táctiles y teclado, guardado y mejor tiempo por nivel.
+**Archivos:** `src/games/sudoku/`, registry, GameView, styles.css, test de catálogo y documentación. No se ha fusionado.
+**Pruebas:** nuevos tests implementados; CI/build y Vercel pendientes de confirmar.
+**Riesgos:** escalabilidad del generador en móviles, comprensión del salto 4×4→9×9, revisión de marca según jurisdicción.
+**Siguiente:** verificar CI/Vercel; jugar tres introducciones más cinco niveles aleatorios en Android/iOS, medir tiempo y latencia; no fusionar sin evaluación.
