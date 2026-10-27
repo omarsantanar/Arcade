@@ -164,7 +164,7 @@ export const COUNTRY_ENTRIES:Partial<Record<CountryCode,readonly Entry[]>>={
     ['PABELLON','Plato típico con carne mechada, arroz y caraotas.','gastronomia'],
     ['JOROPO','Música y baile tradicionales de los llanos.','musica'],
     ['ARPA','Instrumento de cuerda de la música llanera.','musica'],
-    ['CUATRO','Instrumento pequeño de cuatro cuerdas que acompaña cantos llaneros.','musica'],
+    ['CUATRO','Instrumento pequeño de cuerdas que acompaña cantos llaneros.','musica'],
     ['LLANERO','Habitante tradicional de las amplias sabanas interiores.','cultura'],
     ['BOLIVAR','Apellido del libertador nacido en Caracas.','historia'],
     ['GUAICAIPURO','Cacique recordado por resistir la conquista en el valle de Caracas.','historia'],
