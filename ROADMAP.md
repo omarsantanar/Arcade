@@ -69,3 +69,13 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] Integración verificada con 55/55 pruebas y build TypeScript/Vite (Actions 40513226150), estado Vercel `success`.
 - [ ] Validar apertura consecutiva de los tres juegos en Chrome móvil y Safari iOS y confirmar accesibilidad del menú.
 - [ ] Revisar y fusionar PR #5 al flujo de producción después de aceptación funcional; no se modifica `main` por ahora.
+
+### 2026-10-27 — Crucigrama Dominicano
+- [x] Confirmar fuente de referencia DED (Academia Dominicana de la Lengua e Igalex), fuentes ASALE y UNESCO y política de pistas propias.
+- [x] Crear banco inicial de 150 respuestas originales con ocho áreas dominicanas y modalidad mixta.
+- [x] Generar cuadrículas cruzadas 15×15 y numeración, comprobar cruces reales, seleccionar pistas horizontales/verticales, conservar Ñ, teclado de letras, ayuda, reloj y guardado local.
+- [x] Integrar Crucigrama Dominicano como cuarto título, conservando los tres anteriores.
+- [x] CI 40574497642 verificada (63/63 tests y build), Vercel Preview Ready para commit funcional.
+- [ ] Revisión editorial una por una para uso comercial, ampliación de vocabulario regional y nombres propios; consultar permisos si se pretendiera importar definiciones de DED.
+- [ ] Pruebas humanas en iOS/Android y ajuste de tamaño del tablero y variabilidad del generador.
+- [ ] Revisar y fusionar la PR de la beta solo tras aceptación de UX y revisión de fuentes.
