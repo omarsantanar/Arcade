@@ -6,8 +6,8 @@ export const catalog: readonly GameManifest[] = [
     category: 'reflejos', available: true, accent: 'cyan', symbol: '◢', orientation: 'portrait',
   },
   {
-    id: 'lumen-circuit', title: 'Lumen Circuit', tagline: 'Enciende tres nodos. Encuentra la salida.',
-    category: 'aventura', available: true, accent: 'violet', symbol: '◇', orientation: 'portrait',
+    id: 'lumen-circuit', title: 'Lumen Circuit', tagline: 'Enciende generadoras. Huye de los apagones.',
+    category: 'aventura', available: true, accent: 'violet', symbol: '⚡', orientation: 'portrait',
   },
   {
     id: 'nova-run', title: 'Nova Run', tagline: 'Un viaje más allá del borde.',
