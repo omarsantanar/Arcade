@@ -96,8 +96,8 @@ export default function GameView({ manifest, onClose }: Props) {
             <div className="game-metrics"><div><span>PUNTUACIÓN</span><strong>{score.toString().padStart(4, '0')}</strong></div><div><span>MEJOR MARCA</span><strong>{best.toString().padStart(4, '0')}</strong></div></div>
             <div className="instructions"><h3>Cómo jugar</h3>
               {manifest.id === 'lumen-circuit' ? <>
-                <p>Recoge cristales de energía. Con dos cristales, toca un nodo triangular para encenderlo. Enciende los tres y atraviesa el portal de salida.</p>
-                <p>Evita los centinelas geométricos: tienes tres vidas. Cada laberinto es diferente. Usa <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> o <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>. En móvil usa la cruceta, toca o desliza sobre el mapa.</p>
+                <p>Lumen es una chispa eléctrica que recorre generadoras de República Dominicana. Recoge dos cristales para encender cada generadora. Activa las tres y atraviesa el portal de salida.</p>
+                <p>Esquiva los apagones: agujeros negros que persiguen a Lumen. Tienes tres vidas y cada mundo cambia la dificultad y los pasillos del laberinto. Usa <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> o <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>. En móvil usa la cruceta, toca o desliza sobre el mapa.</p>
               </> : <>
                 <p>Esquiva obstáculos geométricos de neón. Cada 7 segundos aumenta el nivel: caen más rápido, aparecen con más frecuencia y cambian de tamaño. Siempre queda un corredor viable, pero deberás alcanzarlo a tiempo.</p>
                 <p><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte. En móviles, toca los botones o desliza el dedo sobre el juego.</p>
