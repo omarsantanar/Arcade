@@ -90,3 +90,14 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Vercel Preview pendiente: cuenta alcanzó el límite `api-deployments-free-per-day`. Redeploy cuando vuelva la cuota y confirmar Ready.
 - [ ] Pruebas físicas iOS/Android; chequear selección diagonal, legibilidad de 15×15, almacenamiento local y accesibilidad.
 - [ ] Progresar a banco de cientos de voces auditadas y control de fuentes por palabra, sin scraping de diccionarios protegidos.
+
+### 2026-10-27 — Crucigrama y Sopa: edición panhispánica
+- [x] Renombrar títulos visibles a «Crucigrama en Español» y «Sopa de Letras en Español».
+- [x] Añadir «Todo el mundo hispanohablante» y 14 opciones nacionales/territoriales.
+- [x] Crear 240 entradas culturales nuevas con países explícitos y pistas propias; conservar las voces dominicanas.
+- [x] Aplicar filtro por país a los dos motores y habilitar tema solo con vocabulario suficiente.
+- [x] Separar récords por país y migrar guardados anteriores sin perder progreso.
+- [x] CI 40583190074: 78/78 pruebas y build correcto.
+- [ ] Vercel pendiente por límite de builds; confirmar Ready del commit final.
+- [ ] Revisar 240 pistas editorialmente por región y probar UX móvil de todos los países.
+- [ ] Ampliar a otros territorios de habla española tras la curaduría de los primeros 14.
