@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { GameCallbacks } from '../types';
 import {
   SUDOKU_LEVEL_KEY,SUDOKU_RECORDS_KEY,SUDOKU_SAVE_KEY,copyGrid,generateSudoku,
+  saveSudokuBestScore,
   qualityFor,safeStoredLevel,isSolved,isValidPlacement,conflictCells,validSavedGame,
   type SudokuPuzzle,type SudokuQuality,type SudokuSave,
 } from './logic';
@@ -102,6 +103,7 @@ export default function SudokuGame({callbacks,controller}:Props){
     saveLevelBest(puzzle.level,elapsedMs);
     localSet(SUDOKU_LEVEL_KEY,String(puzzle.level+1));
     try{window.localStorage.removeItem(SUDOKU_SAVE_KEY);}catch{/* optional */}
+    saveSudokuBestScore(quality.points);
     callbacks.onScore(quality.points);
   },[completed,finish,elapsedMs,puzzle.level,callbacks]);
 
