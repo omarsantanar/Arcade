@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import type { ControlDirection, GameCallbacks, GameHandle } from '../types';
 import {
-  COLS, ROWS, newCircuit, moveExplorer, saveLumenBest, blackoutDelay,
+  COLS, ROWS, newCircuit, moveExplorer, saveLumenBest, tickPower,
+  enemyStepMs, playerStepMs, POWER_LABELS, POWER_DESCRIPTIONS,
   stepSentinels, type CircuitState, type Direction, type Cell
 } from './logic';
 
@@ -131,6 +132,13 @@ class CircuitScene extends Phaser.Scene {
     const old=this.model;
     this.model=moveExplorer(this.model,direction);
     if(this.model===old)return;
+    if(this.model.powerEffect!==old.powerEffect && this.model.powerEffect!==null){
+      this.cameras.main.flash(240,240,220,80);
+      this.beep(this.model.powerEffect==='absorb'?960:520);
+    }
+    if(this.model.drones.length<old.drones.length && this.model.powerEffect==='absorb'){
+      this.cameras.main.flash(130,100,245,220);
+    }
     this.moveTimer=0;
     if(this.model.score!==old.score){
       saveLumenBest(this.model.score);
@@ -182,6 +190,15 @@ class CircuitScene extends Phaser.Scene {
       g.lineStyle(2.4,color,1);g.strokeRoundedRect(p.x-9,p.y-9,18,18,3);
       drawLightning(g,p.x,p.y,color,0.45);
     }
+    // One larger high-voltage node, distinct from both small shards and power generators.
+    if(state.powerNode){
+      const p=POS(state.powerNode);
+      const flicker=0.7+0.3*Math.sin(this.elapsed/250);
+      g.fillStyle(0xffd961,0.22*flicker);g.fillCircle(p.x,p.y,15);
+      g.lineStyle(2.5,0xffdc82,0.95);g.strokeCircle(p.x,p.y,10);
+      g.fillStyle(0x0c2435,1);g.fillCircle(p.x,p.y,7);
+      drawLightning(g,p.x,p.y,0xfff8d1,0.73);
+    }
     // Exit has its own gate glyph and only opens after all three terminals.
     const exit=POS(state.exit),open=state.activated.every(Boolean);
     g.lineStyle(3,open?0x70f5ad:0x7387a6,0.96);
@@ -192,25 +209,41 @@ class CircuitScene extends Phaser.Scene {
     for(const blackout of state.drones){
       const pos=POS(blackout.position);
       drawBlackout(g,pos.x,pos.y,palette.blackout);
+      if(blackout.temporary){g.lineStyle(2,0xff8f9b,0.8);g.strokeCircle(pos.x,pos.y,14);}
+      if(state.powerEffect==='absorb'){
+        g.lineStyle(1.7,0x9cffff,0.85);g.strokeCircle(pos.x,pos.y,14);
+      }
     }
     const player=POS(state.player);
     if(state.invulnerable===0 || Math.floor(state.invulnerable/2)%2===0){
       g.fillStyle(0xa1ffff,0.30);g.fillCircle(player.x,player.y,14);
       drawLightning(g,player.x,player.y,0xf5fff9,0.86);
       g.lineStyle(1.8,0x92fff5,0.85);g.strokeCircle(player.x,player.y,12);
+      if(state.powerEffect==='absorb'){
+        g.lineStyle(2.5,0xa9ffec,0.9);g.strokeCircle(player.x,player.y,15);
+      } else if(state.powerEffect==='turbo'){
+        g.lineStyle(2,0xffd566,0.9);
+        g.lineBetween(player.x-12,player.y+12,player.x-5,player.y+17);
+      }
     }
     const active=state.activated.filter(Boolean).length;
     this.hud.setText('MUNDO '+state.level+' · '+state.world.name.toUpperCase()+' · VIDAS '+state.lives);
-    this.hint.setText(active===3?'SALIDA ABIERTA: BUSCA EL PORTAL →':
-      'ENERGÍA '+state.energy+'/2 · GENERADORAS '+active+'/3');
-    this.footer.setText('PUNTOS '+state.score+' · '+state.world.region.toUpperCase()+' · '+(state.invulnerable?'ESCUDO':'EVITA APAGONES'));
+    const effectMessage=state.powerEffect?POWER_LABELS[state.powerEffect]+' · '+(state.powerRemainingMs/1000).toFixed(1)+'s':null;
+    this.hint.setText(effectMessage ?? (active===3?'SALIDA ABIERTA: BUSCA EL PORTAL →':
+      'ENERGÍA '+state.energy+'/2 · GENERADORAS '+active+'/3'));
+    this.footer.setText(state.powerEffect?POWER_DESCRIPTIONS[state.powerEffect].toUpperCase():
+      ('PUNTOS '+state.score+' · '+state.world.region.toUpperCase()+' · '+(state.invulnerable?'ESCUDO':'EVITA APAGONES')));
   }
 
   update(_time:number,delta:number):void {
     if(this.model.status!=='playing')return;
     const dt=Math.min(100,delta),keys=this.keyMap;
     this.elapsed+=dt;this.moveTimer+=dt;this.droneTimer+=dt;
-    if(this.moveTimer>124){
+    const oldEffect=this.model.powerEffect;
+    const oldNode=this.model.powerNode;
+    this.model=tickPower(this.model,dt);
+    if(oldEffect!==this.model.powerEffect || oldNode!==this.model.powerNode)this.drawBoard();
+    if(this.moveTimer>=playerStepMs(this.model)){
       let dir:Direction=this.touchDirection;
       if(keys.UP?.isDown || keys.W?.isDown)dir='up';
       else if(keys.DOWN?.isDown || keys.S?.isDown)dir='down';
@@ -218,7 +251,7 @@ class CircuitScene extends Phaser.Scene {
       else if(keys.RIGHT?.isDown || keys.D?.isDown)dir='right';
       if(dir!=='none')this.tryMove(dir);
     }
-    const interval=blackoutDelay(this.model.level,this.model.world);
+    const interval=enemyStepMs(this.model);
     if(this.droneTimer>=interval){
       this.droneTimer=0;
       const before=this.model;
