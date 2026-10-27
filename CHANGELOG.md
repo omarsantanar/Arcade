@@ -63,3 +63,11 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 **Validación inicial confirmada:** GitHub Actions [40411150897](https://github.com/omarsantanar/Arcade/actions/runs/40411150897) verificó el commit de código `c3956040f0162b8b7cd1b6abdfb255dadff2e3b2`: **19/19 pruebas** (8 Lumen Circuit, 11 Neon Drift) y compilación TypeScript/Vite satisfactoria. Vercel informó estado `success` y preview Ready: https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. Las pruebas automatizadas no sustituyen un test en teléfonos físicos ni una autorización jurídica.
 
 **Ajuste táctil:** se corrigió un doble desplazamiento que podía ocurrir al presionar por primera vez la cruceta; el primer toque desplaza una celda y la repetición solo comienza tras el intervalo de movimiento. Archivo: `src/games/lumen-circuit/LumenCircuit.ts`. Requiere revisión final de CI y prueba en dispositivo.
+
+## 2026-10-26 — Lumen Circuit: sincronización efectiva de Vercel y temática eléctrica dominicana
+- **Problema reportado:** la preview Vercel mostraba aún un protagonista romboidal y centinelas geométricos; los cambios prometidos estaban solo en un ZIP local sin sincronización con GitHub.
+- **Objetivo:** publicar en la rama `feat/lumen-circuit-beta` la identidad visual correcta sin fusionar a `main`.
+- **Archivos afectados:** `src/games/lumen-circuit/{logic.ts,LumenCircuit.ts,logic.test.ts}`, `src/components/GameView.tsx`, `src/games/registry.ts`, `src/App.tsx`, documentación.
+- **Resultado:** Lumen ahora se dibuja como rayo eléctrico luminoso; los perseguidores, como agujeros negros; los suelos y muros son más luminosos; cuatro mundos basados en paisajes dominicanos alteran conexiones del laberinto, energía dispersa y tiempo entre movimientos de apagones. Generadoras funcionales: tres terminales deben encenderse para activar la salida.
+- **Pruebas:** añadidas comprobaciones de secuencia temática, diferencias de dificultad y accesibilidad de los objetivos. Ver ejecución de CI de la PR #4 correspondiente al commit final.
+- **Riesgos:** los nombres de centrales son ficticios e inspirados en regiones del país, no afirmaciones sobre plantas existentes. Faltan pruebas táctiles y visuales en teléfonos reales; el nombre debe revisarse antes de comercializar.
