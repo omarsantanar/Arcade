@@ -7,6 +7,31 @@ export type Direction = 'up' | 'down' | 'left' | 'right' | 'none';
 export type Cell = { x: number; y: number };
 export type Drone = { position: Cell; previous: Cell };
 export type CircuitStatus = 'playing' | 'cleared' | 'gameover';
+export type WorldId = 'hydro' | 'solar' | 'wind' | 'thermal';
+export interface PowerWorld {
+  id: WorldId;
+  name: string;
+  region: string;
+  tagline: string;
+  crossLinks: number;
+  blackoutInterval: number;
+  minBlackoutInterval: number;
+  energyFragments: number;
+}
+/** Fictional generator settings inspired by Dominican landscapes, not real installations. */
+export const WORLDS: readonly PowerWorld[] = [
+  { id:'hydro', name:'Yaque Hídrica', region:'Cibao', tagline:'ENCIENDE LA ENERGÍA DEL CIBAO',
+    crossLinks:0.10, blackoutInterval:455, minBlackoutInterval:225, energyFragments:20 },
+  { id:'solar', name:'Sol Caribe', region:'Región Sur', tagline:'ATRAVIESA LOS CAMPOS SOLARES',
+    crossLinks:0.19, blackoutInterval:395, minBlackoutInterval:200, energyFragments:20 },
+  { id:'wind', name:'Brisa del Este', region:'Región Este', tagline:'REACTIVA EL CORREDOR EÓLICO',
+    crossLinks:0.13, blackoutInterval:355, minBlackoutInterval:180, energyFragments:18 },
+  { id:'thermal', name:'Ozama Térmica', region:'Gran Santo Domingo', tagline:'SALVA LA RED MÁS EXIGENTE',
+    crossLinks:0.16, blackoutInterval:325, minBlackoutInterval:165, energyFragments:18 },
+];
+export const worldForLevel = (level:number):PowerWorld => WORLDS[(Math.max(1,level)-1)%WORLDS.length];
+export const blackoutDelay = (level:number,world:PowerWorld=worldForLevel(level)):number =>
+  Math.max(world.minBlackoutInterval,world.blackoutInterval-Math.max(0,level-1)*15);
 export interface CircuitState {
   walls: boolean[][];
   start: Cell;
@@ -20,6 +45,7 @@ export interface CircuitState {
   score: number;
   lives: number;
   level: number;
+  world: PowerWorld;
   steps: number;
   invulnerable: number;
   status: CircuitStatus;
@@ -37,7 +63,7 @@ export const adjacent = (walls: boolean[][],cell:Cell) => Object.values(vector)
 const randomIndex = (size:number,random:RandomSource) => Math.min(size-1,Math.floor(Math.max(0,random())*size));
 
 /** Depth-first randomized passages with extra links. Every open cell is connected. */
-export function buildLabyrinth(random: RandomSource = Math.random): boolean[][] {
+export function buildLabyrinth(random: RandomSource = Math.random, crossLinks = 0.14): boolean[][] {
   const walls = Array.from({length:ROWS},()=>Array.from({length:COLS},()=>true));
   const start = {x:1,y:1};
   const stack:Cell[]=[start];
@@ -56,7 +82,7 @@ export function buildLabyrinth(random: RandomSource = Math.random): boolean[][] 
   // Optional cross-connections keep the levels from feeling like one long corridor.
   for(let y=2;y<ROWS-2;y++){
     for(let x=2;x<COLS-2;x++){
-      if(!walls[y][x] || random()>=0.14)continue;
+      if(!walls[y][x] || random()>=crossLinks)continue;
       const horizontal=!walls[y][x-1] && !walls[y][x+1];
       const vertical=!walls[y-1][x] && !walls[y+1][x];
       if(horizontal || vertical) walls[y][x]=false;
@@ -82,7 +108,8 @@ const away = (a:Cell,b:Cell) => Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
 
 /** Build a solvable field: 3 connected terminals, enough shards, and a reachable exit. */
 export function newCircuit(level=1,random:RandomSource=Math.random,previousScore=0,previousLives=3):CircuitState {
-  const walls=buildLabyrinth(random);
+  const world=worldForLevel(level);
+  const walls=buildLabyrinth(random,world.crossLinks);
   const start={x:1,y:1};
   const distances=distanceMap(walls,start);
   const pool=[...distances.keys()].filter(i=>i!==index(start))
@@ -105,10 +132,10 @@ export function newCircuit(level=1,random:RandomSource=Math.random,previousScore
     return {position,previous:position};
   });
   const shardPool=pool.filter(p=>!reserved.has(index(p)));
-  const shardCount=Math.min(20,shardPool.length);
+  const shardCount=Math.min(world.energyFragments,shardPool.length);
   const shards=Array.from({length:shardCount},()=>pick(shardPool,random));
   return {walls,start,exit,player:start,terminals,activated:[false,false,false],shards,drones,
-    energy:0,score:previousScore,lives:previousLives,level,steps:0,invulnerable:0,status:'playing'};
+    energy:0,score:previousScore,lives:previousLives,level,world,steps:0,invulnerable:0,status:'playing'};
 }
 function strike(state:CircuitState):CircuitState {
   if(state.invulnerable>0)return state;
