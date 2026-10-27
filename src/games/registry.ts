@@ -14,13 +14,13 @@ export const catalog: readonly GameManifest[] = [
     category: 'aventura', available: true, accent: 'coral', symbol: '⚡', orientation: 'portrait',
   },
   {
-    id: 'crucigrama-dominicano', title: 'Crucigrama Dominicano',
-    tagline: 'De la guagua al merengue: descubre nuestras palabras e historias.',
+    id: 'crucigrama-dominicano', title: 'Crucigrama en Español',
+    tagline: 'Viaja por países, palabras y tradiciones del español.',
     category: 'puzles', available: true, accent: 'cyan', symbol: '✎', orientation: 'portrait',
   },
   {
-    id: 'sopa-letras-dominicana', title: 'Sopa de Letras Dominicana',
-    tagline: 'Encuentra nuestras voces, figuras y lugares escondidos.',
+    id: 'sopa-letras-dominicana', title: 'Sopa de Letras en Español',
+    tagline: 'Encuentra palabras de todos los rincones del español.',
     category: 'puzles', available: true, accent: 'violet', symbol: '▤', orientation: 'portrait',
   },
 ];
