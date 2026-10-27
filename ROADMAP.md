@@ -38,3 +38,12 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 
 - [x] CI validado para v0.4.0, ejecución 40383943632: 11 pruebas y build satisfactorios.
 - [ ] Validar en móvil rutas alternativas y equilibrio de niveles 1, 3, 6 y 10.
+
+### 2026-10-27 — Sudoku (tercer juego original de Arcade)
+- [x] Revisar copyright de mecánica y riesgo de marca territorial para «Sudoku» (Nikoli/Japón y ONAPI/RD).
+- [x] Prototipo Sudoku 4×4 guiado (niveles 1–3) y 9×9 procedimental desde nivel 4.
+- [x] Generación de tablero con única solución, dificultad escalonada y clasificación temporal en cinco categorías.
+- [x] Teclado móvil/PC, guardado local del progreso y récord de tiempo por nivel.
+- [ ] Comprobar GitHub Actions, TypeScript, Vitest y Vercel de rama experimental.
+- [ ] Evaluar aprendizaje de 3 niveles, dificultad 4+, legibilidad y rendimiento del solver en móviles.
+- [ ] Revisar oficialmente marcas por territorio antes de lanzamiento comercial, especialmente Japón.
