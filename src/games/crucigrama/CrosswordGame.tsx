@@ -1,6 +1,6 @@
 import {useCallback,useEffect,useMemo,useState} from 'react';
 import type {GameCallbacks} from '../types';
-import {TOPIC_LABELS,normalizeAnswer,WORD_BANK,COUNTRY_OPTIONS,topicsFor,type CountryFilter} from './bank';
+import {TOPIC_LABELS,normalizeAnswer,WORD_BANK,COUNTRY_OPTIONS,topicsFor,countryName,type CountryFilter} from './bank';
 import {generateCrossword,emptyFill,entryCells,filledProgress,isCrosswordSolved,
   findEntryAt,validSave,CROSSWORD_SAVE_KEY,CROSSWORD_BEST_KEY,
   type CrosswordTheme,type CrosswordSaved,type CrosswordPuzzle,type PlacedWord} from './logic';
@@ -216,7 +216,7 @@ export default function CrosswordGame({callbacks,controller}:Props){
       <span>{puzzle.entries.length} palabras · {hints} ayudas</span></div>
     <div className="cruci-current" aria-live="polite">
       <b>{entry?.number}{entry?.direction==='across'?' HORIZONTAL':' VERTICAL'} ({entry?.answer.length})</b>
-      <span>{entry?.clue}</span>
+      <span>{entry?.clue}{puzzle.country==='todos'&&entry?' · '+countryName(entry.country):''}</span>
     </div>
     <div className="cruci-keyboard" aria-label="Teclado de letras">
       {alphabet.map(letter=><button type="button" key={letter} onClick={()=>typeLetter(letter)}
