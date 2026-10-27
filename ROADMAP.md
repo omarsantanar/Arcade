@@ -72,3 +72,5 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] Conexión por tubos horizontales en ciertos mapas para Lumen y perseguidores.
 - [x] +1 agujero negro cada cuatro niveles desde el 4; excepción de mundos bonificación.
 - [ ] Confirmar última CI/deploy, prueba en celulares y calibrar dificultad de mundos altos.
+
+- [x] Validación final registrada el 27 de octubre de 2026: 40/40 pruebas, compilación TypeScript/Vite y preview Vercel confirmadas para el cambio de coleccionables y túneles (GitHub Actions 40498722244). Quedan pendientes las pruebas humanas en móvil.
