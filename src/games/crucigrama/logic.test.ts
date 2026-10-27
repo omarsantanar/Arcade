@@ -29,7 +29,7 @@ describe('Dominican editorial word bank',()=>{
   });
 });
 describe('Crossword procedural generator',()=>{
-  const themes=['mixto',...Object.keys(TOPIC_LABELS)] as const;
+  const themes=['mixto',...Object.keys(TOPIC_LABELS)] as ('mixto'|keyof typeof TOPIC_LABELS)[];
   it('constructs crossing words, unambiguous numbering and valid reachable cells across themes',()=>{
     for(const theme of themes)for(let seed=1;seed<=9;seed++){
       const crossword=generateCrossword(theme,seed*713+29);
