@@ -1,6 +1,6 @@
 import {useEffect,useMemo,useRef,useState,type PointerEvent,type KeyboardEvent} from 'react';
 import type {GameCallbacks} from '../types';
-import {WORD_BANK,TOPIC_LABELS,COUNTRY_OPTIONS,topicsFor,type CountryFilter} from '../crucigrama/bank';
+import {WORD_BANK,TOPIC_LABELS,COUNTRY_OPTIONS,topicsFor,countryName,type CountryFilter} from '../crucigrama/bank';
 import {generateWordSearch,matchSelection,cellsAlong,sameCell,isComplete,searchScore,
   readSearchBest,validWordSearchSave,SEARCH_SAVE_KEY,SEARCH_BEST_KEY,
   type Cell,type WordSearchTheme,type WordSearchDifficulty,type WordSearchPuzzle,
@@ -263,7 +263,7 @@ export default function WordSearchGame({callbacks,controller}:Props){
         <div className="ws-word-list">
           {words.map(word=><details key={word.id} className={found.includes(word.id)?'found':''}>
             <summary><span>{found.includes(word.id)?'✓ ':''}{word.answer}</span>
-              <small>{word.answer.length} letras</small></summary>
+              <small>{word.answer.length} letras{puzzle.country==='todos'?' · '+countryName(word.country):''}</small></summary>
             <p>{word.clue}</p>
           </details>)}
         </div>
