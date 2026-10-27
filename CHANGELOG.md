@@ -71,3 +71,6 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - **Pruebas:** resultado pendiente de CI sobre el último commit. Se mantiene la suite de 21 tests y revisión manual aún pendiente.
 - **Bloqueador externo:** Vercel indicó expresamente `api-deployments-free-per-day`, más de 100 despliegues en 24 h, por lo que no se afirma que la preview esté actualizada. No se forzó una cuota ni se modificaron planes/credenciales.
 - **Riesgos:** aún se necesita prueba visual en teléfonos; interfaz no evaluada con usuarios nuevos.
+
+
+**Resultado de cierre de la revisión del 27-oct-2026:** el commit de jugabilidad `61213fe3753b97414dba0a5d75410b42ece9814b` aprobó 21/21 pruebas y `tsc --noEmit && vite build` en [Actions 40509409402](https://github.com/omarsantanar/Arcade/actions/runs/40509409402). Vercel volvió a aceptar despliegues: estado **success** y comentario del bot **Ready** para el mismo commit, con [preview Sudoku](https://arcade-git-feat-sudoku-speed-challenge-omar-santanas-projects.vercel.app). El límite previo de 100 despliegues en 24 horas quedó superado para esta publicación. **No se pudo ejecutar una comprobación visual interactiva remota desde este entorno**; pendiente probar iOS/Android reales y recorrido completo de niveles 1–4. La PR #5 continúa como borrador sin fusionar.

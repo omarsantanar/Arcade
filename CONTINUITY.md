@@ -85,3 +85,11 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - Pruebas: comprobar último CI tras commit, y volver a verificar despliegue cuando Vercel acepte nuevos builds.
 - Riesgo: no se ha observado partida física; nunca etiquetar Preview Ready sin evidencia del SHA exacto.
 - Próximo paso: abrir https://vercel.com/omar-santanas-projects/arcade y hacer Redeploy del último commit cuando se restablezca la cuota, después ensayar cuatro niveles y tomar datos reales de tiempo/errores de comprensión.
+
+
+## Resultado comprobado — Sudoku Beta, 2026-10-27
+- **Código:** `feat/sudoku-speed-challenge`, PR #5, commit funcional `61213fe3753b97414dba0a5d75410b42ece9814b`; selección automática de primera casilla libre, enfoque didáctico por fila/columna/bloque en etapas 1–3 y tablero móvil con scroll y espacio para teclado.
+- **Pruebas:** [GitHub Actions 40509409402](https://github.com/omarsantanar/Arcade/actions/runs/40509409402) completó **21/21** tests, TypeScript y Vite sin errores.
+- **Vercel:** la limitación `api-deployments-free-per-day` impedía desplegar pero el estado del último commit cambió a `success`; el bot de Vercel confirmó **Ready** con preview https://arcade-git-feat-sudoku-speed-challenge-omar-santanas-projects.vercel.app.
+- **Pendiente:** verificación manual de teclado numérico y de pausa/continuación en móvil real, accesibilidad por lector de pantalla y comprensión de los primeros tres niveles. No se afirma que se haya completado una prueba física.
+- **Siguiente tarea:** abrir la preview y completar los niveles 1–4 en teléfono, medir facilidad de tutorial y tiempo de carga de 9×9; no fusionar a producción hasta aprobación.

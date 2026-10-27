@@ -61,3 +61,6 @@ Tercer concepto jugable y módulo independiente en `feat/sudoku-speed-challenge`
 La clasificación **Relámpago / Oro / Plata / Bronce / Completado** depende exclusivamente del tiempo de resolución relativo a la dificultad del nivel. Se guardan el progreso, mejor tiempo por nivel y mejor puntuación localmente. Móvil: tocar casilla y teclado numérico. Escritorio: mouse, números, flechas y Backspace. Para ejecutar: `npm install`, `npm run dev`; validación: `npm run test && npm run build`.
 
 **Derechos:** la mecánica abstracta no está protegida como obra por copyright en los términos descritos por la U.S. Copyright Office, pero **Sudoku es marca registrada por Nikoli en Japón**. El nombre se utiliza aquí descriptivamente en beta; revisar el ámbito marcario antes de distribución comercial o promoción internacional. Diseño y fuentes: `src/games/sudoku/DESIGN.md`.
+
+
+**Preview de Sudoku Beta publicada (27-oct-2026):** https://arcade-git-feat-sudoku-speed-challenge-omar-santanas-projects.vercel.app. Fuente y revisión: https://github.com/omarsantanar/Arcade/pull/5. El último código de jugabilidad aprobó 21/21 pruebas y build en GitHub Actions 40509409402, y Vercel confirmó `Ready`. Aún no se ha validado con jugadores reales ni se ha fusionado a `main`.

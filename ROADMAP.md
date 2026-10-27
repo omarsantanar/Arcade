@@ -56,3 +56,8 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] 2026-10-27: selección de primera celda editable, resaltado educativo por fila/columna/bloque y layout adaptable.
 - [ ] Esperar recuperación de cuota, redeploy del último SHA de la rama y confirmar estado Ready.
 - [ ] Prueba visual/táctil manual iOS/Android y revisión de comprensión del tutorial.
+
+
+- [x] 2026-10-27: bloqueo de Vercel levantado para Sudoku Beta; Vercel Ready confirmado para commit `61213fe3`.
+- [x] 2026-10-27: últimas 21/21 pruebas automatizadas, TypeScript y Vite aprobados ([Actions 40509409402](https://github.com/omarsantanar/Arcade/actions/runs/40509409402)).
+- [ ] PENDIENTE: prueba humana y visual de tutorial, navegación, cronómetro y scroll móvil en iOS/Android antes de merge.
