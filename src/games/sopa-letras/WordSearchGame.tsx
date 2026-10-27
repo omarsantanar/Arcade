@@ -1,4 +1,4 @@
-import {useEffect,useMemo,useRef,useState,type PointerEvent} from 'react';
+import {useEffect,useMemo,useRef,useState,type PointerEvent,type KeyboardEvent} from 'react';
 import type {GameCallbacks} from '../types';
 import {WORD_BANK,TOPIC_LABELS} from '../crucigrama/bank';
 import {generateWordSearch,matchSelection,cellsAlong,sameCell,isComplete,searchScore,
@@ -173,6 +173,29 @@ export default function WordSearchGame({callbacks,controller}:Props){
       event.currentTarget.releasePointerCapture(event.pointerId);
   };
   const cancel=()=>{drag.current=null;setPreview(pending?[pending]:[]);};
+  const onCellKey=(event:KeyboardEvent<HTMLButtonElement>,cell:Cell)=>{
+    if(paused||finished)return;
+    if(event.key==='Enter'||event.key===' '){
+      event.preventDefault();
+      if(pending&&!sameCell(pending,cell))commitSelection(pending,cell);
+      else{
+        setPending(cell);setPreview([cell]);
+        setMessage('Ahora selecciona la última letra con las flechas y pulsa Enter.');
+      }
+      return;
+    }
+    const vector=event.key==='ArrowUp'?{row:-1,col:0}:
+      event.key==='ArrowDown'?{row:1,col:0}:
+      event.key==='ArrowLeft'?{row:0,col:-1}:
+      event.key==='ArrowRight'?{row:0,col:1}:null;
+    if(!vector)return;
+    event.preventDefault();
+    const row=cell.row+vector.row,col=cell.col+vector.col;
+    if(row<0||col<0||row>=puzzle.size||col>=puzzle.size)return;
+    const next=event.currentTarget.parentElement?.querySelector<HTMLButtonElement>(
+      '[data-ws-row="'+row+'"][data-ws-col="'+col+'"]');
+    next?.focus();
+  };
   const help=()=>{
     if(paused||finished)return;
     const word=puzzle.words.find(w=>!found.includes(w.id));
@@ -214,6 +237,7 @@ export default function WordSearchGame({callbacks,controller}:Props){
         return <button key={id} type="button" data-ws-row={r} data-ws-col={c}
           role="gridcell" aria-label={'Fila '+(r+1)+' columna '+(c+1)+': '+letter}
           aria-selected={selected||!!start} disabled={paused||finished}
+          onKeyDown={event=>onCellKey(event,{row:r,col:c})}
           className={'ws-cell'+(foundIndex!==undefined?' ws-found ws-color-'+foundIndex:'')+
             (selected?' ws-selected':'')+(start?' ws-start':'')+(hint?' ws-hint':'')}>
           {letter}
