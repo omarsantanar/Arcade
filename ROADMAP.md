@@ -79,3 +79,14 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Revisión editorial una por una para uso comercial, ampliación de vocabulario regional y nombres propios; consultar permisos si se pretendiera importar definiciones de DED.
 - [ ] Pruebas humanas en iOS/Android y ajuste de tamaño del tablero y variabilidad del generador.
 - [ ] Revisar y fusionar la PR de la beta solo tras aceptación de UX y revisión de fuentes.
+
+### 2026-10-27 — Sopa de Letras Dominicana
+- [x] Banco cultural compartido de 150 palabras/pistas originales y referencias DED/ASALE/UNESCO de Crucigrama.
+- [x] Ocho categorías, modalidad mixta equilibrada y niveles Inicial 10×10 / Intermedio 13×13 / Experto 15×15.
+- [x] Generador reproducible con verticales, diagonales, invertidas progresivas y comprobación de palabras encontradas.
+- [x] Interacción por arrastre de dedo/mouse y toque de extremos, lista de palabras, pistas, ayudas, tiempo y récord local.
+- [x] Integrado como quinto juego de la galería; otros cuatro conservados, Nova Run no incluido.
+- [x] 72/72 pruebas automáticas y compilación TypeScript/Vite: Actions 40579915918.
+- [ ] Vercel Preview pendiente: cuenta alcanzó el límite `api-deployments-free-per-day`. Redeploy cuando vuelva la cuota y confirmar Ready.
+- [ ] Pruebas físicas iOS/Android; chequear selección diagonal, legibilidad de 15×15, almacenamiento local y accesibilidad.
+- [ ] Progresar a banco de cientos de voces auditadas y control de fuentes por palabra, sin scraping de diccionarios protegidos.
