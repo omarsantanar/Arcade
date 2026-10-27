@@ -9,7 +9,19 @@ export type Drone = { position: Cell; previous: Cell; temporary?: boolean };
 export type PowerKind = 'turbo' | 'spawn' | 'haste' | 'absorb';
 export const POWER_DURATION_MS = 7000;
 export const POWER_COOLDOWN_MS = 3500;
-export const MAX_BLACKOUTS = 6;
+export const MAX_BLACKOUTS = 24;
+export const SMALLS_PER_LIFE = 200;
+export const BONUS_LEVELS = [3,9,15,21,27,36,45,54,63] as const;
+export const BONUS_TIME_MS = 90000;
+export function isBonusLevel(level:number):boolean {
+  return BONUS_LEVELS.includes(level as typeof BONUS_LEVELS[number]) || (level>63 && (level-63)%9===0);
+}
+export function baseBlackoutsAt(level:number):number {
+  return 2+Math.floor(Math.max(1,level)/4);
+}
+export function hasTunnel(level:number):boolean {
+  return level%3===2 && !isBonusLevel(level);
+}
 export const POWER_LABELS: Record<PowerKind, string> = {
   turbo: 'TURBO ELÉCTRICO',
   spawn: 'INVASIÓN DE APAGONES',
@@ -60,8 +72,15 @@ export interface CircuitState {
   player: Cell;
   terminals: Cell[];
   activated: boolean[];
-  shards: Cell[];
+  shards: Cell[]; // Medium 10-point energy crystals used to activate generators
+  smallPoints: Cell[]; // Small 1-point lights; 200 collected across levels = +1 life
+  smallCollected: number;
   drones: Drone[];
+  tunnelRows: number[];
+  bonusLevel: boolean;
+  bonusRemainingMs: number;
+  powerRequired: number;
+  powerCollected: number;
   energy: number;
   score: number;
   lives: number;
@@ -83,8 +102,12 @@ export const equals = (a: Cell,b:Cell) => a.x === b.x && a.y === b.y;
 export function isOpen(walls: readonly (readonly boolean[])[], p:Cell) {
   return p.y >= 0 && p.y < ROWS && p.x >= 0 && p.x < COLS && !walls[p.y][p.x];
 }
-export const adjacent = (walls: boolean[][],cell:Cell) => Object.values(vector)
-  .map(v=>({x:cell.x+v.x,y:cell.y+v.y})).filter(p=>isOpen(walls,p));
+export const adjacent = (walls: boolean[][],cell:Cell,tunnelRows:readonly number[]=[]) => Object.values(vector)
+  .map(v=>{
+    const x=cell.x+v.x,y=cell.y+v.y;
+    return {x:y===cell.y && tunnelRows.includes(y) && x<0?COLS-1:
+      y===cell.y && tunnelRows.includes(y) && x>=COLS?0:x,y};
+  }).filter(p=>isOpen(walls,p));
 const randomIndex = (size:number,random:RandomSource) => Math.min(size-1,Math.floor(Math.max(0,random())*size));
 
 /** Depth-first randomized passages with extra links. Every open cell is connected. */
@@ -115,12 +138,12 @@ export function buildLabyrinth(random: RandomSource = Math.random, crossLinks = 
   }
   return walls;
 }
-export function distanceMap(walls:boolean[][],start:Cell):Map<number,number> {
+export function distanceMap(walls:boolean[][],start:Cell,tunnelRows:readonly number[]=[]):Map<number,number> {
   const distances=new Map<number,number>([[index(start),0]]);
   const queue:Cell[]=[start];
   for(let i=0;i<queue.length;i++){
     const cell=queue[i],d=distances.get(index(cell))!;
-    for(const next of adjacent(walls,cell)){
+    for(const next of adjacent(walls,cell,tunnelRows)){
       if(distances.has(index(next)))continue;
       distances.set(index(next),d+1);
       queue.push(next);
@@ -134,14 +157,19 @@ const away = (a:Cell,b:Cell) => Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
 /** Build a solvable field: 3 connected terminals, enough shards, and a reachable exit. */
 export function newCircuit(level=1,random:RandomSource=Math.random,previousScore=0,previousLives=3):CircuitState {
   const world=worldForLevel(level);
-  const walls=buildLabyrinth(random,world.crossLinks);
-  const start={x:1,y:1};
-  const distances=distanceMap(walls,start);
+  const bonusLevel=isBonusLevel(level);
+  const walls=bonusLevel
+    ?Array.from({length:ROWS},(_,y)=>Array.from({length:COLS},(_,x)=>x===0 || x===COLS-1 || y===0 || y===ROWS-1))
+    :buildLabyrinth(random,world.crossLinks);
+  const tunnelRows=hasTunnel(level)?[9]:[];
+  for(const y of tunnelRows){walls[y][0]=false;walls[y][COLS-1]=false;}
+  const start=bonusLevel?{x:7,y:9}:{x:1,y:1};
+  const distances=distanceMap(walls,start,tunnelRows);
   const pool=[...distances.keys()].filter(i=>i!==index(start))
     .map(i=>({x:i%COLS,y:Math.floor(i/COLS)}));
   const far=pool.filter(p=>(distances.get(index(p))??0)>=12)
     .sort((a,b)=>(distances.get(index(b))??0)-(distances.get(index(a))??0));
-  const exit=far.length?far[0]:pool[pool.length-1];
+  const exit=bonusLevel?{x:13,y:17}:(far.length?far[0]:pool[pool.length-1]);
   const reserved=new Set<number>([index(start),index(exit)]);
   const chooseSeparated=(minimumDistance:number):Cell => {
     let candidates=pool.filter(p=>!reserved.has(index(p)) && (distances.get(index(p))??0)>minimumDistance
@@ -151,17 +179,24 @@ export function newCircuit(level=1,random:RandomSource=Math.random,previousScore
     reserved.add(index(p));
     return p;
   };
-  const terminals=Array.from({length:3},()=>chooseSeparated(7));
-  const drones=Array.from({length:Math.min(4,2+Math.floor((level-1)/3))},()=>{
+  const terminals=bonusLevel?[]:Array.from({length:3},()=>chooseSeparated(7));
+  const drones=Array.from({length:bonusLevel?0:Math.min(MAX_BLACKOUTS,baseBlackoutsAt(level))},()=>{
     const position=chooseSeparated(12);
     return {position,previous:position};
   });
   const shardPool=pool.filter(p=>!reserved.has(index(p)));
-  const shardCount=Math.min(world.energyFragments,shardPool.length);
+  const shardCount=Math.min(bonusLevel?4:world.energyFragments,shardPool.length);
   const shards=Array.from({length:shardCount},()=>pick(shardPool,random));
-  const powerPool=shardPool.filter(cell=>away(cell,start)>=4);
+  const powerPool=shardPool.filter(cell=>!reserved.has(index(cell)) && away(cell,start)>=3
+    && (!bonusLevel || away(cell,start)<=7));
   const powerNode=powerPool.length?powerPool[randomIndex(powerPool.length,random)]:null;
-  return {walls,start,exit,player:start,terminals,activated:[false,false,false],shards,drones,
+  if(powerNode)reserved.add(index(powerNode));
+  const smallPool=pool.filter(p=>!reserved.has(index(p)) && !shards.some(q=>equals(p,q))
+    && (!bonusLevel || away(p,start)<=7));
+  const smallPoints=Array.from({length:Math.min(bonusLevel?10:65,smallPool.length)},()=>pick(smallPool,random));
+  return {walls,start,exit,player:start,terminals,activated:terminals.map(()=>false),shards,smallPoints,
+    smallCollected:0,drones,tunnelRows,bonusLevel,bonusRemainingMs:bonusLevel?BONUS_TIME_MS:0,
+    powerRequired:1,powerCollected:0,
     energy:0,score:previousScore,lives:previousLives,level,world,steps:0,invulnerable:0,
     powerNode,powerEffect:null,powerRemainingMs:0,powerCooldownMs:0,status:'playing'};
 }
@@ -175,9 +210,10 @@ function strike(state:CircuitState):CircuitState {
 function findPowerSpot(state:CircuitState, random:RandomSource):Cell|null {
   const blocked=new Set<number>([
     index(state.start),index(state.exit),index(state.player),
-    ...state.terminals.map(index),...state.shards.map(index),...state.drones.map(d=>index(d.position)),
+    ...state.terminals.map(index),...state.shards.map(index),...state.smallPoints.map(index),
+    ...state.drones.map(d=>index(d.position)),
   ]);
-  const possible=[...distanceMap(state.walls,state.player).keys()]
+  const possible=[...distanceMap(state.walls,state.player,state.tunnelRows).keys()]
     .filter(i=>!blocked.has(i))
     .map(i=>({x:i%COLS,y:Math.floor(i/COLS)}))
     .filter(p=>away(p,state.player)>=4);
@@ -188,13 +224,16 @@ function findPowerSpot(state:CircuitState, random:RandomSource):Cell|null {
 export function tickPower(state:CircuitState,dtMs:number,random:RandomSource=Math.random):CircuitState {
   if(state.status!=='playing'||dtMs<=0)return state;
   const dt=Math.max(0,Math.min(250,dtMs));
+  const bonusRemainingMs=state.bonusLevel?Math.max(0,state.bonusRemainingMs-dt):0;
+  if(state.bonusLevel && bonusRemainingMs===0)return {...state,bonusRemainingMs,status:'gameover'};
+  state={...state,bonusRemainingMs};
   if(state.powerEffect!==null) {
     const nextRemaining=Math.max(0,state.powerRemainingMs-dt);
     if(nextRemaining>0)return {...state,powerRemainingMs:nextRemaining};
     return {...state,powerEffect:null,powerRemainingMs:0,powerCooldownMs:POWER_COOLDOWN_MS,
       drones:state.drones.filter(d=>!d.temporary)};
   }
-  if(state.powerNode!==null)return state;
+  if(state.powerNode!==null || state.powerCollected>=state.powerRequired)return state;
   const time=Math.max(0,state.powerCooldownMs-dt);
   if(time>0)return {...state,powerCooldownMs:time};
   return {...state,powerCooldownMs:0,powerNode:findPowerSpot(state,random)};
@@ -239,12 +278,19 @@ export function enemyStepMs(state:CircuitState):number {
 /** A player move can collect a shard, power a terminal or open the exit. */
 export function moveExplorer(state:CircuitState,direction:Direction,random:RandomSource=Math.random):CircuitState {
   if(state.status!=='playing'||direction==='none')return state;
-  const v=vector[direction],next={x:state.player.x+v.x,y:state.player.y+v.y};
+  const v=vector[direction];
+  const candidate={x:state.player.x+v.x,y:state.player.y+v.y};
+  const next={x:state.tunnelRows.includes(candidate.y)&&candidate.x<0?COLS-1:
+    state.tunnelRows.includes(candidate.y)&&candidate.x>=COLS?0:candidate.x,y:candidate.y};
   if(!isOpen(state.walls,next))return state;
   const shards=state.shards.filter(p=>!equals(p,next));
   const gained=shards.length===state.shards.length?0:1;
+  const smallPoints=state.smallPoints.filter(p=>!equals(p,next));
+  const smallGained=smallPoints.length===state.smallPoints.length?0:1;
+  const smallCollected=state.smallCollected+smallGained;
+  const lives=state.lives+(Math.floor(smallCollected/SMALLS_PER_LIFE)-Math.floor(state.smallCollected/SMALLS_PER_LIFE));
   let energy=state.energy+gained;
-  let score=state.score+gained*15;
+  let score=state.score+gained*10+smallGained;
   const activated=[...state.activated];
   for(let i=0;i<state.terminals.length;i++){
     if(!activated[i]&&equals(next,state.terminals[i])&&energy>=TERMINAL_COST){
@@ -255,16 +301,19 @@ export function moveExplorer(state:CircuitState,direction:Direction,random:Rando
   let powerEffect=state.powerEffect;
   let powerRemainingMs=state.powerRemainingMs;
   let drones=state.drones;
+  let powerCollected=state.powerCollected;
   if(powerNode!==null && equals(next,powerNode) && powerEffect===null){
-    powerEffect=choosePowerKind(random);
+    powerEffect=state.bonusLevel?'turbo':choosePowerKind(random);
+    powerCollected++;
     powerRemainingMs=POWER_DURATION_MS;
     powerNode=null;
-    score+=55;
     if(powerEffect==='spawn')drones=[...drones,...extraBlackouts(state,random)];
   }
-  const cleared=equals(next,state.exit)&&activated.every(Boolean);
-  let result:CircuitState={...state,player:next,shards,energy,score,activated,
-    powerNode,powerEffect,powerRemainingMs,drones,steps:state.steps+1,invulnerable:Math.max(0,state.invulnerable-1),
+  const cleared=state.bonusLevel
+    ? smallPoints.length===0 && shards.length===0 && powerCollected>=state.powerRequired
+    : equals(next,state.exit)&&activated.every(Boolean) && powerCollected>=state.powerRequired;
+  let result:CircuitState={...state,player:next,shards,smallPoints,smallCollected,lives,energy,score,activated,
+    powerNode,powerEffect,powerRemainingMs,powerCollected,drones,steps:state.steps+1,invulnerable:Math.max(0,state.invulnerable-1),
     status:cleared?'cleared' as CircuitStatus:'playing' as CircuitStatus};
   if(!cleared)result=resolveBlackoutContact(result);
   return result;
@@ -273,15 +322,16 @@ const manhattan=away;
 /** Independent geometric sentinels, with brief pursuit and longer random patrols. */
 export function stepSentinels(state:CircuitState,random:RandomSource=Math.random):CircuitState {
   if(state.status!=='playing')return state;
+  const distances=distanceMap(state.walls,state.player,state.tunnelRows);
   const drones=state.drones.map(drone=>{
-    const candidates=adjacent(state.walls,drone.position);
+    const candidates=adjacent(state.walls,drone.position,state.tunnelRows);
     if(!candidates.length)return drone;
-    const near=manhattan(drone.position,state.player)<=5;
+    const near=(distances.get(index(drone.position))??Infinity)<=6;
     let options=candidates.filter(p=>!equals(p,drone.previous));
     if(!options.length)options=candidates;
     if(near){
-      const best=Math.min(...options.map(p=>manhattan(p,state.player)));
-      if(random()<0.8)options=options.filter(p=>manhattan(p,state.player)===best);
+      const best=Math.min(...options.map(p=>distances.get(index(p))??Infinity));
+      if(random()<0.8)options=options.filter(p=>(distances.get(index(p))??Infinity)===best);
     }
     const next=options[randomIndex(options.length,random)];
     return {position:next,previous:drone.position};
