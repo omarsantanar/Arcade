@@ -55,3 +55,10 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] Implementar cuatro mundos ficticios inspirados en regiones dominicanas con parámetros de dificultad diferentes.
 - [x] Añadir pruebas de progresión por mundos y conectividad.
 - [ ] Validar la última ejecución CI/Vercel y prueba humana en móvil.
+
+### 2026-10-27 — Lumen Circuit: nodos de sobrecarga
+- [x] Nodo especial grande y claramente distinto de generadoras y cristales.
+- [x] Cuatro eventos aleatorios mutuamente excluyentes (turbo, nuevos apagones, aceleración de apagones, neutralización).
+- [x] Siete segundos de efecto, 3,5 de espera, reaparición segura y límite de agujeros negros.
+- [x] Pruebas automatizadas adicionales de efectos, tiempo, azar y colisiones.
+- [ ] Confirmar CI/preview del código final y ajustar el balance tras partidas de prueba.
