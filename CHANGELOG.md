@@ -71,3 +71,10 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - **Resultado:** Lumen ahora se dibuja como rayo eléctrico luminoso; los perseguidores, como agujeros negros; los suelos y muros son más luminosos; cuatro mundos basados en paisajes dominicanos alteran conexiones del laberinto, energía dispersa y tiempo entre movimientos de apagones. Generadoras funcionales: tres terminales deben encenderse para activar la salida.
 - **Pruebas:** añadidas comprobaciones de secuencia temática, diferencias de dificultad y accesibilidad de los objetivos. Ver ejecución de CI de la PR #4 correspondiente al commit final.
 - **Riesgos:** los nombres de centrales son ficticios e inspirados en regiones del país, no afirmaciones sobre plantas existentes. Faltan pruebas táctiles y visuales en teléfonos reales; el nombre debe revisarse antes de comercializar.
+
+## 2026-10-27 — Lumen Circuit: alta tensión y eventos aleatorios
+**Objetivo:** dar consecuencias claras al recoger el nodo grande y variar la partida.
+**Archivos afectados:** `src/games/lumen-circuit/logic.ts`, `logic.test.ts`, `LumenCircuit.ts`, `DESIGN.md` y documentos de arquitectura/continuidad/roadmap/README.
+**Implementación:** nodo dorado sobredimensionado, único por oleada de poder; cuatro efectos exclusivos: Turbo eléctrico (movimiento acelerado), Invasión de apagones (aparición temporal acotada), Apagones acelerados (movimiento enemigo más rápido) y Campo de absorción (neutralización con recompensa de 120 puntos). Cada efecto dura siete segundos activos; luego 3,5 segundos de espera y nuevo nodo en casilla libre alcanzable. Se muestra nombre y cuenta atrás; sin cambios en Neon Drift.
+**Pruebas:** suite determinista ampliada para los cuatro efectos, límites, expiración, aparición y colisiones. Resultado de CI/Vercel por confirmar para commit final.
+**Riesgos:** algunos resultados castigan al jugador; revisar comprensión de ese riesgo y justicia perceptiva en teléfonos reales.
