@@ -81,3 +81,10 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 ## Revisión Vercel — 2026-10-26
 El usuario detectó correctamente una vista previa anterior a la especificación dominicana de Lumen Circuit. Se verificó que GitHub no contenía los cambios del ZIP local y que Vercel desplegaba exitosamente ese código anterior. Se sincronizaron directamente en la rama `feat/lumen-circuit-beta` (PR #4) las mejoras gráficas: héroe rayo, apagones de centro negro, circuitos iluminados, mundos Yaque Hídrica / Sol Caribe / Brisa del Este / Ozama Térmica, mecánicas por bioma, portada e instrucciones. Neon Drift y `main` permanecen intactos. Los mundos son ficticios, inspirados en regiones dominicanas.
 **Pendiente inmediato:** confirmar último CI y estado `success` de Vercel para el SHA final; probar visualmente en móvil que el brillo contraste correctamente con los agujeros negros y que los controles táctiles mantengan su respuesta; después considerar fusionar PR #4 a rama base, sin hacer merge prematuro a `main`.
+
+## Estado inmediato — 2026-10-27 — Lumen Circuit: nodo de alta tensión
+**Solicitud del responsable:** un nodo mucho mayor con premio o riesgo aleatorio, un resultado cada vez: turbo, nuevos apagones, más velocidad enemiga o neutralización de agujeros negros. Implementado en `feat/lumen-circuit-beta` (PR #4). La regla de salida por tres generadoras, los cuatro mundos y Neon Drift se preservan.
+**Cambios:** nuevo `PowerKind`, `powerNode`, `powerEffect`, contador/espera, elección aleatoria, refuerzos temporales con máximo seis, absorción con puntos y visualizador del efecto; tests puros y documentación.
+**Pruebas:** tests adicionales escritos; última ejecución GitHub Actions y Vercel aún por confirmar.
+**Riesgos:** balance azar/penalización sin validación humana; legibilidad de aviso y del contador en celulares.
+**Próximo paso:** verificar CI, preview, prueba real móvil de los cuatro resultados; ajustar probabilidades y avisos según resultados de juego, antes de fusionar.
