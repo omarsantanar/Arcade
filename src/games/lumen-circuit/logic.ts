@@ -318,7 +318,6 @@ export function moveExplorer(state:CircuitState,direction:Direction,random:Rando
   if(!cleared)result=resolveBlackoutContact(result);
   return result;
 }
-const manhattan=away;
 /** Independent geometric sentinels, with brief pursuit and longer random patrols. */
 export function stepSentinels(state:CircuitState,random:RandomSource=Math.random):CircuitState {
   if(state.status!=='playing')return state;
