@@ -48,3 +48,10 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Revisar disponibilidad legal del nombre antes de lanzamiento.
 
 - [x] Lumen Circuit validado por GitHub Actions 40411150897 (19/19 tests, build correcto), Vercel Preview Ready.
+
+### Corrección de sincronización Vercel — 2026-10-26
+- [x] Verificar diferencia entre ZIP local y GitHub/Vercel.
+- [x] Subir al repositorio la identidad eléctrica de Lumen y los apagones, conservando concepto original.
+- [x] Implementar cuatro mundos ficticios inspirados en regiones dominicanas con parámetros de dificultad diferentes.
+- [x] Añadir pruebas de progresión por mundos y conectividad.
+- [ ] Validar la última ejecución CI/Vercel y prueba humana en móvil.
