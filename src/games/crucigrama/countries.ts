@@ -96,7 +96,7 @@ export const COUNTRY_ENTRIES:Partial<Record<CountryCode,readonly Entry[]>>={
     ['VALLENATO','Género musical colombiano cuyo acordeón es protagonista.','musica'],
     ['BOGOTA','Capital situada sobre una sabana andina.','geografia'],
     ['MEDELLIN','Ciudad antioqueña atravesada por el río del mismo nombre.','geografia'],
-    ['CARTAGENA','Ciudad caribeña colombiana de murallas coloniales.','geografia'],
+    ['CARTAGENA','Ciudad del Caribe colombiano de murallas coloniales.','geografia'],
     ['BARRANQUILLA','Ciudad costera famosa por su gran carnaval.','geografia'],
     ['GUATAPE','Municipio antioqueño conocido por sus zócalos coloridos.','geografia'],
     ['BOTERO','Apellido del artista colombiano de figuras voluminosas.','historia'],
@@ -106,7 +106,7 @@ export const COUNTRY_ENTRIES:Partial<Record<CountryCode,readonly Entry[]>>={
     ['TINTO','Nombre habitual para una taza de café negro en este país.','lexico'],
     ['CHIVA','Autobús rural de vivos colores utilizado en regiones andinas.','cultura'],
     ['CAFETERO','Adjetivo asociado al principal cultivo de las montañas centrales.','cultura'],
-    ['SOMBREROVUELTIAO','Prenda trenzada tradicional; símbolo artesanal costeño.','cultura'],
+    ['VUELTIAO','Adjetivo del sombrero tradicional tejido en caña flecha.','cultura'],
     ['BANDEJAPAISA','Plato abundante antioqueño con frijoles y distintos acompañantes.','gastronomia'],
     ['MOJANA','Región de ciénagas del norte del país.','geografia'],
     ['CALI','Ciudad del Valle del Cauca asociada con la salsa.','geografia'],
@@ -212,7 +212,7 @@ export const COUNTRY_ENTRIES:Partial<Record<CountryCode,readonly Entry[]>>={
     ['TEMBLEQUE','Postre de coco con textura suave.','gastronomia'],
     ['ALCAPURRIA','Fritura rellena hecha con masa de raíces o plátano.','gastronomia'],
     ['BORICUA','Gentilicio coloquial del habitante de la isla.','lexico'],
-    ['CUATROPR','Instrumento de cinco órdenes dobles de cuerdas, muy usado en música jíbara.','musica'],
+    ['TROVADOR','Cantor que improvisa décimas en celebraciones tradicionales.','musica'],
   ],
   EC:[
     ['QUITO','Capital andina próxima a la línea ecuatorial.','geografia'],
@@ -251,7 +251,7 @@ export const COUNTRY_ENTRIES:Partial<Record<CountryCode,readonly Entry[]>>={
     ['DURAZNO','Departamento interior cuyo nombre también designa una fruta.','geografia'],
     ['TACUAREMBO','Departamento norteño vinculado a tradiciones gauchas.','geografia'],
     ['BATLLISMO','Corriente política uruguaya asociada a José Batlle y Ordóñez.','historia'],
-    ['GARD E L'.replace(' ',''),'Apellido del cantante de tango Carlos, ligado a la tradición rioplatense.','musica'],
+    ['GARDEL','Apellido del célebre cantante de tango Carlos, vinculado al Río de la Plata.','musica'],
     ['CHARRUA','Nombre de un pueblo indígena del territorio oriental.','historia'],
   ],
   GT:[
@@ -272,7 +272,6 @@ export const COUNTRY_ENTRIES:Partial<Record<CountryCode,readonly Entry[]>>={
     ['HUEHUETENANGO','Departamento del occidente montañoso.','geografia'],
     ['PANAJACHEL','Población turística junto al lago Atitlán.','geografia'],
     ['POPOLVUH','Texto fundamental de la tradición histórica maya quiché.','cultura'],
-    ['MIXT A'.replace(' ',''),'Nombre de un estilo de comida o combinación; término regional.','lexico'],
   ],
   CR:[
     ['SANJOSE','Capital ubicada en el Valle Central.','geografia'],
