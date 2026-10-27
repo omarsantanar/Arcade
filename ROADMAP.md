@@ -74,3 +74,10 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Confirmar última CI/deploy, prueba en celulares y calibrar dificultad de mundos altos.
 
 - [x] Validación final registrada el 27 de octubre de 2026: 40/40 pruebas, compilación TypeScript/Vite y preview Vercel confirmadas para el cambio de coleccionables y túneles (GitHub Actions 40498722244). Quedan pendientes las pruebas humanas en móvil.
+
+### 2026-10-27 — Corrección de rutas imposibles
+- [x] Eliminar casillas transitables sin salida o con salida única mediante conexión mínima de corredores.
+- [x] Añadir escenario ocasional de apagón frontal al inicio; asegurar tubo conectado al extremo contrario sin retirar al perseguidor.
+- [x] Compartir el tubo de emergencia con la IA enemiga y señalarlo visualmente.
+- [x] Comprobar 1.100 mapas aleatorios más emboscadas en pruebas de topología y conectividad.
+- [ ] Verificar Vercel del último commit y observar escenarios de persecución en móvil físico.
