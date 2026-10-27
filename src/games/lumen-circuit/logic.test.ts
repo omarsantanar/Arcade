@@ -89,7 +89,10 @@ describe('Lumen Circuit original labyrinth',()=>{
         for(let i=0;i<s.drones.length;i++){
           const before=prev.drones[i].position,after=s.drones[i].position;
           expect(isOpen(s.walls,after)).toBe(true);
-          expect(Math.abs(after.x-before.x)+Math.abs(after.y-before.y)).toBeLessThanOrEqual(1);
+          const dx=Math.abs(after.x-before.x);
+          const horizontal=prev.tunnelRows.includes(after.y) && before.y===after.y
+            ?Math.min(dx,COLS-dx):dx;
+          expect(horizontal+Math.abs(after.y-before.y)).toBeLessThanOrEqual(1);
         }
         if(s.status==='gameover')break;
       }
