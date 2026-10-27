@@ -206,3 +206,12 @@
  .ws-controls select#ws-theme{max-width:140px}
 }
 @media(max-height:610px){.ws-board{width:min(100%,310px)}.ws-game{gap:5px}}
+
+/* Country selectors shared by both Spanish word games. */
+.cruci-options #cruci-country{max-width:245px;min-width:155px;flex:2}
+.ws-controls #ws-country{max-width:245px;min-width:155px;flex:2}
+@media(max-width:650px){
+  .cruci-options #cruci-country,.ws-controls #ws-country{max-width:100%;min-width:135px;flex:1}
+  .cruci-options #cruci-theme{max-width:100%}
+  .ws-controls #ws-theme{max-width:145px}
+}

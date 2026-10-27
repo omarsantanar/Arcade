@@ -31,3 +31,10 @@ El botón «Revisar letras» señala errores sin revelar respuestas; «Revelar u
 3. **Variedad/dificultad:** medir densidad, número de palabras y calidad de tableros por categoría; introducir niveles y crucigrama diario con semilla estable si los usuarios lo solicitan.
 4. **Interfaz:** evaluar lectura de 15 × 15 casillas en teléfonos pequeños, especialmente iOS, lectores de pantalla y teclado nativo.
 5. **Derechos:** no automatizar copiado de lexicones sin comprobar condiciones de reutilización y autorización.
+
+## 2026-10-27 — Nueva edición en español para varios países
+Este juego deja de llevar «Dominicano/a» en su título público. Conserva su identidad técnica e historial de desarrollo (ruta/ID internos) para que los usuarios mantengan sus partidas antiguas. La pantalla ofrece **Todo el mundo hispanohablante** o uno de 14 países/territorios (incluido Puerto Rico). Al elegir uno, los tableros contienen solo palabras **asociadas editorialmente al país** seleccionado; la asociación no implica uso exclusivo de esa palabra. La elección de tema aparece solo cuando hay vocabulario suficiente para un buen reto.
+
+La colección compartida se amplía mediante `src/games/crucigrama/countries.ts` con 240 términos culturales originales, además del material inicial de RD. El contenido incluye historia, léxico, ciudades, tradiciones, gastronomía, música, deportes y naturaleza. Las partidas siguen siendo reproducibles por semilla, y los récords usan una clave diferenciada por país. Los guardados antiguos sin código de país se restauran como «República Dominicana».
+
+**Control editorial:** contrastar cada propuesta contra fuentes fidedignas del territorio antes del lanzamiento comercial. Para español de América, ASALE (https://www.asale.org/obras-academicas/diccionarios/diccionario-de-americanismos) explica distribución regional del léxico; para RD, DED permanece como referencia. No copiar definiciones ni presentar automáticamente las nuevas 240 pistas como verificadas por academias. El código superó 78/78 pruebas en CI 40583190074; Vercel sigue bloqueado por cuota; requiere prueba táctil real y revisión de vocabulario antes de merge.

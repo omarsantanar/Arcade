@@ -1,6 +1,6 @@
 import {useEffect,useMemo,useRef,useState,type PointerEvent,type KeyboardEvent} from 'react';
 import type {GameCallbacks} from '../types';
-import {WORD_BANK,TOPIC_LABELS} from '../crucigrama/bank';
+import {WORD_BANK,TOPIC_LABELS,COUNTRY_OPTIONS,topicsFor,countryName,type CountryFilter} from '../crucigrama/bank';
 import {generateWordSearch,matchSelection,cellsAlong,sameCell,isComplete,searchScore,
   readSearchBest,validWordSearchSave,SEARCH_SAVE_KEY,SEARCH_BEST_KEY,
   type Cell,type WordSearchTheme,type WordSearchDifficulty,type WordSearchPuzzle,
@@ -10,20 +10,20 @@ export interface WordSearchController {pause:()=>void;resume:()=>void;restart:()
 interface Props {callbacks:GameCallbacks;controller:WordSearchController}
 interface Session {puzzle:WordSearchPuzzle;found:string[];elapsedMs:number;hints:number;mistakes:number}
 interface Drag {start:Cell;end:Cell;moved:boolean}
-const themes=[{value:'mixto',label:'Todo el país'},...Object.entries(TOPIC_LABELS).map(([value,label])=>({value,label}))];
+const themes=[{value:'mixto',label:'Todas las temáticas'},...Object.entries(TOPIC_LABELS).map(([value,label])=>({value,label}))];
 const difficulties=[{value:'inicial',label:'Inicial · 10×10'},{value:'intermedio',label:'Intermedio · 13×13'},
   {value:'experto',label:'Experto · 15×15'}];
 const makeSeed=()=>Math.floor(Math.random()*4294967295);
 function loadLocal(key:string){try{return window.localStorage.getItem(key);}catch{return null;}}
 function saveLocal(key:string,value:string){try{window.localStorage.setItem(key,value);}catch{/* optional */}}
-function newSession(theme:WordSearchTheme='mixto',difficulty:WordSearchDifficulty='inicial'):Session{
-  return {puzzle:generateWordSearch(theme,difficulty,makeSeed()),found:[],elapsedMs:0,hints:0,mistakes:0};
+function newSession(theme:WordSearchTheme='mixto',difficulty:WordSearchDifficulty='inicial',country:CountryFilter='todos'):Session{
+  return {puzzle:generateWordSearch(theme,difficulty,makeSeed(),country),found:[],elapsedMs:0,hints:0,mistakes:0};
 }
 function initialSession():Session{
   try{
     const data=JSON.parse(loadLocal(SEARCH_SAVE_KEY)||'null') as unknown;
     if(validWordSearchSave(data)){
-      const puzzle=generateWordSearch(data.theme,data.difficulty,data.seed);
+      const puzzle=generateWordSearch(data.theme,data.difficulty,data.seed,data.country??'DO');
       const allowed=new Set(puzzle.words.map(w=>w.id));
       return {puzzle,found:data.found.filter(id=>allowed.has(id)),elapsedMs:data.elapsedMs,
         hints:data.hints,mistakes:data.mistakes};
@@ -33,16 +33,16 @@ function initialSession():Session{
 }
 const formatTime=(milliseconds:number)=>{const s=Math.floor(milliseconds/1000);
   return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');};
-function bestFor(theme:WordSearchTheme,difficulty:WordSearchDifficulty):number{
+function bestFor(theme:WordSearchTheme,difficulty:WordSearchDifficulty,country:CountryFilter):number{
   try{
     const parsed=JSON.parse(loadLocal(SEARCH_BEST_KEY)||'{}') as Record<string,number>;
-    const n=Number(parsed[theme+':'+difficulty]);return Number.isFinite(n)&&n>0?n:0;
+    const n=Number(parsed[country+':'+theme+':'+difficulty]??(country==='DO'?parsed[theme+':'+difficulty]:0));return Number.isFinite(n)&&n>0?n:0;
   }catch{return 0;}
 }
-function recordBest(theme:WordSearchTheme,difficulty:WordSearchDifficulty,score:number){
+function recordBest(theme:WordSearchTheme,difficulty:WordSearchDifficulty,country:CountryFilter,score:number){
   try{
     const parsed=JSON.parse(loadLocal(SEARCH_BEST_KEY)||'{}') as Record<string,number>;
-    const key=theme+':'+difficulty;
+    const key=country+':'+theme+':'+difficulty;
     parsed[key]=Math.max(Number(parsed[key])||0,score);
     saveLocal(SEARCH_BEST_KEY,JSON.stringify(parsed));
   }catch{/* optional */}
@@ -81,14 +81,14 @@ export default function WordSearchGame({callbacks,controller}:Props){
     return acc;
   },{} as Record<string,SearchWord[]>),[puzzle]);
 
-  const reset=(theme:WordSearchTheme=puzzle.theme,difficulty:WordSearchDifficulty=puzzle.difficulty)=>{
-    const next=newSession(theme,difficulty);
+  const reset=(theme:WordSearchTheme=puzzle.theme,difficulty:WordSearchDifficulty=puzzle.difficulty,country:CountryFilter=puzzle.country)=>{
+    const next=newSession(theme,difficulty,country);
     setSession(next);setPaused(false);setFinished(false);setPending(null);setPreview([]);setHintId(null);
     setMessage('Desliza una palabra o toca la primera y última letra.');
     setScore(0);setBest(readSearchBest());
     callbacks.onScore(0);callbacks.onStatus('playing');
     saveLocal(SEARCH_SAVE_KEY,JSON.stringify({theme:next.puzzle.theme,difficulty:next.puzzle.difficulty,
-      seed:next.puzzle.seed,found:[],elapsedMs:0,hints:0,mistakes:0} satisfies WordSearchSave));
+      country:next.puzzle.country,seed:next.puzzle.seed,found:[],elapsedMs:0,hints:0,mistakes:0} satisfies WordSearchSave));
   };
   useEffect(()=>{
     controller.pause=()=>{setPaused(true);callbacks.onStatus('paused');};
@@ -110,7 +110,7 @@ export default function WordSearchGame({callbacks,controller}:Props){
   useEffect(()=>{
     if(finished||completed)return;
     saveLocal(SEARCH_SAVE_KEY,JSON.stringify({
-      theme:puzzle.theme,difficulty:puzzle.difficulty,seed:puzzle.seed,found,elapsedMs,hints,mistakes,
+      theme:puzzle.theme,country:puzzle.country,difficulty:puzzle.difficulty,seed:puzzle.seed,found,elapsedMs,hints,mistakes,
     } satisfies WordSearchSave));
   },[puzzle,found,elapsedMs,hints,mistakes,finished,completed]);
 
@@ -118,7 +118,7 @@ export default function WordSearchGame({callbacks,controller}:Props){
     if(!completed||finished)return;
     const result=searchScore(puzzle,elapsedMs,hints,mistakes);
     setScore(result);setFinished(true);setPaused(true);
-    recordBest(puzzle.theme,puzzle.difficulty,result);
+    recordBest(puzzle.theme,puzzle.difficulty,puzzle.country,result);
     setBest(old=>Math.max(old,result));
     callbacks.onScore(result);
     try{window.localStorage.removeItem(SEARCH_SAVE_KEY);}catch{/* optional */}
@@ -208,16 +208,21 @@ export default function WordSearchGame({callbacks,controller}:Props){
   const showHintCells=new Set(puzzle.words.find(w=>w.id===hintId)?.cells.slice(0,1)
     .map(c=>c.row+':'+c.col)??[]);
 
-  return <section className="ws-game" aria-label="Sopa de Letras Dominicana">
-    <header className="ws-head"><div><strong>SOPA DE LETRAS DOMINICANA</strong>
-      <small>{WORD_BANK.length} entradas culturales en ocho categorías</small></div>
+  return <section className="ws-game" aria-label="Sopa de Letras en Español">
+    <header className="ws-head"><div><strong>SOPA DE LETRAS EN ESPAÑOL</strong>
+      <small>{WORD_BANK.length} entradas · {COUNTRY_OPTIONS.length-1} países y territorios</small></div>
       <span className="ws-clock" aria-label={'Tiempo '+formatTime(elapsedMs)}>{formatTime(elapsedMs)}</span>
     </header>
     <div className="ws-controls">
+      <label htmlFor="ws-country">País</label>
+      <select id="ws-country" value={puzzle.country}
+        onChange={e=>reset('mixto',puzzle.difficulty,e.target.value as CountryFilter)}>
+        {COUNTRY_OPTIONS.map(item=><option key={item.code} value={item.code}>{item.name}</option>)}
+      </select>
       <label htmlFor="ws-theme">Tema</label>
       <select id="ws-theme" value={puzzle.theme}
         onChange={e=>reset(e.target.value as WordSearchTheme,puzzle.difficulty)}>
-        {themes.map(t=><option key={t.value} value={t.value}>{t.label}</option>)}
+        {themes.filter(t=>t.value==='mixto'||topicsFor(puzzle.country).includes(t.value as keyof typeof TOPIC_LABELS)).map(t=><option key={t.value} value={t.value}>{t.label}</option>)}
       </select>
       <label htmlFor="ws-difficulty">Nivel</label>
       <select id="ws-difficulty" value={puzzle.difficulty}
@@ -250,7 +255,7 @@ export default function WordSearchGame({callbacks,controller}:Props){
     <p className="ws-message" role="status">{message}</p>
     <div className="ws-actions">
       <button type="button" onClick={help} disabled={paused||finished}>Mostrar comienzo (ayuda)</button>
-      <span>Récord personal: {best||'—'} · tema/nivel: {bestFor(puzzle.theme,puzzle.difficulty)||'—'}</span>
+      <span>Récord personal: {best||'—'} · tema/nivel: {bestFor(puzzle.theme,puzzle.difficulty,puzzle.country)||'—'}</span>
     </div>
     <div className="ws-words" aria-label="Lista de palabras">
       {Object.entries(wordsByTopic).map(([topic,words])=><div key={topic} className="ws-topic">
@@ -258,7 +263,7 @@ export default function WordSearchGame({callbacks,controller}:Props){
         <div className="ws-word-list">
           {words.map(word=><details key={word.id} className={found.includes(word.id)?'found':''}>
             <summary><span>{found.includes(word.id)?'✓ ':''}{word.answer}</span>
-              <small>{word.answer.length} letras</small></summary>
+              <small>{word.answer.length} letras{puzzle.country==='todos'?' · '+countryName(word.country):''}</small></summary>
             <p>{word.clue}</p>
           </details>)}
         </div>

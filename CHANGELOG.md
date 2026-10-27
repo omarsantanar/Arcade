@@ -99,3 +99,12 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - **Riesgos:** sin ensayo en teléfonos físicos, edición documental no 100 % verificada por entrada, posible palabra accidental por relleno; no se hace merge ni se inicia monetización.
 
 **Última revisión de accesibilidad (2026-10-27):** `WordSearchGame.tsx` admite además de arrastre y dos toques táctiles, navegación con flechas y selección de extremos con Enter/Espacio en el teclado físico; sin cambios en otros juegos. Commit funcional `e875d6d46c63543f6a19119aeedbdd5dcdd12e66`: [Actions 40580465036](https://github.com/omarsantanar/Arcade/actions/runs/40580465036) completó 72/72 pruebas (5 suites), typecheck y build de Vite. Vercel mantiene error `upgradeToPro=build-rate-limit` para ese commit; sin preview Ready.
+
+## 2026-10-27 — Crucigrama y Sopa de Letras pasan a español general
+**Objetivo:** eliminar enfoque exclusivo de RD en ambos títulos y permitir tableros generales o específicos por país.
+**Archivos:** `crucigrama/{bank.ts,countries.ts,countries.test.ts,logic.ts,CrosswordGame.tsx}`, `sopa-letras/{logic.ts,WordSearchGame.tsx}`, `registry.ts`, `GameView.tsx`, `App.tsx`, `styles.css` y seis documentos raíz.
+**Resultado:** nombres visibles en Español, 14 selecciones territoriales más modo general, 240 pistas nuevas sobre el banco existente, filtros reales, récords segmentados, restauración de guardados antiguos como DO. Sin cambios a Neon Drift, Sudoku ni Lumen Circuit.
+**Pruebas:** el primer test detectó que una pista venezolana contenía la respuesta CUATRO; corregido. El commit funcional `5e7d10d88f448b8b2a7a7f2e40dbbb027aef9127` completó **78/78 tests**, TypeScript y Vite ([GitHub Actions 40583190074](https://github.com/omarsantanar/Arcade/actions/runs/40583190074)).
+**Riesgos:** revisión lingüística/territorial de las 240 entradas, pruebas reales móvil, cobertura limitada en ciertos temas. Vercel `failure` por cuota diaria; PR #8 abierta sin merge.
+
+**Ajuste final de UX:** en modo general, Crucigrama indica el país asociado a la pista activa, y Sopa de Letras lo muestra junto a las palabras de la lista. No atribuye exclusividad lingüística. Último commit de juego `80ee6125a4ebedb5e51280847e802e5f8c4fe2b7`: 78/78 pruebas y compilación correctas en [CI 40584052314](https://github.com/omarsantanar/Arcade/actions/runs/40584052314). Estado Vercel `failure` únicamente por cuota de builds.
