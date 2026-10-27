@@ -54,3 +54,26 @@ Los niveles aumentan cada 7 segundos de juego activo. La velocidad, frecuencia y
 
 ## Neon Drift v0.4.0
 Los obstáculos se distribuyen al azar antes de evaluar la viabilidad temporal de sus rutas. Los niveles 1 y 2 suelen presentar varias salidas; los altos reducen opciones. Las oleadas aparecen con intervalos variables y los bloqueos verticales se mantienen cada tres niveles. Diseño y limitaciones: src/games/neon-drift/DESIGN.md.
+
+## Lumen Circuit — tercer prototipo original (rama de revisión)
+`feat/lumen-circuit-beta`: laberinto de circuitos con tres objetivos de energía, adversarios geométricos y salida desbloqueada. Para jugar, recoge dos cristales, activa cada terminal triangular y luego busca el portal; evita centinelas. Móvil: cruceta táctil y gestos; PC: flechas/WASD. El progreso del récord se guarda localmente. Es un juego original, **no una réplica ni un producto afiliado a Pac-Man/Bandai Namco**. Se deben verificar la marca `Lumen Circuit` y los posibles parecidos audiovisuales antes del lanzamiento comercial. Documento de diseño: `src/games/lumen-circuit/DESIGN.md`.
+
+**Preview de Lumen Circuit:** https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. **Código:** [PR #4](https://github.com/omarsantanar/Arcade/pull/4). GitHub Actions [40411150897](https://github.com/omarsantanar/Arcade/actions/runs/40411150897) pasó 19/19 pruebas y build en el commit de aplicación. La preview es experimental; no supone autorización para publicación comercial.
+
+### Actualización publicada en rama de prueba: Lumen Circuit, red eléctrica dominicana
+El protagonista es un **rayo eléctrico luminoso** y sus perseguidores son **apagones visualizados como agujeros negros**. Enciende tres generadoras ficticias por mundo para activar el portal. Cuatro regiones originales inspiran dificultades y paletas: Yaque Hídrica (Cibao), Sol Caribe (Sur), Brisa del Este (Este) y Ozama Térmica (Gran Santo Domingo). Las rutas, fragmentos y frecuencias enemigas cambian entre mundos. La experiencia se abre desde [Vercel Preview](https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app) y el código actualizado está en [PR #4](https://github.com/omarsantanar/Arcade/pull/4). No es un juego oficial ni usa marca, personajes o música de otras franquicias.
+
+### Nodos de alta tensión — Lumen Circuit (2026-10-27)
+Además de los cristales pequeños y las tres generadoras, existe **un gran nodo dorado** que activa **un resultado al azar y solo uno a la vez**: Lumen más rápido, aparición de apagones adicionales, apagones más rápidos o un campo capaz de neutralizarlos por contacto. Dura siete segundos activos y luego aparece otro nodo tras una espera corta. El efecto seleccionado y el tiempo restante se ven durante la partida. El objetivo de encender las tres generadoras por mundo no cambia. Consultar `src/games/lumen-circuit/DESIGN.md`. Las modificaciones se trabajan en la preview de la PR #4, no en producción.
+
+### Nuevas reglas de Lumen Circuit (2026-10-27)
+- **Luces pequeñas:** valen 1 punto. Cada **200 luces pequeñas recogidas** concede una vida adicional; se conserva el contador entre mundos.
+- **Luces medianas:** valen **10 puntos** y aportan una carga eléctrica. Usa dos cargas para encender cada generadora.
+- **Gran nodo:** vale **0 puntos**, produce un buff/debuff aleatorio y debe recogerse para completar el nivel normal. Después de los tres generadores encendidos y el nodo grande, busca la salida.
+- **Niveles especiales:** 3, 9, 15, 21, 27, 36, 45, 54, 63 y 72/81/90…: tablero abierto sin perseguidores, 90 segundos para recoger **todos** los puntos; el punto grande concede Turbo para que la bonificación resulte fácil. Avanza inmediatamente al completar la recogida.
+- **Túneles:** algunos mapas abren tuberías a izquierda y derecha para Lumen **y** los agujeros negros.
+- **Enemigos:** 2 de inicio y +1 por cada cuatro niveles (3 desde el 4; 4 desde el 8; etc.); no hay en los niveles especiales. Máximo técnico de 24 agujeros negros.
+Ver [PR #4](https://github.com/omarsantanar/Arcade/pull/4) y [preview Vercel](https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app).
+
+### Laberintos sin encerronas — 2026-10-27
+Los mundos normales de Lumen Circuit ahora reparan únicamente las paredes necesarias para que **toda casilla jugable tenga al menos dos posibles salidas**. No se eliminan los pasillos sinuosos ni se reduce la velocidad o la cantidad de apagones. En algunos niveles desde el cuarto, Lumen aparece en una esquina con un agujero negro frente a él: en ese mapa la tubería inmediata a su izquierda conduce directamente al **otro extremo de la pantalla**. También hay un camino hacia el interior. Los apagones pueden utilizar esa misma conexión. Un aviso breve señala la posibilidad de escape; se mantiene la necesidad de reaccionar bien.

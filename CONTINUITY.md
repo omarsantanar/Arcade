@@ -66,3 +66,42 @@ Próximo paso: verificar Vitest, compilación Vite y preview de Vercel para la r
 - CI GitHub Actions: ejecución 40383943632, 11 pruebas satisfactorias y build Vite/TypeScript exitoso.
 - Preview Vercel: estado Ready en la rama feat/initial-web-portal.
 - Falta validar con usuarios y dispositivos físicos que las distintas soluciones sean perceptibles y el control responda adecuadamente.
+
+## Estado inmediato — 2026-10-26 — Lumen Circuit
+- **Solicitud:** elaborar juego original inspirado en persecución de laberintos y verificar derechos vigentes de Pac-Man.
+- **Legal:** Bandai Namco reivindica marcas y derechos de Pac-Man; las reglas abstractas no están protegidas igual que la expresión. La Ley 65-00 dominicana fue ampliada en duraciones por Ley 424-06. Evitar nombre, personajes, sonidos, mapas y trade dress; revisar marca y originalidad antes de comercializar.
+- **Desarrollo:** se implementó `src/games/lumen-circuit/` en rama `feat/lumen-circuit-beta`, independiente de Neon Drift; cuatro direcciones móviles/teclado, tres terminales para abrir salida, generación procedural y enemigos distintos.
+- **Archivos afectados:** lógica, Phaser, pruebas, registry, GameView, tipos, estilos, documentación.
+- **Pruebas:** pendientes Vitest/TS/build y Vercel tras PR; pruebas humanas Android/iOS pendientes.
+- **Riesgos:** control móvil, percepción de dificultad y originalidad audiovisual no validados.
+- **Siguiente paso:** revisar CI, preview, balancear niveles y confirmar orientación vertical en móvil. No fusionar a producción antes de revisión.
+
+**Integración verificada:** rama `feat/lumen-circuit-beta`, [PR #4](https://github.com/omarsantanar/Arcade/pull/4) en borrador; GitHub Actions [40411150897](https://github.com/omarsantanar/Arcade/actions/runs/40411150897) ejecutó con éxito 19 tests, tsc y build; Vercel preview `Ready`: https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. Siguiente paso: jugar 3 niveles en móvil, validar captación de energía, activación de 3 nodos, salida, vidas, colisiones y controles en pantalla; mejorar la inteligibilidad del tablero si falla. Revisar marca/propiedad intelectual antes de comercialización. No fusionar a producción todavía.
+
+## Revisión Vercel — 2026-10-26
+El usuario detectó correctamente una vista previa anterior a la especificación dominicana de Lumen Circuit. Se verificó que GitHub no contenía los cambios del ZIP local y que Vercel desplegaba exitosamente ese código anterior. Se sincronizaron directamente en la rama `feat/lumen-circuit-beta` (PR #4) las mejoras gráficas: héroe rayo, apagones de centro negro, circuitos iluminados, mundos Yaque Hídrica / Sol Caribe / Brisa del Este / Ozama Térmica, mecánicas por bioma, portada e instrucciones. Neon Drift y `main` permanecen intactos. Los mundos son ficticios, inspirados en regiones dominicanas.
+**Pendiente inmediato:** confirmar último CI y estado `success` de Vercel para el SHA final; probar visualmente en móvil que el brillo contraste correctamente con los agujeros negros y que los controles táctiles mantengan su respuesta; después considerar fusionar PR #4 a rama base, sin hacer merge prematuro a `main`.
+
+## Estado inmediato — 2026-10-27 — Lumen Circuit: nodo de alta tensión
+**Solicitud del responsable:** un nodo mucho mayor con premio o riesgo aleatorio, un resultado cada vez: turbo, nuevos apagones, más velocidad enemiga o neutralización de agujeros negros. Implementado en `feat/lumen-circuit-beta` (PR #4). La regla de salida por tres generadoras, los cuatro mundos y Neon Drift se preservan.
+**Cambios:** nuevo `PowerKind`, `powerNode`, `powerEffect`, contador/espera, elección aleatoria, refuerzos temporales con máximo seis, absorción con puntos y visualizador del efecto; tests puros y documentación.
+**Pruebas:** tests adicionales escritos; última ejecución GitHub Actions y Vercel aún por confirmar.
+**Riesgos:** balance azar/penalización sin validación humana; legibilidad de aviso y del contador en celulares.
+**Próximo paso:** verificar CI, preview, prueba real móvil de los cuatro resultados; ajustar probabilidades y avisos según resultados de juego, antes de fusionar.
+
+**Resultado de validación:** [GitHub Actions 40494565328](https://github.com/omarsantanar/Arcade/actions/runs/40494565328): 30/30 pruebas, `tsc --noEmit` y build Vite aprobados. Estado Vercel para el commit `f458617262804e9feae08d7c6924e9581f381c11`: `success`. Preview: https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. Las pruebas certifican reglas de software, **no** la experiencia de juego en dispositivos físicos. PR #4 permanece experimental.
+
+## Estado al 2026-10-27 — Lumen Circuit: tres tamaños, bonus y teletransporte lateral
+**Reglas implementadas en `feat/lumen-circuit-beta` (PR #4):** pequeños (+1, vida por 200 totales consumidos entre mundos), medianos (+10 y energía para generadoras), grandes (buff/debuff sin puntos; recoger uno es obligatorio para completar nivel normal). Mundo normal requiere tres generadoras, nodo grande y salida. Mundos 3/9/15/21/27/36/45/54/63 (después cada 9) son bonificaciones de 90 segundos para recoger todos los puntos de mapa abierto, sin apagones ni requisito de generadoras. Algunos laberintos añaden túneles laterales que usan también los agujeros negros. En mundos ordinarios empieza con dos apagones y se agrega uno en niveles 4,8,12,16 etc.; tope técnico 24 simultáneos.
+**Archivos:** `src/games/lumen-circuit/logic.ts`, `LumenCircuit.ts`, `logic.test.ts`, `DESIGN.md` y seis documentos de raíz. **Pruebas:** la primera ejecución detectó que un test antiguo medía el salto por túnel como 14 casillas en vez de una; se corrigió la aserción para respetar el grafo del juego. Falta confirmar CI/build y Vercel del commit final.
+**Siguiente:** verificar CI/preview, probar en celular con los tres tamaños, el HUD del cronómetro, que las bonificaciones resulten fáciles y evaluar rendimiento cuando aumenta la cantidad de agujeros negros.
+**Riesgos:** el usuario podría entender «200 puntos pequeños» como 200 de score total o 200 recogidas; se implementó **200 recogidas pequeñas** porque los medianos tienen puntuación independiente. Se espera validación de UX para dificultad y temporizador.
+
+**Última validación del código (27-oct-2026):** [Actions 40498530032](https://github.com/omarsantanar/Arcade/actions/runs/40498530032) pasó 40/40 pruebas, TypeScript y build Vite; Vercel informó `success` en `0a34487d673310fb8aee3d0f8339bcc98dbce194`. Dirección de prueba: https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. No se ha fusionado PR #4 a producción. **Próximo paso:** UX móvil de niveles 3/4/8, vida extra al llegar a 200 puntos pequeños y maniobras por tubo con apagones.
+
+## Estado — 2026-10-27 — Corrección de encerronas en Lumen Circuit
+**Solicitud:** los mapas no deben tener puntos totalmente cerrados. Si Lumen inicia en una esquina con agujero negro de frente, debe tener una salida de tubería al extremo opuesto; no reducir dificultad.
+**Código en PR #4, rama `feat/lumen-circuit-beta`:** `blindAlleys` (identifica celdas de grado menor que 2), `repairBlindAlleys` (rompe solo paredes que crean rutas alternativas) y `openCornerEscape` (tubo en fila de inicio). Emboscada de probabilística por mundo normal a partir del nivel 4, perseguidor junto al inicio; el escape izquierdo conduce al extremo derecho y el interior mantiene otro camino. Misma IA, número y velocidad de apagones. El HUD anuncia la tubería al empezar esa emboscada. Mundos bonus y reglas de puntuación se preservan.
+**Archivos:** `src/games/lumen-circuit/{logic.ts,logic.test.ts,LumenCircuit.ts,DESIGN.md}` y seis documentos raíz.
+**Pruebas:** suite de 45 tests, compilación aprobada en CI 40500246484; ver Vercel del último commit antes de cerrar. **Riesgos:** ausencia de callejones geométricos no equivale a invulnerabilidad; es necesario probar la persecución en móvil.
+**Siguiente paso:** probar visualmente escenarios de emboscada, evaluar si se interpreta el tubo de inicio y si la dificultad sigue atractiva con rutas alternativas.

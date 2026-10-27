@@ -31,12 +31,12 @@ export default function App() {
             <div className="hero-content">
               <div className="eyebrow"><span className="live-dot" /> TU ESPACIO DE JUEGO, SIN DESCARGAS</div>
               <h1>La diversión<br />no tiene <em>pausa.</em></h1>
-              <p>La esencia de los arcades de siempre. Juegos originales, partidas rápidas y toda la emoción directamente en tu navegador.</p>
-              <div className="hero-buttons"><button className="primary-button" onClick={() => setActiveGameId('neon-drift')}>Jugar ahora <span aria-hidden="true">↗</span></button><a className="secondary-button" href="#juegos">Ver juegos ↓</a></div>
+              <p>La esencia de los arcades de siempre. Juegos originales y mundos eléctricos inspirados en República Dominicana, directamente en tu navegador.</p>
+              <div className="hero-buttons"><button className="primary-button" onClick={() => setActiveGameId('lumen-circuit')}>Jugar Lumen Circuit <span aria-hidden="true">↗</span></button><a className="secondary-button" href="#juegos">Ver juegos ↓</a></div>
               <div className="hero-meta"><span>✧ Sin instalaciones</span><span>▣ En móvil y PC</span><span>∞ Juega gratis</span></div>
             </div>
             <div className="hero-visual" aria-hidden="true">
-              <div className="visual-glow" /><div className="visual-ring ring-1" /><div className="visual-ring ring-2" /><div className="visual-ring ring-3" /><div className="orbit-symbol">◢</div><div className="visual-label">PRESS START<br /><small>NEW HIGH SCORE</small></div>
+              <div className="visual-glow" /><div className="visual-ring ring-1" /><div className="visual-ring ring-2" /><div className="visual-ring ring-3" /><div className="orbit-symbol">⚡</div><div className="visual-label">LUMEN CIRCUIT<br /><small>ENCIENDE Y ESCAPA</small></div>
               <span className="visual-spark spark-one">✦</span><span className="visual-spark spark-two">+</span>
             </div>
           </section>

@@ -51,3 +51,47 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - GitHub Actions [ejecución 40372684449](https://github.com/omarsantanar/Arcade/actions/runs/40372684449), commit de código `319428d180a495ac13b951068247b79cfa122d06`: **7/7 tests y build TypeScript/Vite correctos**.
 - Estado del despliegue Vercel: **success**, comprobado para ese commit. La vista previa permanece en la rama de PR #1; no se considera producción.
 - Queda pendiente comprobar dificultad, latencia, percepción de falsos huecos y controles en Safari iOS y Chrome Android.
+
+## 2026-10-26 — Lumen Circuit, nueva beta de laberintos (sin integración a main)
+**Objetivo:** construir juego original de persecución y circuitos sin reutilizar personajes, mapas, música o identidad de Pac-Man.
+**Archivos:** `src/games/lumen-circuit/{logic.ts,logic.test.ts,LumenCircuit.ts,DESIGN.md}`, `src/games/types.ts`, `src/games/registry.ts`, `src/components/GameView.tsx`, `src/styles.css`, test de catálogo y documentación.
+**Cambios:** mapas aleatorios conectados, cristales energéticos, tres terminales de carga, salida condicionada, tres vidas, centinelas angulares, cuatro direcciones táctiles/teclado, dificultad por nivel y récord local. Neon Drift sin cambios jugables.
+**Pruebas:** suite de simulación y comprobaciones Vitest escritas; comprobación de CI/build en GitHub y preview pendientes del PR.
+**Resultado:** rama de trabajo `feat/lumen-circuit-beta`, basada en la beta de Neon Drift, sin fusionar.
+**Riesgos:** controles móviles no probados en dispositivos físicos; revisión de marca para el nombre y valoración jurídica de parecido final antes de distribución comercial. No garantizar ausencia absoluta de infracción.
+
+**Validación inicial confirmada:** GitHub Actions [40411150897](https://github.com/omarsantanar/Arcade/actions/runs/40411150897) verificó el commit de código `c3956040f0162b8b7cd1b6abdfb255dadff2e3b2`: **19/19 pruebas** (8 Lumen Circuit, 11 Neon Drift) y compilación TypeScript/Vite satisfactoria. Vercel informó estado `success` y preview Ready: https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. Las pruebas automatizadas no sustituyen un test en teléfonos físicos ni una autorización jurídica.
+
+**Ajuste táctil:** se corrigió un doble desplazamiento que podía ocurrir al presionar por primera vez la cruceta; el primer toque desplaza una celda y la repetición solo comienza tras el intervalo de movimiento. Archivo: `src/games/lumen-circuit/LumenCircuit.ts`. Requiere revisión final de CI y prueba en dispositivo.
+
+## 2026-10-26 — Lumen Circuit: sincronización efectiva de Vercel y temática eléctrica dominicana
+- **Problema reportado:** la preview Vercel mostraba aún un protagonista romboidal y centinelas geométricos; los cambios prometidos estaban solo en un ZIP local sin sincronización con GitHub.
+- **Objetivo:** publicar en la rama `feat/lumen-circuit-beta` la identidad visual correcta sin fusionar a `main`.
+- **Archivos afectados:** `src/games/lumen-circuit/{logic.ts,LumenCircuit.ts,logic.test.ts}`, `src/components/GameView.tsx`, `src/games/registry.ts`, `src/App.tsx`, documentación.
+- **Resultado:** Lumen ahora se dibuja como rayo eléctrico luminoso; los perseguidores, como agujeros negros; los suelos y muros son más luminosos; cuatro mundos basados en paisajes dominicanos alteran conexiones del laberinto, energía dispersa y tiempo entre movimientos de apagones. Generadoras funcionales: tres terminales deben encenderse para activar la salida.
+- **Pruebas:** añadidas comprobaciones de secuencia temática, diferencias de dificultad y accesibilidad de los objetivos. Ver ejecución de CI de la PR #4 correspondiente al commit final.
+- **Riesgos:** los nombres de centrales son ficticios e inspirados en regiones del país, no afirmaciones sobre plantas existentes. Faltan pruebas táctiles y visuales en teléfonos reales; el nombre debe revisarse antes de comercializar.
+
+## 2026-10-27 — Lumen Circuit: alta tensión y eventos aleatorios
+**Objetivo:** dar consecuencias claras al recoger el nodo grande y variar la partida.
+**Archivos afectados:** `src/games/lumen-circuit/logic.ts`, `logic.test.ts`, `LumenCircuit.ts`, `DESIGN.md` y documentos de arquitectura/continuidad/roadmap/README.
+**Implementación:** nodo dorado sobredimensionado, único por oleada de poder; cuatro efectos exclusivos: Turbo eléctrico (movimiento acelerado), Invasión de apagones (aparición temporal acotada), Apagones acelerados (movimiento enemigo más rápido) y Campo de absorción (neutralización con recompensa de 120 puntos). Cada efecto dura siete segundos activos; luego 3,5 segundos de espera y nuevo nodo en casilla libre alcanzable. Se muestra nombre y cuenta atrás; sin cambios en Neon Drift.
+**Pruebas:** suite determinista ampliada para los cuatro efectos, límites, expiración, aparición y colisiones. Resultado de CI/Vercel por confirmar para commit final.
+**Riesgos:** algunos resultados castigan al jugador; revisar comprensión de ese riesgo y justicia perceptiva en teléfonos reales.
+
+**Validación del sistema de nodos especiales (2026-10-27):** GitHub Actions [40494565328](https://github.com/omarsantanar/Arcade/actions/runs/40494565328) pasó 30/30 pruebas y compilación TypeScript/Vite sobre `f458617262804e9feae08d7c6924e9581f381c11`. Vercel informó despliegue `success` del preview de la rama. Queda pendiente prueba de legibilidad y balance en iOS/Android.
+
+## 2026-10-27 — Lumen Circuit: tres tipos de puntos, bonificación, túneles y más apagones
+- **Objetivo:** vincular supervivencia a puntos pequeños; puntuar chispas medianas a 10; convertir el gran nodo sin puntos en requisito del mundo; ofrecer niveles de respiro contrarreloj y túneles horizontales.
+- **Código:** `src/games/lumen-circuit/logic.ts`, `LumenCircuit.ts`, `logic.test.ts`; documentación en `DESIGN.md`, README, ARCHITECTURE, CONTINUITY, ROADMAP y AGENTS.
+- **Implementación:** cada 200 puntos pequeños (+1 por recogida) recibes una vida nueva, acumulada entre mundos; medianos aportan 10 y energía; grande activa un único efecto pero 0 puntos y es necesario para abrir portal normal. Bonificaciones 3,9,15,21,27,36,45,54,63 y cada nueve después: 90 s, sin apagones, interior despejado y todos los puntos obligatorios; sin generadoras. En algunos mundos, tubería de extremo a extremo para jugador y agujeros negros. Desde nivel 4, se añade un agujero negro permanente cada 4 niveles; bonificaciones excluidas.
+- **Tests:** extendidos para umbral de 200, cambio de mundo, valor de cada tamaño, gran nodo obligatorio, reloj, secuencia de niveles, enlace lateral y IA en túnel, escalado cada cuatro niveles. Revisar estado final de CI/Vercel en la PR #4.
+- **Riesgos:** mundos muy altos con muchos apagones y 90 s de bonificación deben comprobarse con usuarios, especialmente controles táctiles. La interpretación de «etc.» se documenta como +9 después del 63; es modificable.
+
+**Validación confirmada (2026-10-27):** ejecución [GitHub Actions 40498530032](https://github.com/omarsantanar/Arcade/actions/runs/40498530032), commit funcional `0a34487d673310fb8aee3d0f8339bcc98dbce194`: 40/40 pruebas, comprobación TypeScript y compilación Vite exitosas. Estado Vercel: `success` para esa misma revisión. Antes de aprobar una beta pública falta jugar los mundos especiales/tuberías en teléfonos reales, valorar el tiempo de 90 segundos y medir rendimiento con más de diez apagones.
+
+## 2026-10-27 — Lumen Circuit: corredores sin callejones y escape ante emboscada
+**Objetivo:** evitar laberintos con entradas sin salida y situaciones de inicio en esquina con apagón frontal sin ruta de escape, **sin bajar dificultad**.
+**Archivos afectados:** `src/games/lumen-circuit/logic.ts`, `logic.test.ts`, `LumenCircuit.ts`, `DESIGN.md` y documentación README, ARCHITECTURE, CHANGELOG, CONTINUITY, ROADMAP, AGENTS.
+**Implementación:** bucles mínimos conectan callejones (todas las casillas transitables, incluyendo tubos, tienen al menos dos salidas); emboscadas ocasionales en mundos normales desde nivel 4 con un apagón delante, tubería en el mismo renglón inicial al lado contrario de pantalla y salida normal adicional. El perseguidor también puede recorrer la tubería. Se comunica la maniobra inicial en HUD.
+**Pruebas:** tests específicos sobre 1.100 mapas de 20 niveles/55 semillas más cientos de escenarios de amenaza; 45/45 tests, TypeScript y Vite aprobados en el primer commit de código (GitHub Actions 40500246484). **Riesgos:** garantía geométrica no equivale a asegurar éxito de una maniobra; hace falta test de latencia/reacción con jugadores.

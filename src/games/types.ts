@@ -23,6 +23,8 @@ export interface GameHandle {
   resume: () => void;
   restart: () => void;
   setDirection: (direction: ControlDirection) => void;
+  /** Optional 4-way movement for maze modules; horizontal-only games need not implement it. */
+  setMove?: (direction: 'up' | 'down' | 'left' | 'right' | 'none') => void;
   setMuted: (muted: boolean) => void;
   destroy: () => void;
 }

@@ -38,3 +38,46 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 
 - [x] CI validado para v0.4.0, ejecución 40383943632: 11 pruebas y build satisfactorios.
 - [ ] Validar en móvil rutas alternativas y equilibrio de niveles 1, 3, 6 y 10.
+
+### 2026-10-26 — Lumen Circuit, laberintos originales
+- [x] Documentar límites de propiedad intelectual y diseño audiovisual original.
+- [x] Crear lógica de laberintos conectados, objetivos energéticos, centinelas y controles de cuatro direcciones.
+- [x] Integrar módulo independiente y tests en el catálogo del portal (rama `feat/lumen-circuit-beta`).
+- [ ] Confirmar GitHub Actions y despliegue de preview.
+- [ ] Probar iOS/Android: latencia, desplazamiento, señales de terminales, colisiones y balance.
+- [ ] Revisar disponibilidad legal del nombre antes de lanzamiento.
+
+- [x] Lumen Circuit validado por GitHub Actions 40411150897 (19/19 tests, build correcto), Vercel Preview Ready.
+
+### Corrección de sincronización Vercel — 2026-10-26
+- [x] Verificar diferencia entre ZIP local y GitHub/Vercel.
+- [x] Subir al repositorio la identidad eléctrica de Lumen y los apagones, conservando concepto original.
+- [x] Implementar cuatro mundos ficticios inspirados en regiones dominicanas con parámetros de dificultad diferentes.
+- [x] Añadir pruebas de progresión por mundos y conectividad.
+- [ ] Validar la última ejecución CI/Vercel y prueba humana en móvil.
+
+### 2026-10-27 — Lumen Circuit: nodos de sobrecarga
+- [x] Nodo especial grande y claramente distinto de generadoras y cristales.
+- [x] Cuatro eventos aleatorios mutuamente excluyentes (turbo, nuevos apagones, aceleración de apagones, neutralización).
+- [x] Siete segundos de efecto, 3,5 de espera, reaparición segura y límite de agujeros negros.
+- [x] Pruebas automatizadas adicionales de efectos, tiempo, azar y colisiones.
+- [ ] Confirmar CI/preview del código final y ajustar el balance tras partidas de prueba.
+
+- [x] Validación CI inicial de nodos especiales: 30/30 pruebas y build; estado Vercel `success` (ejecución 40494565328).
+
+### 2026-10-27 — Puntuación por tamaños, túneles y niveles especiales
+- [x] 200 luces pequeñas recogidas entre mundos → +1 vida.
+- [x] Puntos medios de 10 puntos y energía; gran punto sin puntuación pero obligatorio.
+- [x] Bonificaciones indicadas: 3,9,15,21,27,36,45,54,63 y 72+ cada 9, sin enemigos, con 90 s para recogerlo todo.
+- [x] Conexión por tubos horizontales en ciertos mapas para Lumen y perseguidores.
+- [x] +1 agujero negro cada cuatro niveles desde el 4; excepción de mundos bonificación.
+- [ ] Confirmar última CI/deploy, prueba en celulares y calibrar dificultad de mundos altos.
+
+- [x] Validación final registrada el 27 de octubre de 2026: 40/40 pruebas, compilación TypeScript/Vite y preview Vercel confirmadas para el cambio de coleccionables y túneles (GitHub Actions 40498722244). Quedan pendientes las pruebas humanas en móvil.
+
+### 2026-10-27 — Corrección de rutas imposibles
+- [x] Eliminar casillas transitables sin salida o con salida única mediante conexión mínima de corredores.
+- [x] Añadir escenario ocasional de apagón frontal al inicio; asegurar tubo conectado al extremo contrario sin retirar al perseguidor.
+- [x] Compartir el tubo de emergencia con la IA enemiga y señalarlo visualmente.
+- [x] Comprobar 1.100 mapas aleatorios más emboscadas en pruebas de topología y conectividad.
+- [ ] Verificar Vercel del último commit y observar escenarios de persecución en móvil físico.
