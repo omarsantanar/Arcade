@@ -208,7 +208,7 @@ export default function WordSearchGame({callbacks,controller}:Props){
   const showHintCells=new Set(puzzle.words.find(w=>w.id===hintId)?.cells.slice(0,1)
     .map(c=>c.row+':'+c.col)??[]);
 
-  return <section className="ws-game" aria-label="Sopa de Letras Dominicana">
+  return <section className="ws-game" aria-label="Sopa de Letras en Español">
     <header className="ws-head"><div><strong>SOPA DE LETRAS EN ESPAÑOL</strong>
       <small>{WORD_BANK.length} entradas · {COUNTRY_OPTIONS.length-1} países y territorios</small></div>
       <span className="ws-clock" aria-label={'Tiempo '+formatTime(elapsedMs)}>{formatTime(elapsedMs)}</span>
