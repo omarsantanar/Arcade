@@ -2,7 +2,7 @@ import {useEffect,useMemo,useRef,useState,type PointerEvent} from 'react';
 import type {GameCallbacks} from '../types';
 import {WORD_BANK,TOPIC_LABELS} from '../crucigrama/bank';
 import {generateWordSearch,matchSelection,cellsAlong,sameCell,isComplete,searchScore,
-  readSearchBest,validWordSearchSave,SEARCH_SAVE_KEY,SEARCH_BEST_KEY,DIFFICULTIES,
+  readSearchBest,validWordSearchSave,SEARCH_SAVE_KEY,SEARCH_BEST_KEY,
   type Cell,type WordSearchTheme,type WordSearchDifficulty,type WordSearchPuzzle,
   type WordSearchSave,type SearchWord} from './logic';
 
@@ -226,7 +226,7 @@ export default function WordSearchGame({callbacks,controller}:Props){
     <p className="ws-message" role="status">{message}</p>
     <div className="ws-actions">
       <button type="button" onClick={help} disabled={paused||finished}>Mostrar comienzo (ayuda)</button>
-      <span>Mejor marca: {best||'—'}</span>
+      <span>Récord de este tema y nivel: {bestFor(puzzle.theme,puzzle.difficulty)||'—'}</span>
     </div>
     <div className="ws-words" aria-label="Lista de palabras">
       {Object.entries(wordsByTopic).map(([topic,words])=><div key={topic} className="ws-topic">
