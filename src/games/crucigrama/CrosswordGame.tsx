@@ -1,6 +1,6 @@
 import {useCallback,useEffect,useMemo,useState} from 'react';
 import type {GameCallbacks} from '../types';
-import {TOPIC_LABELS,normalizeAnswer,WORD_BANK} from './bank';
+import {TOPIC_LABELS,normalizeAnswer,WORD_BANK,COUNTRY_OPTIONS,topicsFor,type CountryFilter} from './bank';
 import {generateCrossword,emptyFill,entryCells,filledProgress,isCrosswordSolved,
   findEntryAt,validSave,CROSSWORD_SAVE_KEY,CROSSWORD_BEST_KEY,
   type CrosswordTheme,type CrosswordSaved,type CrosswordPuzzle,type PlacedWord} from './logic';
@@ -11,15 +11,15 @@ interface Session {puzzle:CrosswordPuzzle;fill:string[][];elapsedMs:number;hints
 const getLocal=(key:string)=>{try{return window.localStorage.getItem(key);}catch{return null;}};
 const setLocal=(key:string,value:string)=>{try{window.localStorage.setItem(key,value);}catch{/* optional */}};
 const newSeed=()=>Math.floor(Math.random()*4294967295);
-const createSession=(theme:CrosswordTheme='mixto'):Session=>{
-  const puzzle=generateCrossword(theme,newSeed());
+const createSession=(theme:CrosswordTheme='mixto',country:CountryFilter='todos'):Session=>{
+  const puzzle=generateCrossword(theme,newSeed(),country);
   return {puzzle,fill:emptyFill(puzzle),elapsedMs:0,hints:0};
 };
 function loadSession():Session{
   try{
     const raw=JSON.parse(getLocal(CROSSWORD_SAVE_KEY)||'null') as unknown;
     if(validSave(raw)){
-      const puzzle=generateCrossword(raw.theme,raw.seed);
+      const puzzle=generateCrossword(raw.theme,raw.seed,raw.country??'DO');
       return {puzzle,fill:raw.fill,elapsedMs:raw.elapsedMs,hints:raw.hints};
     }
   }catch{/* corrupt or unavailable */ }
@@ -27,14 +27,14 @@ function loadSession():Session{
 }
 function clock(ms:number){const n=Math.floor(ms/1000);return Math.floor(n/60).toString().padStart(2,'0')+':'+(n%60).toString().padStart(2,'0');}
 const alphabet=[...'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'];
-const choices=[{value:'mixto',label:'Todo el país'},...Object.entries(TOPIC_LABELS).map(([value,label])=>({value,label}))];
-function readBest(theme:CrosswordTheme):number{
+const choices=[{value:'mixto',label:'Todas las temáticas'},...Object.entries(TOPIC_LABELS).map(([value,label])=>({value,label}))];
+function readBest(theme:CrosswordTheme,country:CountryFilter):number{
   try{const d=JSON.parse(getLocal(CROSSWORD_BEST_KEY)||'{}') as Record<string,number>;
-    const n=Number(d[theme]);return Number.isFinite(n)&&n>0?n:0;}catch{return 0;}
+    const n=Number(d[country+':'+theme]??(country==='DO'?d[theme]:0));return Number.isFinite(n)&&n>0?n:0;}catch{return 0;}
 }
-function saveBest(theme:CrosswordTheme,score:number){
+function saveBest(theme:CrosswordTheme,country:CountryFilter,score:number){
   try{const d=JSON.parse(getLocal(CROSSWORD_BEST_KEY)||'{}') as Record<string,number>;
-    d[theme]=Math.max(Number(d[theme])||0,score);setLocal(CROSSWORD_BEST_KEY,JSON.stringify(d));}catch{/* optional */ }
+    const key=country+':'+theme;d[key]=Math.max(Number(d[key])||0,score);setLocal(CROSSWORD_BEST_KEY,JSON.stringify(d));}catch{/* optional */ }
 }
 export default function CrosswordGame({callbacks,controller}:Props){
   const [session,setSession]=useState<Session>(loadSession);
@@ -55,15 +55,15 @@ export default function CrosswordGame({callbacks,controller}:Props){
   const progress=filledProgress(puzzle,fill);
   const complete=isCrosswordSolved(puzzle,fill);
   const [score,setScore]=useState(0);
-  const [best,setBest]=useState(()=>readBest(puzzle.theme));
+  const [best,setBest]=useState(()=>readBest(puzzle.theme,puzzle.country));
 
-  const reset=(theme:CrosswordTheme=puzzle.theme)=>{
-    const next=createSession(theme);
+  const reset=(theme:CrosswordTheme=puzzle.theme,country:CountryFilter=puzzle.country)=>{
+    const next=createSession(theme,country);
     setSession(next);setSelection({row:0,col:0,id:null});
     setPaused(false);setFinished(false);setShowReview(false);setScore(0);
-    setBest(readBest(theme));
+    setBest(readBest(theme,country));
     callbacks.onScore(0);callbacks.onStatus('playing');
-    setLocal(CROSSWORD_SAVE_KEY,JSON.stringify({theme:next.puzzle.theme,seed:next.puzzle.seed,
+    setLocal(CROSSWORD_SAVE_KEY,JSON.stringify({theme:next.puzzle.theme,country:next.puzzle.country,seed:next.puzzle.seed,
       elapsedMs:0,fill:next.fill,hints:0} satisfies CrosswordSaved));
   };
   useEffect(()=>{
@@ -85,7 +85,7 @@ export default function CrosswordGame({callbacks,controller}:Props){
 
   useEffect(()=>{
     if(finished||complete)return;
-    setLocal(CROSSWORD_SAVE_KEY,JSON.stringify({theme:puzzle.theme,seed:puzzle.seed,fill,
+    setLocal(CROSSWORD_SAVE_KEY,JSON.stringify({theme:puzzle.theme,country:puzzle.country,seed:puzzle.seed,fill,
       elapsedMs,hints} satisfies CrosswordSaved));
   },[puzzle,fill,elapsedMs,hints,finished,complete]);
 
@@ -94,7 +94,7 @@ export default function CrosswordGame({callbacks,controller}:Props){
     const result=Math.max(100,Math.round(1000+puzzle.entries.length*110-
       elapsedMs/1200-hints*150));
     setScore(result);setFinished(true);setPaused(true);
-    saveBest(puzzle.theme,result);
+    saveBest(puzzle.theme,puzzle.country,result);
     setBest(current=>Math.max(current,result));
     callbacks.onScore(result);
     try{window.localStorage.removeItem(CROSSWORD_SAVE_KEY);}catch{/* optional */}
@@ -180,13 +180,17 @@ export default function CrosswordGame({callbacks,controller}:Props){
 
   return <section className="cruci-game" aria-label="Crucigrama dominicano">
     <header className="cruci-head">
-      <div><strong>CRUCIGRAMA DOMINICANO</strong><small>{WORD_BANK.length} voces, sitios y referencias culturales</small></div>
+      <div><strong>CRUCIGRAMA EN ESPAÑOL</strong><small>{WORD_BANK.length} entradas culturales · {COUNTRY_OPTIONS.length-1} países y territorios</small></div>
       <div className="cruci-timer" aria-label={'Tiempo '+clock(elapsedMs)}>{clock(elapsedMs)}</div>
     </header>
     <div className="cruci-options">
+      <label htmlFor="cruci-country">País</label>
+      <select id="cruci-country" value={puzzle.country} onChange={e=>reset('mixto',e.target.value as CountryFilter)}>
+        {COUNTRY_OPTIONS.map(item=><option key={item.code} value={item.code}>{item.name}</option>)}
+      </select>
       <label htmlFor="cruci-theme">Tema</label>
       <select id="cruci-theme" value={puzzle.theme} onChange={e=>reset(e.target.value as CrosswordTheme)}>
-        {choices.map(c=><option key={c.value} value={c.value}>{c.label}</option>)}
+        {choices.filter(c=>c.value==='mixto'||topicsFor(puzzle.country).includes(c.value as keyof typeof TOPIC_LABELS)).map(c=><option key={c.value} value={c.value}>{c.label}</option>)}
       </select>
       <button type="button" onClick={()=>reset()} title="Crear otro crucigrama">Nuevo</button>
     </div>
@@ -240,7 +244,7 @@ export default function CrosswordGame({callbacks,controller}:Props){
     {finished&&<div className="cruci-finish" role="dialog" aria-label="Crucigrama completado">
       <strong>¡CRUCIGRAMA RESUELTO!</strong>
       <p>{clock(elapsedMs)} · {score} puntos · {hints} pistas usadas</p>
-      <button type="button" onClick={()=>reset()}>Otro crucigrama dominicano</button>
+      <button type="button" onClick={()=>reset()}>Otro crucigrama en español</button>
     </div>}
   </section>;
 }
