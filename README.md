@@ -86,4 +86,22 @@ Arcade incorpora **Crucigrama Dominicano** como cuarta tarjeta jugable junto con
 **Desarrollo:** `src/games/crucigrama/{bank.ts,logic.ts,CrosswordGame.tsx,Crossword.ts,logic.test.ts,DESIGN.md}`. Rama `feat/crucigrama-dominicano`, [PR #6](https://github.com/omarsantanar/Arcade/pull/6), con base en el portal integrado de tres juegos (PR #5). [Preview Vercel](https://arcade-git-feat-crucigrama-dominicano-omar-santanas-projects.vercel.app). Ejecutar: `git switch feat/crucigrama-dominicano && npm ci && npm run dev`; pruebas: `npm run test && npm run build`.
 
 **Fuentes y propiedad intelectual:** la referencia lexicográfica es el DED (Academia Dominicana de la Lengua / Igalex), complementado por entradas verificadas en ASALE y patrimonio UNESCO. **No se ha importado ni copiado el diccionario completo ni sus definiciones**. Las pistas fueron redactadas para el juego; el banco editorial debe ser revisado individualmente antes de una versión comercial. Consultar `src/games/crucigrama/DESIGN.md`.
-**Validación funcional:** commit `f55daa15bebf6c815145354a8f7bf3cc7acb1c34`, [CI 40574497642](https://github.com/omarsantanar/Arcade/actions/runs/40574497642), 63/63 tests, TypeScript/Vite correctos y Vercel `success`/Ready para la preview. Falta prueba humana en dispositivos reales. 
+**Validación funcional:** commit `f55daa15bebf6c815145354a8f7bf3cc7acb1c34`, [CI 40574497642](https://github.com/omarsantanar/Arcade/actions/runs/40574497642), 63/63 tests, TypeScript/Vite correctos y Vercel `success`/Ready para la preview. Falta prueba humana en dispositivos reales.
+
+## Sopa de Letras Dominicana — quinto juego en beta (2026-10-27)
+El catálogo de Arcade añade **Sopa de Letras Dominicana**, sobre la rama `feat/sopa-letras-dominicana` y [PR #7](https://github.com/omarsantanar/Arcade/pull/7), basada en el catálogo con cuatro juegos de la PR #6. Los cinco títulos se muestran como disponibles: Neon Drift, Sudoku, Lumen Circuit, Crucigrama Dominicano y Sopa de Letras Dominicana. Nova Run sigue excluido.
+
+El nuevo juego comparte las 150 entradas de `src/games/crucigrama/bank.ts`, sin una segunda copia ni importación del Diccionario del español dominicano; temas: dominicanismos, historia, lugares, cultura, gastronomía, música, deportes y naturaleza, más modo mixto. Pistas propias y fuentes parciales DED/ASALE/UNESCO ya documentadas en la rama del crucigrama. No confundir voces de uso general con dominicanismos registrados.
+
+Tres tamaños: Inicial 10×10 (7 palabras), Intermedio 13×13 (10) y Experto 15×15 (13); el generador combina ocho direcciones según nivel y reproduce tableros con semilla. Selección táctil por arrastre o dos toques, teclado/mouse, resaltado de hallazgos, lista con pistas culturales, cronómetro, ayudas, récords por tema/dificultad y almacenamiento local. El tutorial básico se describe en `src/games/sopa-letras/DESIGN.md`.
+
+Para ejecutar:
+```bash
+git switch feat/sopa-letras-dominicana
+npm ci
+npm run dev
+npm run test
+npm run build
+```
+
+**Validación de código:** [GitHub Actions 40579915918](https://github.com/omarsantanar/Arcade/actions/runs/40579915918) aprobó 72/72 pruebas, TypeScript y Vite. **Publicación:** Vercel rechazó los commits de esta rama por límite del plan Hobby `api-deployments-free-per-day` (más de 100 despliegues en 24 horas). No confirmar una preview actualizada hasta que el estado del commit final sea `success/Ready`. No se ha fusionado a `main`.

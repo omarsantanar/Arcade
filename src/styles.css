@@ -152,3 +152,57 @@
   .cruci-lists{gap:7px}
 }
 @media(max-height:620px){.cruci-board{width:min(100%,300px)}.cruci-game{gap:5px}}
+
+
+/* Sopa de Letras Dominicana: original touch-first puzzle */
+.ws-game{position:relative;box-sizing:border-box;min-width:0;min-height:0;width:100%;height:100%;display:flex;flex-direction:column;gap:9px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding:12px 14px 24px;background:radial-gradient(circle at 50% 0%,#233d50,#0b1828 68%);color:#eefaf9;scrollbar-width:thin}
+.ws-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ws-head strong{display:block;font:800 15px 'Space Grotesk',sans-serif;letter-spacing:.8px;color:#93ffee}
+.ws-head small{font-size:10px;color:#b1cbd8;display:block;margin-top:3px}
+.ws-clock{font:800 20px 'Space Grotesk',sans-serif;color:#ffdf9a;font-variant-numeric:tabular-nums}
+.ws-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ws-controls label{font-size:10px;color:#b9d6e1}
+.ws-controls select{min-width:0;max-width:130px;background:#1e3449;border:1px solid #588699;border-radius:7px;padding:6px 5px;color:#f5ffff;font-size:11px}
+.ws-controls select#ws-theme{flex:1;max-width:170px}
+.ws-controls button,.ws-actions button{border:1px solid #5a8d97;border-radius:7px;padding:7px 9px;background:#2a5260;color:#effffb;font-size:11px;font-weight:700}
+.ws-board{display:grid;align-self:center;width:min(100%,420px);aspect-ratio:1;gap:1px;background:#315468;padding:3px;border:2px solid #93fce4;border-radius:8px;flex:none;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 8px 36px #00172270}
+.ws-cell{display:grid;place-items:center;padding:0;min-width:0;min-height:0;width:100%;height:100%;background:#edf6ef;border:0;border-radius:2px;color:#123043;font:800 clamp(11px,1.8vw,19px) 'Space Grotesk',sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+.ws-cell.ws-found{color:#0b2831;background:#a1d8c5}
+.ws-cell.ws-color-1{background:#f6d890}.ws-cell.ws-color-2{background:#c3cef9}.ws-cell.ws-color-3{background:#f5bcbc}.ws-cell.ws-color-4{background:#bfdfb5}.ws-cell.ws-color-5{background:#dcbff1}
+.ws-cell.ws-selected{background:#f8c978;color:#172934;box-shadow:inset 0 0 0 2px #e77d40}
+.ws-cell.ws-start{outline:3px solid #fbecaa;outline-offset:-3px;z-index:1}
+.ws-cell.ws-hint{background:#ffe188;box-shadow:inset 0 0 0 2px #e88741}
+.ws-cell:focus-visible{outline:2px solid #a9432b;outline-offset:-2px;z-index:2}
+.ws-stats{display:flex;justify-content:space-between;gap:8px;font-size:10px;font-weight:700;color:#b6d8d8}
+.ws-meter{width:100%;height:5px;overflow:hidden;border-radius:9px;background:#254657}
+.ws-meter>div{height:100%;background:#87f2c9;transition:width .15s}
+.ws-message{min-height:33px;margin:0;line-height:1.4;color:#fff0c2;font-size:11px;padding:7px 9px;background:#243b4e;border:1px solid #405c69;border-radius:6px}
+.ws-actions{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.ws-actions span{color:#a9cddb;font-size:10px}
+.ws-words{display:flex;flex-direction:column;gap:11px;padding-bottom:7px}
+.ws-topic h4{font-size:12px;color:#95f2df;font-weight:800;margin:2px 0 6px}
+.ws-word-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.ws-word-list details{background:#1c3648;border:1px solid #415e6d;border-radius:6px;min-width:0;padding:8px}
+.ws-word-list details.found{background:#1b483d;border-color:#459e86}
+.ws-word-list summary{cursor:pointer;font-size:11px;color:#e7f7f5;font-weight:750;word-break:break-word}
+.ws-word-list summary span{display:inline-block;max-width:100%}
+.ws-word-list summary small{display:block;font-size:9px;color:#a9c8ce;font-weight:500;margin:3px 0 0}
+.ws-word-list details.found summary{text-decoration:line-through;text-decoration-color:#6bf4c9}
+.ws-word-list details p{font-size:10px;line-height:1.45;margin:6px 0 0;color:#e6d9b3}
+.ws-finish{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:25px;gap:14px;background:#061c27f4}
+.ws-finish strong{font:800 24px 'Space Grotesk',sans-serif;color:#9effd6}
+.ws-finish p{font-size:13px;color:#e8eaf0}
+.ws-finish button{padding:13px 16px;border:0;border-radius:8px;background:#a1ffe4;font-weight:800;color:#0d2932}
+.game-dialog:has(.ws-game) .game-stage{touch-action:pan-y}
+@media(max-width:650px){
+ .game-dialog:has(.ws-game) .game-aside{display:none}
+ .ws-game{gap:7px;padding:9px 10px 18px}
+ .ws-head strong{font-size:13px}
+ .ws-head small{font-size:9px}
+ .ws-clock{font-size:17px}
+ .ws-board{width:min(100%,370px)}
+ .ws-cell{font-size:clamp(11px,3.2vw,17px)}
+ .ws-controls select{max-width:112px}
+ .ws-controls select#ws-theme{max-width:140px}
+}
+@media(max-height:610px){.ws-board{width:min(100%,310px)}.ws-game{gap:5px}}

@@ -5,6 +5,7 @@ import { readBestScore } from '../games/neon-drift/logic';
 import { readSudokuBestScore } from '../games/sudoku/logic';
 import { readLumenBest } from '../games/lumen-circuit/logic';
 import { readCrosswordBest } from '../games/crucigrama/logic';
+import { readSearchBest } from '../games/sopa-letras/logic';
 
 interface Props { manifest: GameManifest; onClose: () => void }
 
@@ -15,7 +16,8 @@ export default function GameView({ manifest, onClose }: Props) {
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(() => manifest.id === 'sudoku' ? readSudokuBestScore() :
     manifest.id === 'lumen-circuit' ? readLumenBest() :
-    manifest.id === 'crucigrama-dominicano' ? readCrosswordBest() : readBestScore());
+    manifest.id === 'crucigrama-dominicano' ? readCrosswordBest() :
+    manifest.id === 'sopa-letras-dominicana' ? readSearchBest() : readBestScore());
   const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -32,14 +34,15 @@ export default function GameView({ manifest, onClose }: Props) {
           onScore: (value) => {
             setScore(value);
             if (manifest.id === 'sudoku' || manifest.id === 'lumen-circuit' ||
-                manifest.id === 'crucigrama-dominicano')
+                manifest.id === 'crucigrama-dominicano' || manifest.id === 'sopa-letras-dominicana')
               setBest(current => Math.max(current,value));
           },
           onStatus: (nextStatus) => {
             setStatus(nextStatus);
             if (nextStatus === 'gameover') setBest(manifest.id === 'sudoku' ? readSudokuBestScore() :
               manifest.id === 'lumen-circuit' ? readLumenBest() :
-              manifest.id === 'crucigrama-dominicano' ? readCrosswordBest() : readBestScore());
+              manifest.id === 'crucigrama-dominicano' ? readCrosswordBest() :
+              manifest.id === 'sopa-letras-dominicana' ? readSearchBest() : readBestScore());
           },
         });
         gameRef.current = game;
@@ -109,6 +112,10 @@ export default function GameView({ manifest, onClose }: Props) {
                 <p><strong>Niveles 1–3:</strong> descubre las filas, columnas y bloques con ejemplos 4×4, teclado y opciones de ayuda.</p>
                 <p><strong>Desde el 4:</strong> tableros 9×9 aleatorios de solución única; desaparece la ayuda y se reducen las cifras iniciales. Cada nivel exige más concentración.</p>
                 <p>Selecciona una casilla y escribe del 1 al 9. En escritorio usa las flechas y los números. <strong>La calidad se mide únicamente por el tiempo de solución.</strong> Puedes detener el cronómetro con Pausa.</p>
+              </> : manifest.id === 'sopa-letras-dominicana' ? <>
+                <p>Encuentra palabras de <strong>dominicanismos, personajes históricos, lugares, comida, música, deportes, naturaleza y tradiciones</strong>. Elige un tema o «Todo el país».</p>
+                <p>En celular, desliza el dedo desde la primera hasta la última letra; también puedes tocar ambas. En computadora, arrastra con el mouse. Se admiten horizontal, vertical y diagonal, también al revés en niveles avanzados.</p>
+                <p>Hay tres dificultades, cronómetro, récords, pista de ubicación y guardado local. Despliega una palabra en la lista para descubrir una pista cultural original. Las palabras no llevan tildes, pero conservan la Ñ.</p>
               </> : manifest.id === 'crucigrama-dominicano' ? <>
                 <p>Conecta palabras de <strong>nuestro léxico, historia, ciudades, gastronomía, música y tradiciones</strong>. Cada número indica una pista horizontal o vertical.</p>
                 <p>Selecciona una casilla o pista. Si dos palabras se cruzan, toca la casilla dos veces para alternar. Escribe con el teclado físico o los botones de letras. Las respuestas van sin tildes, pero mantienen la Ñ.</p>

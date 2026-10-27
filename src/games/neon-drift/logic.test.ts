@@ -167,8 +167,8 @@ describe('Neon Drift: multiple valid exits and irregular encounters', () => {
 describe('Arcade catalog', () => {
   it('preserves independently registered game modules', () => {
     expect(new Set(catalog.map(game => game.id)).size).toBe(catalog.length);
-    expect(catalog.filter(game => game.available)).toHaveLength(4);
-    expect(catalog.map(game => game.id).sort()).toEqual(['crucigrama-dominicano', 'lumen-circuit', 'neon-drift', 'sudoku']);
+    expect(catalog.filter(game => game.available)).toHaveLength(5);
+    expect(catalog.map(game => game.id).sort()).toEqual(['crucigrama-dominicano', 'lumen-circuit', 'neon-drift', 'sopa-letras-dominicana', 'sudoku']);
     expect(findGame('nova-run')).toBeUndefined();
     expect(findGame('neon-drift')?.title).toBe('Neon Drift');
   });
