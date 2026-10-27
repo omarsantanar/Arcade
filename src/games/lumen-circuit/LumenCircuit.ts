@@ -254,7 +254,9 @@ class CircuitScene extends Phaser.Scene {
     this.hint.setText(effectMessage ?? (state.bonusLevel?bonusRemaining:
       (active===3 && state.powerCollected>=state.powerRequired?'SALIDA ABIERTA → PORTAL':
         'ENERGÍA '+state.energy+'/2 · GEN '+active+'/3 · GRAN '+state.powerCollected+'/1')));
-    this.footer.setText(state.powerEffect?POWER_DESCRIPTIONS[state.powerEffect].toUpperCase():
+    this.footer.setText(state.ambushStart && state.steps<4?
+      '¡APAGÓN DE FRENTE! ← TUBERÍA AL OTRO EXTREMO':
+      state.powerEffect?POWER_DESCRIPTIONS[state.powerEffect].toUpperCase():
       (state.bonusLevel?'RECOGE TODOS LOS PUNTOS ANTES DEL TIEMPO':
         'PEQUEÑOS '+(state.smallCollected%200)+'/200 → VIDA EXTRA · APAGONES '+state.drones.length));
   }
