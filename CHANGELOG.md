@@ -80,3 +80,10 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 **Riesgos:** algunos resultados castigan al jugador; revisar comprensión de ese riesgo y justicia perceptiva en teléfonos reales.
 
 **Validación del sistema de nodos especiales (2026-10-27):** GitHub Actions [40494565328](https://github.com/omarsantanar/Arcade/actions/runs/40494565328) pasó 30/30 pruebas y compilación TypeScript/Vite sobre `f458617262804e9feae08d7c6924e9581f381c11`. Vercel informó despliegue `success` del preview de la rama. Queda pendiente prueba de legibilidad y balance en iOS/Android.
+
+## 2026-10-27 — Lumen Circuit: tres tipos de puntos, bonificación, túneles y más apagones
+- **Objetivo:** vincular supervivencia a puntos pequeños; puntuar chispas medianas a 10; convertir el gran nodo sin puntos en requisito del mundo; ofrecer niveles de respiro contrarreloj y túneles horizontales.
+- **Código:** `src/games/lumen-circuit/logic.ts`, `LumenCircuit.ts`, `logic.test.ts`; documentación en `DESIGN.md`, README, ARCHITECTURE, CONTINUITY, ROADMAP y AGENTS.
+- **Implementación:** cada 200 puntos pequeños (+1 por recogida) recibes una vida nueva, acumulada entre mundos; medianos aportan 10 y energía; grande activa un único efecto pero 0 puntos y es necesario para abrir portal normal. Bonificaciones 3,9,15,21,27,36,45,54,63 y cada nueve después: 90 s, sin apagones, interior despejado y todos los puntos obligatorios; sin generadoras. En algunos mundos, tubería de extremo a extremo para jugador y agujeros negros. Desde nivel 4, se añade un agujero negro permanente cada 4 niveles; bonificaciones excluidas.
+- **Tests:** extendidos para umbral de 200, cambio de mundo, valor de cada tamaño, gran nodo obligatorio, reloj, secuencia de niveles, enlace lateral y IA en túnel, escalado cada cuatro niveles. Revisar estado final de CI/Vercel en la PR #4.
+- **Riesgos:** mundos muy altos con muchos apagones y 90 s de bonificación deben comprobarse con usuarios, especialmente controles táctiles. La interpretación de «etc.» se documenta como +9 después del 63; es modificable.
