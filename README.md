@@ -74,3 +74,6 @@ Además de los cristales pequeños y las tres generadoras, existe **un gran nodo
 - **Túneles:** algunos mapas abren tuberías a izquierda y derecha para Lumen **y** los agujeros negros.
 - **Enemigos:** 2 de inicio y +1 por cada cuatro niveles (3 desde el 4; 4 desde el 8; etc.); no hay en los niveles especiales. Máximo técnico de 24 agujeros negros.
 Ver [PR #4](https://github.com/omarsantanar/Arcade/pull/4) y [preview Vercel](https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app).
+
+### Laberintos sin encerronas — 2026-10-27
+Los mundos normales de Lumen Circuit ahora reparan únicamente las paredes necesarias para que **toda casilla jugable tenga al menos dos posibles salidas**. No se eliminan los pasillos sinuosos ni se reduce la velocidad o la cantidad de apagones. En algunos niveles desde el cuarto, Lumen aparece en una esquina con un agujero negro frente a él: en ese mapa la tubería inmediata a su izquierda conduce directamente al **otro extremo de la pantalla**. También hay un camino hacia el interior. Los apagones pueden utilizar esa misma conexión. Un aviso breve señala la posibilidad de escape; se mantiene la necesidad de reaccionar bien.
