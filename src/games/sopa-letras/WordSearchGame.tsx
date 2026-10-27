@@ -226,7 +226,7 @@ export default function WordSearchGame({callbacks,controller}:Props){
     <p className="ws-message" role="status">{message}</p>
     <div className="ws-actions">
       <button type="button" onClick={help} disabled={paused||finished}>Mostrar comienzo (ayuda)</button>
-      <span>Récord de este tema y nivel: {bestFor(puzzle.theme,puzzle.difficulty)||'—'}</span>
+      <span>Récord personal: {best||'—'} · tema/nivel: {bestFor(puzzle.theme,puzzle.difficulty)||'—'}</span>
     </div>
     <div className="ws-words" aria-label="Lista de palabras">
       {Object.entries(wordsByTopic).map(([topic,words])=><div key={topic} className="ws-topic">
