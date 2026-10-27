@@ -1,4 +1,4 @@
-import {WORDS_BY_TOPIC, TOPIC_LABELS, type CrosswordTerm, type CrosswordTopic} from '../crucigrama/bank';
+import {TOPIC_LABELS,termsFor,isCountryFilter,type CrosswordTerm,type CrosswordTopic,type CountryFilter} from '../crucigrama/bank';
 
 /** A word-search puzzle using the shared, independently authored Dominican editorial bank. */
 export type WordSearchTheme=CrosswordTopic|'mixto';
@@ -6,11 +6,11 @@ export type WordSearchDifficulty='inicial'|'intermedio'|'experto';
 export interface Cell {row:number;col:number}
 export interface SearchWord extends CrosswordTerm {id:string;cells:Cell[]}
 export interface WordSearchPuzzle {
-  theme:WordSearchTheme; difficulty:WordSearchDifficulty; seed:number;
+  theme:WordSearchTheme; country:CountryFilter; difficulty:WordSearchDifficulty; seed:number;
   size:number;grid:string[][];words:SearchWord[];
 }
 export interface WordSearchSave {
-  theme:WordSearchTheme;difficulty:WordSearchDifficulty;seed:number;
+  theme:WordSearchTheme;country?:CountryFilter;difficulty:WordSearchDifficulty;seed:number;
   found:string[];elapsedMs:number;hints:number;mistakes:number;
 }
 export const SEARCH_SAVE_KEY='arcade:sopa-letras:save-v1';
@@ -42,11 +42,11 @@ function route(start:Cell,vector:Cell,length:number,size:number):Cell[]|null{
   const cells=Array.from({length},(_,i)=>({row:start.row+i*vector.row,col:start.col+i*vector.col}));
   return cells.every(c=>inBounds(c,size))?cells:null;
 }
-function optionsFor(theme:WordSearchTheme,maxLength:number,rnd:()=>number):CrosswordTerm[]{
-  if(theme!=='mixto')return shuffle(WORDS_BY_TOPIC[theme],rnd).filter(w=>w.answer.length>=4&&w.answer.length<=maxLength);
-  // Round robin by topic so "Todo el país" never devolves into a single subject.
+function optionsFor(theme:WordSearchTheme,maxLength:number,rnd:()=>number,country:CountryFilter):CrosswordTerm[]{
+  if(theme!=='mixto')return shuffle(termsFor(country,theme),rnd).filter(w=>w.answer.length>=4&&w.answer.length<=maxLength);
+  // Round robin ensures country and pan-Hispanic games cover different fields.
   const keys=shuffle(Object.keys(TOPIC_LABELS) as CrosswordTopic[],rnd);
-  const stacks=keys.map(topic=>shuffle(WORDS_BY_TOPIC[topic],rnd).filter(w=>w.answer.length>=4&&w.answer.length<=maxLength));
+  const stacks=keys.map(topic=>shuffle(termsFor(country,topic),rnd).filter(w=>w.answer.length>=4&&w.answer.length<=maxLength));
   const result:CrosswordTerm[]=[];
   while(stacks.some(group=>group.length)){
     for(const group of stacks){const word=group.shift();if(word)result.push(word);}
@@ -87,11 +87,11 @@ function occurrences(grid:string[][],answer:string):Cell[][]{
   }
   return out;
 }
-function createOnce(theme:WordSearchTheme,difficulty:WordSearchDifficulty,seed:number,rnd:()=>number):WordSearchPuzzle{
+function createOnce(theme:WordSearchTheme,difficulty:WordSearchDifficulty,seed:number,rnd:()=>number,country:CountryFilter):WordSearchPuzzle{
   const cfg=DIFFICULTIES[difficulty],grid=Array.from({length:cfg.size},()=>Array<string|null>(cfg.size).fill(null));
   const chosen:SearchWord[]=[];
   const selected=new Set<string>();
-  const pool=optionsFor(theme,cfg.maxLength,rnd);
+  const pool=optionsFor(theme,cfg.maxLength,rnd,country);
   for(const word of pool){
     if(chosen.length>=cfg.count)break;
     if(selected.has(word.answer)||[...selected].some(w=>w.includes(word.answer)||word.answer.includes(w)))continue;
@@ -104,15 +104,15 @@ function createOnce(theme:WordSearchTheme,difficulty:WordSearchDifficulty,seed:n
     filled=grid.map(line=>line.map(letter=>letter??LETTERS[Math.floor(rnd()*LETTERS.length)]));
     if(chosen.every(word=>occurrences(filled,word.answer).length===1))break;
   }
-  return {theme,difficulty,seed,size:cfg.size,grid:filled,words:chosen};
+  return {theme,country,difficulty,seed,size:cfg.size,grid:filled,words:chosen};
 }
 export function generateWordSearch(theme:WordSearchTheme='mixto',difficulty:WordSearchDifficulty='inicial',
-  seed=Math.floor(Math.random()*4294967295)):WordSearchPuzzle{
+  seed=Math.floor(Math.random()*4294967295),country:CountryFilter='todos'):WordSearchPuzzle{
   const rnd=seedRandom(seed);
-  let best=createOnce(theme,difficulty,seed,rnd);
+  let best=createOnce(theme,difficulty,seed,rnd,country);
   const target=DIFFICULTIES[difficulty].count;
   for(let retry=0;retry<5&&best.words.length<target;retry++){
-    const candidate=createOnce(theme,difficulty,seed,rnd);
+    const candidate=createOnce(theme,difficulty,seed,rnd,country);
     if(candidate.words.length>best.words.length)best=candidate;
   }
   return best;
@@ -150,7 +150,8 @@ export function readSearchBest():number{
 export function validWordSearchSave(data:unknown):data is WordSearchSave{
   if(!data||typeof data!=='object')return false;
   const d=data as Partial<WordSearchSave>;
-  return (d.theme==='mixto'||Object.hasOwn(WORDS_BY_TOPIC,String(d.theme)))
+  return (d.theme==='mixto'||Object.hasOwn(TOPIC_LABELS,String(d.theme)))
+    &&(d.country===undefined||isCountryFilter(d.country))
     &&(d.difficulty==='inicial'||d.difficulty==='intermedio'||d.difficulty==='experto')
     &&Number.isInteger(d.seed)&&Number(d.seed)>=0&&Number(d.seed)<=4294967295
     &&Array.isArray(d.found)&&d.found.length<=DIFFICULTIES[d.difficulty].count
