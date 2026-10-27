@@ -77,6 +77,8 @@ export interface CircuitState {
   smallCollected: number;
   drones: Drone[];
   tunnelRows: number[];
+  /** One enemy deliberately threatens the corner spawn; a linked pipe provides a distinct escape. */
+  ambushStart: boolean;
   bonusLevel: boolean;
   bonusRemainingMs: number;
   powerRequired: number;
@@ -138,6 +140,51 @@ export function buildLabyrinth(random: RandomSource = Math.random, crossLinks = 
   }
   return walls;
 }
+
+/** Count usable exits of a floor tile, including connected edge pipes. */
+export function blindAlleys(walls:boolean[][],tunnelRows:readonly number[]=[]):Cell[] {
+  const result:Cell[]=[];
+  for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){
+    const p={x,y};
+    if(isOpen(walls,p) && adjacent(walls,p,tunnelRows).length<2)result.push(p);
+  }
+  return result;
+}
+
+/** Open only short links between existing corridors, eliminating trap-ending single-exit cells.
+ * We keep the wall lattice and complex bends: this does not turn the map into an open arena. */
+export function repairBlindAlleys(walls:boolean[][],random:RandomSource=Math.random,tunnelRows:readonly number[]=[]):void {
+  const maxPasses=COLS*ROWS;
+  for(let pass=0;pass<maxPasses;pass++){
+    const traps=blindAlleys(walls,tunnelRows);
+    if(!traps.length)return;
+    let repaired=false;
+    for(const cell of traps){
+      if(adjacent(walls,cell,tunnelRows).length>=2)continue;
+      const candidates=Object.values(vector).map(v=>({x:cell.x+v.x,y:cell.y+v.y}))
+        .filter(p=>p.x>0 && p.x<COLS-1 && p.y>0 && p.y<ROWS-1 && walls[p.y][p.x])
+        .filter(p=>adjacent(walls,p,tunnelRows).length>=2);
+      if(!candidates.length)continue;
+      const door=candidates[randomIndex(candidates.length,random)];
+      walls[door.y][door.x]=false;
+      repaired=true;
+    }
+    if(!repaired)break;
+  }
+}
+
+/** When a blackout faces Lumen in a corner, link its starting row to the opposite edge.
+ * Both Lumen and blackouts use the same portal graph and cannot tunnel through walls. */
+export function openCornerEscape(walls:boolean[][],start:Cell,tunnelRows:number[]):void {
+  if(start.y<=0 || start.y>=ROWS-1 || start.x!==1)return;
+  if(!tunnelRows.includes(start.y))tunnelRows.push(start.y);
+  walls[start.y][0]=false;
+  walls[start.y][COLS-1]=false;
+  // Keep one ordinary route into the labyrinth, independent of the edge exit.
+  walls[start.y+1][start.x]=false;
+  walls[start.y][start.x+1]=false;
+}
+
 export function distanceMap(walls:boolean[][],start:Cell,tunnelRows:readonly number[]=[]):Map<number,number> {
   const distances=new Map<number,number>([[index(start),0]]);
   const queue:Cell[]=[start];
@@ -164,6 +211,11 @@ export function newCircuit(level=1,random:RandomSource=Math.random,previousScore
   const tunnelRows=hasTunnel(level)?[9]:[];
   for(const y of tunnelRows){walls[y][0]=false;walls[y][COLS-1]=false;}
   const start=bonusLevel?{x:7,y:9}:{x:1,y:1};
+  // An occasional close-range ambush demands a real escape into the opposite edge.
+  // No speed reduction, invulnerability or blackout removal is used to compensate.
+  const ambushStart=!bonusLevel && level>=4 && random()<0.28;
+  if(ambushStart)openCornerEscape(walls,start,tunnelRows);
+  if(!bonusLevel)repairBlindAlleys(walls,random,tunnelRows);
   const distances=distanceMap(walls,start,tunnelRows);
   const pool=[...distances.keys()].filter(i=>i!==index(start))
     .map(i=>({x:i%COLS,y:Math.floor(i/COLS)}));
@@ -180,7 +232,12 @@ export function newCircuit(level=1,random:RandomSource=Math.random,previousScore
     return p;
   };
   const terminals=bonusLevel?[]:Array.from({length:3},()=>chooseSeparated(7));
-  const drones=Array.from({length:bonusLevel?0:Math.min(MAX_BLACKOUTS,baseBlackoutsAt(level))},()=>{
+  const drones=Array.from({length:bonusLevel?0:Math.min(MAX_BLACKOUTS,baseBlackoutsAt(level))},(_,i)=>{
+    if(ambushStart && i===0){
+      const position={x:start.x+1,y:start.y};
+      reserved.add(index(position));
+      return {position,previous:position};
+    }
     const position=chooseSeparated(12);
     return {position,previous:position};
   });
@@ -195,7 +252,7 @@ export function newCircuit(level=1,random:RandomSource=Math.random,previousScore
     && (!bonusLevel || away(p,start)<=7));
   const smallPoints=Array.from({length:Math.min(bonusLevel?10:65,smallPool.length)},()=>pick(smallPool,random));
   return {walls,start,exit,player:start,terminals,activated:terminals.map(()=>false),shards,smallPoints,
-    smallCollected:previousSmallCollected,drones,tunnelRows,bonusLevel,bonusRemainingMs:bonusLevel?BONUS_TIME_MS:0,
+    smallCollected:previousSmallCollected,drones,tunnelRows,ambushStart,bonusLevel,bonusRemainingMs:bonusLevel?BONUS_TIME_MS:0,
     powerRequired:1,powerCollected:0,
     energy:0,score:previousScore,lives:previousLives,level,world,steps:0,invulnerable:0,
     powerNode,powerEffect:null,powerRemainingMs:0,powerCooldownMs:0,status:'playing'};
