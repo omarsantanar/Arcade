@@ -1,4 +1,4 @@
-import {WORD_BANK, WORDS_BY_TOPIC, TOPIC_LABELS, type CrosswordTerm, type CrosswordTopic} from '../crucigrama/bank';
+import {WORDS_BY_TOPIC, TOPIC_LABELS, type CrosswordTerm, type CrosswordTopic} from '../crucigrama/bank';
 
 /** A word-search puzzle using the shared, independently authored Dominican editorial bank. */
 export type WordSearchTheme=CrosswordTopic|'mixto';
@@ -37,7 +37,6 @@ function shuffle<T>(input:readonly T[],rnd:()=>number):T[]{
   }
   return list;
 }
-const key=(c:Cell)=>c.row+','+c.col;
 const inBounds=(c:Cell,size:number)=>c.row>=0&&c.col>=0&&c.row<size&&c.col<size;
 function route(start:Cell,vector:Cell,length:number,size:number):Cell[]|null{
   const cells=Array.from({length},(_,i)=>({row:start.row+i*vector.row,col:start.col+i*vector.col}));
