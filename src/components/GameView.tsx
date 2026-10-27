@@ -113,13 +113,13 @@ export default function GameView({ manifest, onClose }: Props) {
                 <p><strong>Desde el 4:</strong> tableros 9×9 aleatorios de solución única; desaparece la ayuda y se reducen las cifras iniciales. Cada nivel exige más concentración.</p>
                 <p>Selecciona una casilla y escribe del 1 al 9. En escritorio usa las flechas y los números. <strong>La calidad se mide únicamente por el tiempo de solución.</strong> Puedes detener el cronómetro con Pausa.</p>
               </> : manifest.id === 'sopa-letras-dominicana' ? <>
-                <p>Encuentra palabras de <strong>dominicanismos, personajes históricos, lugares, comida, música, deportes, naturaleza y tradiciones</strong>. Elige un tema o «Todo el país».</p>
+                <p>Encuentra palabras de <strong>países hispanohablantes</strong>: expresiones, personajes históricos, lugares, gastronomía, música, deportes y tradiciones. Cambia entre un país concreto y el mundo hispanohablante.</p>
                 <p>En celular, desliza el dedo desde la primera hasta la última letra; también puedes tocar ambas. En computadora, arrastra con el mouse. Se admiten horizontal, vertical y diagonal, también al revés en niveles avanzados.</p>
-                <p>Hay tres dificultades, cronómetro, récords, pista de ubicación y guardado local. Despliega una palabra en la lista para descubrir una pista cultural original. Las palabras no llevan tildes, pero conservan la Ñ.</p>
+                <p>Hay tres dificultades, cronómetro, récords por país, pistas y guardado local. Abre una palabra de la lista para leer su pista cultural original. No se usan tildes en el tablero, pero se conserva la Ñ.</p>
               </> : manifest.id === 'crucigrama-dominicano' ? <>
-                <p>Conecta palabras de <strong>nuestro léxico, historia, ciudades, gastronomía, música y tradiciones</strong>. Cada número indica una pista horizontal o vertical.</p>
+                <p>Conecta palabras de <strong>distintos países hispanohablantes</strong>: léxico, historia, lugares, gastronomía, música y tradiciones. Elige país o «Todo el mundo hispanohablante» y busca pistas horizontales o verticales.</p>
                 <p>Selecciona una casilla o pista. Si dos palabras se cruzan, toca la casilla dos veces para alternar. Escribe con el teclado físico o los botones de letras. Las respuestas van sin tildes, pero mantienen la Ñ.</p>
-                <p>Elige un tema o «Todo el país». Guarda progreso local, revisa errores y usa ayudas; el tiempo y las ayudas influyen en tu puntuación. Las pistas son originales, sin copiar definiciones del diccionario.</p>
+                <p>Elige un país y, cuando haya suficientes palabras, un tema. Guarda progreso local, revisa errores y usa ayudas. Las pistas son originales; algunas expresiones también se emplean en otros países.</p>
               </> : manifest.id === 'lumen-circuit' ? <>
                 <p><strong>Objetivo:</strong> enciende las tres generadoras y recoge el nodo grande para abrir la salida. Las luces pequeñas suman 1 punto; cada 200 dan una vida extra. Los cristales medianos suman 10 puntos y aportan energía.</p>
                 <p><strong>Persecución:</strong> esquiva apagones. El nodo grande activa un efecto aleatorio; ciertos laberintos tienen tuberías de extremo a extremo. En los mundos de bonificación, recoge todos los puntos antes de 90 segundos.</p>
