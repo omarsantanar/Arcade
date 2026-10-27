@@ -3,6 +3,7 @@ import { COLS, ROWS, TERMINAL_COST, buildLabyrinth, distanceMap, isOpen, newCirc
   moveExplorer, stepSentinels, equals, worldForLevel, blackoutDelay, WORLDS, choosePowerKind,
   tickPower, playerStepMs, enemyStepMs, POWER_DURATION_MS, POWER_COOLDOWN_MS,
   MAX_BLACKOUTS, isBonusLevel, BONUS_TIME_MS, baseBlackoutsAt, SMALLS_PER_LIFE,
+  blindAlleys, openCornerEscape, repairBlindAlleys,
   hasTunnel, type CircuitState, type Cell } from './logic';
 
 const seeded=(initial:number)=>{
@@ -305,5 +306,78 @@ describe('Pipe tunnels and level-based blackouts',()=>{
     const enemy={position:from,previous:{x:1,y:9}};
     const next=stepSentinels({...s,player:to,drones:[enemy]},()=>0);
     expect(next.drones[0].position).toEqual(to);
+  });
+});
+
+describe('Anti-entrapment labyrinth topology', () => {
+  it('leaves no completely closed cells or single-exit dead ends over many worlds and random seeds', () => {
+    const levels=[1,2,3,4,5,6,7,8,9,11,12,15,16,19,20,27,34,40,54,72];
+    for(const level of levels){
+      for(let seed=1;seed<=55;seed++){
+        const state=newCircuit(level,seeded(level*15001+seed));
+        expect(blindAlleys(state.walls,state.tunnelRows)).toHaveLength(0);
+        const distance=distanceMap(state.walls,state.start,state.tunnelRows);
+        expect(distance.size).toBe(state.walls.flat().filter(w=>!w).length);
+        if(!state.bonusLevel){
+          const wallCount=state.walls.flat().filter(Boolean).length;
+          // Maintain a substantial maze rather than flattening obstacles.
+          expect(wallCount).toBeGreaterThan(85);
+        }
+      }
+    }
+  },30000);
+  it('can add the opposite-edge emergency pipe while keeping the ordinary south route', () => {
+    const state=newCircuit(1,seeded(73));
+    const walls=state.walls.map(row=>[...row]);
+    const tunnels=[...state.tunnelRows];
+    openCornerEscape(walls,state.start,tunnels);
+    repairBlindAlleys(walls,seeded(2),tunnels);
+    expect(tunnels).toContain(state.start.y);
+    expect(walls[state.start.y][0]).toBe(false);
+    expect(walls[state.start.y][COLS-1]).toBe(false);
+    expect(walls[state.start.y+1][state.start.x]).toBe(false);
+    expect(blindAlleys(walls,tunnels)).toHaveLength(0);
+  });
+  it('never generates a corner ambush without the usable escape at the other edge', () => {
+    let ambushCount=0;
+    for(const level of [4,5,8,10,12,13,17]){
+      for(let seed=1;seed<=75;seed++){
+        const state=newCircuit(level,seeded(level*211+seed));
+        if(!state.ambushStart)continue;
+        ambushCount++;
+        expect(state.tunnelRows).toContain(state.start.y);
+        expect(state.drones.some(d=>equals(d.position,{x:state.start.x+1,y:state.start.y}))).toBe(true);
+        const safe=moveExplorer({...state,shards:[],smallPoints:[],powerNode:null},'left');
+        expect(safe.player).toEqual({x:0,y:state.start.y});
+        expect(safe.lives).toBe(state.lives);
+        const farEdge=moveExplorer(safe,'left');
+        expect(farEdge.player).toEqual({x:COLS-1,y:state.start.y});
+        expect(farEdge.lives).toBe(state.lives);
+        expect(distanceMap(state.walls,state.start,state.tunnelRows)
+          .has(state.start.y*COLS+COLS-1)).toBe(true);
+      }
+    }
+    expect(ambushCount).toBeGreaterThan(50);
+  },30000);
+  it('allows blackouts to traverse the emergency starting pipe too', () => {
+    const state=newCircuit(4,seeded(122));
+    const walls=state.walls.map(row=>[...row]);
+    const tunnels=[...state.tunnelRows];
+    openCornerEscape(walls,state.start,tunnels);
+    const left={x:0,y:state.start.y};
+    const right={x:COLS-1,y:state.start.y};
+    const enemy={position:left,previous:{x:1,y:state.start.y}};
+    const next=stepSentinels({...state,walls,tunnelRows:tunnels,player:right,drones:[enemy]},()=>0);
+    expect(next.drones[0].position).toEqual(right);
+  });
+  it('does not change the number or speed of opponents to make an ambush easier', () => {
+    let threatened=null as ReturnType<typeof newCircuit>|null;
+    for(let seed=1;seed<=90;seed++){
+      const s=newCircuit(8,seeded(seed+550));
+      if(s.ambushStart){threatened=s;break;}
+    }
+    expect(threatened).not.toBeNull();
+    expect(threatened!.drones).toHaveLength(baseBlackoutsAt(8));
+    expect(enemyStepMs(threatened!)).toBe(enemyStepMs({...threatened!,ambushStart:false}));
   });
 });
