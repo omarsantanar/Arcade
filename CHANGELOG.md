@@ -51,3 +51,12 @@ Se añadieron README.md, ARCHITECTURE.md, CHANGELOG.md, CONTINUITY.md, ROADMAP.m
 - GitHub Actions [ejecución 40372684449](https://github.com/omarsantanar/Arcade/actions/runs/40372684449), commit de código `319428d180a495ac13b951068247b79cfa122d06`: **7/7 tests y build TypeScript/Vite correctos**.
 - Estado del despliegue Vercel: **success**, comprobado para ese commit. La vista previa permanece en la rama de PR #1; no se considera producción.
 - Queda pendiente comprobar dificultad, latencia, percepción de falsos huecos y controles en Safari iOS y Chrome Android.
+
+## 2026-10-27 — Nuevo título Sudoku, beta de aprendizaje y velocidad
+- **Objetivo:** investigar copyright/marca de Sudoku y crear puzzle integrado en Arcade con tres niveles guiados y dificultad aleatoria ascendente desde el cuarto, medido por tiempo.
+- **Archivos:** `src/games/sudoku/{logic.ts,Sudoku.ts,SudokuGame.tsx,logic.test.ts,DESIGN.md}`, `src/games/registry.ts`, `src/games/neon-drift/logic.test.ts`, `src/components/GameView.tsx`, `src/styles.css` y documentos raíz.
+- **Implementación:** tableros 4×4 de introducción filas/columnas/bloques con candidatos, cambio abrupto a 9×9 en nivel 4, generador aleatorio con verificación de solución única y pistas objetivo descendentes, cronómetro de tiempo activo, cinco categorías de calidad basadas únicamente en tiempo normalizado al nivel, progreso parcial y récords por nivel guardados localmente.
+- **Investigación jurídica:** U.S. Copyright Office distingue método de juego frente a expresión protegida; Nikoli reivindica marca Sudoku en Japón (categorías 9, 28, 41, entre otras); ONAPI explica protección marcaria dominicana. Se usará el nombre únicamente en sentido descriptivo durante beta, con revisión territorial antes de comercializar.
+- **Pruebas:** Vitest de unicidad, variación, enseñanza, calidad temporal y validez de partidas guardadas; CI y Vercel por confirmar tras PR.
+- **Resultado:** rama `feat/sudoku-speed-challenge` sobre `feat/initial-web-portal` sin modificar Neon Drift ni Lumen Circuit.
+- **Riesgos:** usabilidad en móvil, costo de generación de puzzles duros, nombre en jurisdicciones restringidas; sin monetización.
