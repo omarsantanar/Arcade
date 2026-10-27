@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { loadGame } from '../games/registry';
 import type { ControlDirection, GameHandle, GameManifest, GameStatus } from '../games/types';
 import { readBestScore } from '../games/neon-drift/logic';
+import { readSudokuBestScore } from '../games/sudoku/logic';
 
 interface Props { manifest: GameManifest; onClose: () => void }
 
@@ -10,7 +11,7 @@ export default function GameView({ manifest, onClose }: Props) {
   const gameRef = useRef<GameHandle | null>(null);
   const [status, setStatus] = useState<GameStatus>('playing');
   const [score, setScore] = useState(0);
-  const [best, setBest] = useState(readBestScore);
+  const [best, setBest] = useState(() => manifest.id === 'sudoku' ? readSudokuBestScore() : readBestScore());
   const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -24,10 +25,10 @@ export default function GameView({ manifest, onClose }: Props) {
       .then((factory) => {
         if (cancelled) return;
         const game = factory(mount, {
-          onScore: setScore,
+          onScore: (value) => { setScore(value); if (manifest.id === 'sudoku') setBest(current => Math.max(current,value)); },
           onStatus: (nextStatus) => {
             setStatus(nextStatus);
-            if (nextStatus === 'gameover') setBest(readBestScore());
+            if (nextStatus === 'gameover') setBest(manifest.id === 'sudoku' ? readSudokuBestScore() : readBestScore());
           },
         });
         gameRef.current = game;
@@ -91,11 +92,20 @@ export default function GameView({ manifest, onClose }: Props) {
           </div>
           <div className="game-aside">
             <div className="game-metrics"><div><span>PUNTUACIÓN</span><strong>{score.toString().padStart(4, '0')}</strong></div><div><span>MEJOR MARCA</span><strong>{best.toString().padStart(4, '0')}</strong></div></div>
-            <div className="instructions"><h3>Cómo jugar</h3><p>Esquiva obstáculos geométricos de neón. Cada 7 segundos aumenta el nivel: caen más rápido, aparecen con más frecuencia y cambian de tamaño. Siempre queda un corredor viable, pero deberás alcanzarlo a tiempo.</p><p><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte. En móviles, toca los botones o desliza el dedo sobre el juego.</p></div>
-            <div className="touch-controls" aria-label="Controles táctiles">
+            <div className="instructions"><h3>Cómo jugar</h3>
+              {manifest.id === 'sudoku' ? <>
+                <p><strong>Niveles 1–3:</strong> descubre las filas, columnas y bloques con ejemplos 4×4, teclado y opciones de ayuda.</p>
+                <p><strong>Desde el 4:</strong> tableros 9×9 aleatorios de solución única; desaparece la ayuda y se reducen las cifras iniciales. Cada nivel exige más concentración.</p>
+                <p>Selecciona una casilla y escribe del 1 al 9. En escritorio usa las flechas y los números. <strong>La calidad se mide únicamente por el tiempo de solución.</strong> Puedes detener el cronómetro con Pausa.</p>
+              </> : <>
+                <p>Esquiva obstáculos geométricos de neón. Cada 7 segundos aumenta el nivel: caen más rápido, aparecen con más frecuencia y cambian de tamaño. Siempre queda un corredor viable, pero deberás alcanzarlo a tiempo.</p>
+                <p><kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte. En móviles, toca los botones o desliza el dedo sobre el juego.</p>
+              </>}
+            </div>
+            {manifest.id !== 'sudoku' && <div className="touch-controls" aria-label="Controles táctiles">
               <button type="button" aria-label="Mover a la izquierda" onPointerDown={(e) => { e.preventDefault(); setDirection(-1); }} onPointerUp={() => setDirection(0)} onPointerLeave={() => setDirection(0)} onPointerCancel={() => setDirection(0)}>←</button>
               <button type="button" aria-label="Mover a la derecha" onPointerDown={(e) => { e.preventDefault(); setDirection(1); }} onPointerUp={() => setDirection(0)} onPointerLeave={() => setDirection(0)} onPointerCancel={() => setDirection(0)}>→</button>
-            </div>
+            </div>}
             <span className="game-footnote">Tus récords se guardan en este dispositivo.</span>
           </div>
         </div>
