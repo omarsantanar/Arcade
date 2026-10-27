@@ -13,6 +13,12 @@ export interface CrosswordPuzzle {
 export interface CrosswordSaved {theme:CrosswordTheme;seed:number;elapsedMs:number;fill:string[][];hints:number}
 export const CROSSWORD_SAVE_KEY='arcade:crossword:save-v1';
 export const CROSSWORD_BEST_KEY='arcade:crossword:best-v1';
+export function readCrosswordBest():number {
+  try{
+    const parsed=JSON.parse(window.localStorage.getItem(CROSSWORD_BEST_KEY)||'{}') as Record<string,number>;
+    return Math.max(0,...Object.values(parsed).filter(n=>Number.isFinite(n)&&n>0));
+  }catch{return 0;}
+}
 const blank=()=>Array.from({length:SIZE},()=>Array<string|null>(SIZE).fill(null));
 const emptyMask=()=>Array.from({length:SIZE},()=>Array<number>(SIZE).fill(0));
 export const seedRandom=(seed:number)=>{
