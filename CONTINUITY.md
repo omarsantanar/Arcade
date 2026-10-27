@@ -88,3 +88,5 @@ El usuario detectó correctamente una vista previa anterior a la especificación
 **Pruebas:** tests adicionales escritos; última ejecución GitHub Actions y Vercel aún por confirmar.
 **Riesgos:** balance azar/penalización sin validación humana; legibilidad de aviso y del contador en celulares.
 **Próximo paso:** verificar CI, preview, prueba real móvil de los cuatro resultados; ajustar probabilidades y avisos según resultados de juego, antes de fusionar.
+
+**Resultado de validación:** [GitHub Actions 40494565328](https://github.com/omarsantanar/Arcade/actions/runs/40494565328): 30/30 pruebas, `tsc --noEmit` y build Vite aprobados. Estado Vercel para el commit `f458617262804e9feae08d7c6924e9581f381c11`: `success`. Preview: https://arcade-git-feat-lumen-circuit-beta-omar-santanas-projects.vercel.app. Las pruebas certifican reglas de software, **no** la experiencia de juego en dispositivos físicos. PR #4 permanece experimental.
