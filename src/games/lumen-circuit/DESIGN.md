@@ -38,3 +38,14 @@ La mecánica abstracta de navegar un laberinto mientras se esquivan adversarios 
 
 ## Riesgos
 El comportamiento de centinelas puede producir emboscadas y el escalado debe ajustarse con pruebas humanas. Navegación táctil por gesto y D-pad requieren verificación en pantallas pequeñas. El nombre es provisional y no está autorizado como marca registrada.
+
+## 2026-10-27 — Mecánica de alta tensión: nodo mayor aleatorio
+Esta sección sustituye cualquier descripción antigua del protagonista romboidal y de los centinelas. **Lumen es un rayo**, los adversarios son **apagones como agujeros negros** y los objetivos son las tres generadoras de cada mundo. El **nodo especial** es un gran círculo dorado con un rayo central; es distinto de los cristales pequeños y de las instalaciones eléctricas que se deben encender.
+
+Al tocar el nodo especial, **se sortea exactamente un efecto**, que dura siete segundos de partida activa (la pausa congela el reloj). Cada aparición tiene cuatro resultados con probabilidad uniforme: (1) Turbo eléctrico: Lumen se desplaza más rápido; (2) Invasión: aparece uno o dos apagones extra según el nivel, con máximo global de seis perseguidores; (3) Apagones acelerados: los enemigos se mueven más rápido; (4) Campo de absorción: al entrar en contacto con un agujero negro, este queda neutralizado y el jugador obtiene 120 puntos, sin perder una vida. No se pueden acumular dos poderes a la vez. Tras expirar, hay una espera de 3,5 segundos antes de que aparezca el siguiente nodo en una casilla transitable libre, separada de objetivos y perseguidores. Los apagones adicionales desaparecen al finalizar la invasión.
+
+Se prioriza la claridad gráfica: círculo especial con rayo y brillo, estado textual del efecto en el HUD y cuenta atrás visible. En los niveles avanzados se mantienen los mundos temáticos con topologías/velocidades de persecución distintas; el nodo no desbloquea la salida ni sustituye encender las tres generadoras.
+
+**Diferenciación jurídica:** esta es una mecánica aleatoria propia de electricidad, con beneficios y penalizaciones, no una reproducción de las reglas ni la expresión audiovisual de ninguna franquicia. Evitar personajes o sonidos licenciados. La aparición de absorción no cambia al personaje en una boca animada ni transforma a los agujeros negros en fantasmas.
+
+**Pruebas automáticas:** aparición alcanzable y sin solapamientos, reparto de cuatro clases mediante RNG controlable, un efecto por vez, expiración y reaparición, límites de aparición, aceleración y absorción. **Pendiente:** prueba manual del contraste y legibilidad en celular, ritmo de sorpresa, equilibrio en mundos avanzados y revisión de propiedad intelectual antes de comercializar.
