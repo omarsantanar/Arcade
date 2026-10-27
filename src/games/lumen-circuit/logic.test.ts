@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { COLS, ROWS, TERMINAL_COST, buildLabyrinth, distanceMap, isOpen, newCircuit,
-  moveExplorer, stepSentinels, equals, type CircuitState, type Cell } from './logic';
+  moveExplorer, stepSentinels, equals, worldForLevel, blackoutDelay, WORLDS, type CircuitState, type Cell } from './logic';
 
 const seeded=(initial:number)=>{
   let seed=initial>>>0;
@@ -96,5 +96,31 @@ describe('Lumen Circuit original labyrinth',()=>{
     expect(newCircuit(1,seeded(2)).drones).toHaveLength(2);
     expect(newCircuit(4,seeded(2)).drones).toHaveLength(3);
     expect(newCircuit(50,seeded(2)).drones).toHaveLength(4);
+  });
+});
+
+describe('Dominican power worlds', () => {
+  it('uses four fictional generator worlds in order, then cycles with new layouts', () => {
+    expect(WORLDS.map(w => w.id)).toEqual(['hydro', 'solar', 'wind', 'thermal']);
+    expect([1, 2, 3, 4, 5].map(level => worldForLevel(level).id))
+      .toEqual(['hydro', 'solar', 'wind', 'thermal', 'hydro']);
+    expect(new Set(WORLDS.map(w => w.name)).size).toBe(4);
+  });
+  it('changes obstacle rhythm and maze linkage for distinct worlds', () => {
+    expect(blackoutDelay(4)).toBeLessThan(blackoutDelay(1));
+    expect(blackoutDelay(100)).toBeGreaterThanOrEqual(worldForLevel(100).minBlackoutInterval);
+    expect(new Set(WORLDS.map(w => w.crossLinks)).size).toBeGreaterThan(1);
+  });
+  it('keeps every generator and energy shard reachable in every world', () => {
+    for (let level=1; level<=8; level++) {
+      for (let seed=1; seed<=24; seed++) {
+        const state=newCircuit(level,seeded(seed*13+level));
+        const reachable=distanceMap(state.walls,state.start);
+        expect(state.world.id).toBe(worldForLevel(level).id);
+        expect([...state.terminals,state.exit,...state.shards]
+          .every(p=>reachable.has(p.y*COLS+p.x))).toBe(true);
+        expect(state.shards.length).toBeGreaterThanOrEqual(TERMINAL_COST*3);
+      }
+    }
   });
 });
