@@ -1,13 +1,40 @@
 import Phaser from 'phaser';
 import type { ControlDirection, GameCallbacks, GameHandle } from '../types';
 import {
-  COLS, ROWS, newCircuit, moveExplorer, saveLumenBest,
+  COLS, ROWS, newCircuit, moveExplorer, saveLumenBest, blackoutDelay,
   stepSentinels, type CircuitState, type Direction, type Cell
 } from './logic';
 
 const W = 360, H = 600, CELL = 22, LEFT = (W - COLS * CELL) / 2, TOP = 97;
 const POS = (p: Cell) => ({ x: LEFT + (p.x + 0.5) * CELL, y: TOP + (p.y + 0.5) * CELL });
-const COLORS = [0x41ebce, 0xe498ff, 0xffb56d] as const;
+
+const POWER_PALETTES: Record<CircuitState['world']['id'],{floor:number;alternate:number;wall:number;edge:number;accent:number;blackout:number}> = {
+  hydro:{floor:0x17394e,alternate:0x1b4056,wall:0x254965,edge:0x76cfff,accent:0x9affef,blackout:0x6f67b8},
+  solar:{floor:0x514029,alternate:0x59472c,wall:0x70533a,edge:0xffd38a,accent:0xffec9a,blackout:0x9c73b2},
+  wind:{floor:0x21465a,alternate:0x254d62,wall:0x32647b,edge:0x9ee8ff,accent:0xc1fffc,blackout:0x8974b5},
+  thermal:{floor:0x4d2a2b,alternate:0x553033,wall:0x693a40,edge:0xffa083,accent:0xffd5b0,blackout:0x9762a3},
+};
+function drawLightning(g:Phaser.GameObjects.Graphics,x:number,y:number,color:number,scale=1) {
+  const polygon=[
+    {x:x-3*scale,y:y-11*scale},{x:x+5*scale,y:y-11*scale},
+    {x:x+1*scale,y:y-2*scale},{x:x+8*scale,y:y-2*scale},
+    {x:x-5*scale,y:y+11*scale},{x:x-1*scale,y:y+2*scale},
+    {x:x-8*scale,y:y+2*scale},
+  ];
+  g.fillStyle(color,0.21);g.fillCircle(x,y,14*scale);
+  g.fillStyle(color,1);g.fillPoints(polygon,true);
+  g.lineStyle(1,0xffffff,0.9);g.strokePoints(polygon,true);
+}
+function drawBlackout(g:Phaser.GameObjects.Graphics,x:number,y:number,accent:number) {
+  // Light-bending rings and a black core: never ghost silhouettes.
+  g.fillStyle(accent,0.25);g.fillCircle(x,y,13);
+  g.lineStyle(2.2,accent,0.85);g.strokeCircle(x,y,10);
+  g.fillStyle(0x010208,1);g.fillCircle(x,y,8);
+  g.lineStyle(1,0xddd2ff,0.85);
+  g.beginPath();g.arc(x,y,12,0.3,2.8,false);g.strokePath();
+  g.lineStyle(1.2,0x7755db,0.8);
+  g.beginPath();g.arc(x,y,5,3.4,5.95,false);g.strokePath();
+}
 
 class CircuitScene extends Phaser.Scene {
   private model: CircuitState = newCircuit();
@@ -28,7 +55,7 @@ class CircuitScene extends Phaser.Scene {
   constructor(callbacks: GameCallbacks) { super('LumenCircuit'); this.callbacks = callbacks; }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#07121D');
+    this.cameras.main.setBackgroundColor('#0e1b2b');
     const bg=this.add.graphics();
     let seed=2467;
     for(let i=0;i<60;i++){
@@ -39,7 +66,7 @@ class CircuitScene extends Phaser.Scene {
     }
     this.board=this.add.graphics();
     this.add.text(16,14,'LUMEN CIRCUIT',{fontFamily:'monospace',fontSize:'22px',fontStyle:'bold',color:'#79ffe1'});
-    this.add.text(16,44,'RECOGE ENERGÍA · ACTIVA 3 NODOS · ESCAPA',
+    this.add.text(16,44,'ENCIENDE 3 GENERADORAS · EVITA LOS APAGONES',
       {fontFamily:'monospace',fontSize:'9px',color:'#b7cbe3'});
     this.hud=this.add.text(16,66,'',{fontFamily:'monospace',fontSize:'12px',color:'#fafcff'});
     this.hint=this.add.text(W/2,535,'',{fontFamily:'monospace',fontSize:'10px',color:'#86f6e8'}).setOrigin(0.5);
@@ -131,31 +158,29 @@ class CircuitScene extends Phaser.Scene {
     if(!g)return;
     g.clear();
     const state=this.model;
-    g.fillStyle(0x0b192b,1);
+    const palette=POWER_PALETTES[state.world.id];
+    g.fillStyle(0x152840,1);
     g.fillRoundedRect(LEFT-4,TOP-4,COLS*CELL+8,ROWS*CELL+8,6);
     for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){
       const xx=LEFT+x*CELL, yy=TOP+y*CELL;
       if(state.walls[y][x]){
-        g.fillStyle(0x1e3351,1);g.fillRoundedRect(xx+1,yy+1,CELL-2,CELL-2,3);
-        g.lineStyle(0.8,0x326078,0.44);g.strokeRoundedRect(xx+1.5,yy+1.5,CELL-3,CELL-3,3);
+        g.fillStyle(palette.wall,1);g.fillRoundedRect(xx+1,yy+1,CELL-2,CELL-2,3);
+        g.lineStyle(1,palette.edge,0.33);g.strokeRoundedRect(xx+1.5,yy+1.5,CELL-3,CELL-3,3);
       }else{
-        g.fillStyle((x+y)%2?0x0c192b:0x0e2133,0.9);g.fillRect(xx+1,yy+1,CELL-2,CELL-2);
+        g.fillStyle((x+y)%2?palette.floor:palette.alternate,0.94);g.fillRect(xx+1,yy+1,CELL-2,CELL-2);
       }
     }
     // Energy fragments are angular sparks instead of food-like circles.
     for(const p of state.shards){
       const {x,y}=POS(p);
-      g.lineStyle(2,0xffd37e,0.88);
-      g.lineBetween(x-4,y,x+4,y);
-      g.lineBetween(x,y-4,x,y+4);
-      g.fillStyle(0xffe5a8,0.9);g.fillRect(x-2,y-2,4,4);
+      drawLightning(g,x,y,0xffec92,0.42);
     }
     for(let i=0;i<state.terminals.length;i++){
-      const p=POS(state.terminals[i]),active=state.activated[i],color=active?0x49f5ce:COLORS[i];
+      const p=POS(state.terminals[i]),active=state.activated[i],color=active?0xa8fff2:palette.accent;
       g.fillStyle(active?0x0a4244:0x2e1f44,0.86);
       g.fillRoundedRect(p.x-9,p.y-9,18,18,3);
       g.lineStyle(2.4,color,1);g.strokeRoundedRect(p.x-9,p.y-9,18,18,3);
-      g.fillStyle(color,1);g.fillTriangle(p.x,p.y-5,p.x+5,p.y+4,p.x-5,p.y+4);
+      drawLightning(g,p.x,p.y,color,0.45);
     }
     // Exit has its own gate glyph and only opens after all three terminals.
     const exit=POS(state.exit),open=state.activated.every(Boolean);
@@ -164,28 +189,21 @@ class CircuitScene extends Phaser.Scene {
     g.lineBetween(exit.x-4,exit.y,exit.x+5,exit.y);
     g.lineBetween(exit.x+1,exit.y-4,exit.x+5,exit.y);
     g.lineBetween(exit.x+1,exit.y+4,exit.x+5,exit.y);
-    for(let i=0;i<state.drones.length;i++){
-      const pos=POS(state.drones[i].position);
-      const color=i%2?0xff6587:0xee8d6b;
-      g.fillStyle(color,0.12);g.fillCircle(pos.x,pos.y,11);
-      g.fillStyle(color,0.9);
-      // Four-corner electrical sentinels, visually unlike any ghost-like character.
-      g.fillPoints([{x:pos.x-8,y:pos.y},{x:pos.x,y:pos.y-8},{x:pos.x+8,y:pos.y},{x:pos.x,y:pos.y+8}],true);
-      g.fillStyle(0x09111e,1);g.fillRect(pos.x-3,pos.y-2,6,4);
+    for(const blackout of state.drones){
+      const pos=POS(blackout.position);
+      drawBlackout(g,pos.x,pos.y,palette.blackout);
     }
     const player=POS(state.player);
     if(state.invulnerable===0 || Math.floor(state.invulnerable/2)%2===0){
-      g.fillStyle(0x2df9df,0.11);g.fillCircle(player.x,player.y,13);
-      g.fillStyle(0x73ffe9,1);
-      g.fillPoints([{x:player.x,y:player.y-9},{x:player.x+8,y:player.y},
-        {x:player.x,y:player.y+9},{x:player.x-8,y:player.y}],true);
-      g.fillStyle(0x0c2b38,1);g.fillCircle(player.x,player.y,2.5);
+      g.fillStyle(0xa1ffff,0.30);g.fillCircle(player.x,player.y,14);
+      drawLightning(g,player.x,player.y,0xf5fff9,0.86);
+      g.lineStyle(1.8,0x92fff5,0.85);g.strokeCircle(player.x,player.y,12);
     }
     const active=state.activated.filter(Boolean).length;
-    this.hud.setText('NIVEL '+state.level+'  ·  NODOS '+active+'/3  ·  VIDAS '+state.lives);
+    this.hud.setText('MUNDO '+state.level+' · '+state.world.name.toUpperCase()+' · VIDAS '+state.lives);
     this.hint.setText(active===3?'SALIDA ABIERTA: BUSCA EL PORTAL →':
-      'CRISTALES '+state.energy+'/2  ·  NODOS '+active+'/3');
-    this.footer.setText('PUNTOS '+state.score+' · '+Math.floor(this.elapsed/1000)+'s · '+(state.invulnerable?'ESCUDO':'EVITA CENTINELAS'));
+      'ENERGÍA '+state.energy+'/2 · GENERADORAS '+active+'/3');
+    this.footer.setText('PUNTOS '+state.score+' · '+state.world.region.toUpperCase()+' · '+(state.invulnerable?'ESCUDO':'EVITA APAGONES'));
   }
 
   update(_time:number,delta:number):void {
@@ -200,7 +218,7 @@ class CircuitScene extends Phaser.Scene {
       else if(keys.RIGHT?.isDown || keys.D?.isDown)dir='right';
       if(dir!=='none')this.tryMove(dir);
     }
-    const interval=Math.max(180,425-(this.model.level-1)*28);
+    const interval=blackoutDelay(this.model.level,this.model.world);
     if(this.droneTimer>=interval){
       this.droneTimer=0;
       const before=this.model;
