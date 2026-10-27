@@ -64,3 +64,11 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Confirmar CI/preview del código final y ajustar el balance tras partidas de prueba.
 
 - [x] Validación CI inicial de nodos especiales: 30/30 pruebas y build; estado Vercel `success` (ejecución 40494565328).
+
+### 2026-10-27 — Puntuación por tamaños, túneles y niveles especiales
+- [x] 200 luces pequeñas recogidas entre mundos → +1 vida.
+- [x] Puntos medios de 10 puntos y energía; gran punto sin puntuación pero obligatorio.
+- [x] Bonificaciones indicadas: 3,9,15,21,27,36,45,54,63 y 72+ cada 9, sin enemigos, con 90 s para recogerlo todo.
+- [x] Conexión por tubos horizontales en ciertos mapas para Lumen y perseguidores.
+- [x] +1 agujero negro cada cuatro niveles desde el 4; excepción de mundos bonificación.
+- [ ] Confirmar última CI/deploy, prueba en celulares y calibrar dificultad de mundos altos.
