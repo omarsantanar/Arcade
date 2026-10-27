@@ -105,3 +105,10 @@ npm run build
 ```
 
 **Validación de código:** [GitHub Actions 40579915918](https://github.com/omarsantanar/Arcade/actions/runs/40579915918) aprobó 72/72 pruebas, TypeScript y Vite. **Publicación:** Vercel rechazó los commits de esta rama por límite del plan Hobby `api-deployments-free-per-day` (más de 100 despliegues en 24 horas). No confirmar una preview actualizada hasta que el estado del commit final sea `success/Ready`. No se ha fusionado a `main`.
+
+## Juegos de palabras en español por país (2026-10-27)
+**Crucigrama en Español** y **Sopa de Letras en Español** tienen modo «Todo el mundo hispanohablante» y filtros reales para República Dominicana, México, España, Argentina, Colombia, Perú, Chile, Venezuela, Cuba, Puerto Rico, Ecuador, Uruguay, Guatemala y Costa Rica. El banco compartido conserva las entradas dominicanas y añade **240 pistas originales** asociadas a 13 territorios adicionales (240 en total). Los temas se habilitan cuando disponen de suficiente material. Las partidas y récords son compatibles con las versiones anteriores; la ausencia del campo país en guardados antiguos se interpreta como RD.
+
+El filtro de país indica **referencia cultural**, no exclusividad de una palabra: muchas voces cruzan fronteras. ASALE (https://www.asale.org/obras-academicas/diccionarios/diccionario-de-americanismos) permite consultar variantes regionales; el DED (https://ded.igalex.org/Consultas/Index) continúa como referencia dominicana. Ninguna definición de esas obras fue copiada. Las entradas nuevas requieren revisión editorial individual antes de uso comercial.
+
+**Código:** PR #8, rama `feat/juegos-palabras-espanol-paises`. Ejecutar `git switch feat/juegos-palabras-espanol-paises && npm ci && npm run dev`; probar `npm run test && npm run build`. El último código pasó **78 pruebas**, TypeScript y Vite ([Actions 40583190074](https://github.com/omarsantanar/Arcade/actions/runs/40583190074)). Vercel todavía bloquea el despliegue por cuota, no se debe presentar como publicado.
