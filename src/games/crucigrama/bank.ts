@@ -1,15 +1,19 @@
+import {COUNTRY_ENTRIES,type CountryCode,type CountryFilter} from './countries';
+export {COUNTRIES,COUNTRY_OPTIONS,countryName,isCountryFilter} from './countries';
+export type {CountryCode,CountryFilter} from './countries';
 /** Original editorial clues, not reproductions of copyrighted dictionary entries. */
 export type CrosswordTopic = 'lexico'|'historia'|'geografia'|'cultura'|'gastronomia'|'musica'|'deportes'|'naturaleza';
 export interface CrosswordTerm {
   answer:string;
   clue:string;
   topic:CrosswordTopic;
+  country:CountryCode;
   /** Direct public citation when individually checked; otherwise editorial research. */
   source?:string;
 }
 export const TOPIC_LABELS:Record<CrosswordTopic,string>={
-  lexico:'Dominicanismos',historia:'Historia y personajes',geografia:'Lugares y regiones',
-  cultura:'Cultura y tradiciones',gastronomia:'Sabores dominicanos',musica:'Música y ritmos',
+  lexico:'Palabras y expresiones',historia:'Historia y personajes',geografia:'Lugares y regiones',
+  cultura:'Cultura y tradiciones',gastronomia:'Gastronomía',musica:'Música y ritmos',
   deportes:'Deportes y juegos',naturaleza:'Naturaleza y patrimonio',
 };
 export const VERIFIED_SOURCES={
@@ -207,8 +211,18 @@ export function normalizeAnswer(value:string):string {
     .replace(/[ÚÙÛÜ]/g,'U')
     .replace(/[^A-ZÑ]/g,'');
 }
-export const WORD_BANK:readonly CrosswordTerm[]=Object.entries(groups).flatMap(([topic,items])=>
-  items.map(([answer,clue,source])=>({answer:normalizeAnswer(answer),clue,
+const dominican:CrosswordTerm[]=Object.entries(groups).flatMap(([topic,items])=>
+  items.map(([answer,clue,source])=>({answer:normalizeAnswer(answer),clue,country:'DO',
     topic:topic as CrosswordTopic,...(source?{source}:{})})));
+const regional:CrosswordTerm[]=Object.entries(COUNTRY_ENTRIES).flatMap(([country,items])=>
+  items.map(([answer,clue,topic])=>({answer:normalizeAnswer(answer),clue,topic,country:country as CountryCode})));
+export const WORD_BANK:readonly CrosswordTerm[]=[...dominican,...regional];
+export function termsFor(country:CountryFilter='todos',topic:CrosswordTopic|'mixto'='mixto'):CrosswordTerm[]{
+  return WORD_BANK.filter(word=>(country==='todos'||word.country===country)&&(topic==='mixto'||word.topic===topic));
+}
+export function topicsFor(country:CountryFilter,minWords=10):CrosswordTopic[]{
+  return (Object.keys(TOPIC_LABELS) as CrosswordTopic[]).filter(topic=>termsFor(country,topic)
+    .filter(w=>w.answer.length<=15).length>=minWords);
+}
 export const WORDS_BY_TOPIC=Object.fromEntries(
   Object.keys(groups).map(key=>[key,WORD_BANK.filter(w=>w.topic===key)])) as Record<CrosswordTopic,CrosswordTerm[]>;
