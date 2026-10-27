@@ -1,4 +1,4 @@
-import {WORD_BANK,WORDS_BY_TOPIC,normalizeAnswer,type CrosswordTerm,type CrosswordTopic} from './bank';
+import {WORDS_BY_TOPIC,normalizeAnswer,termsFor,isCountryFilter,type CrosswordTerm,type CrosswordTopic,type CountryFilter} from './bank';
 
 export const SIZE=15;
 export type CrosswordTheme=CrosswordTopic|'mixto';
@@ -7,10 +7,10 @@ export interface PlacedWord extends CrosswordTerm {
   id:string;direction:Direction;row:number;col:number;number:number;
 }
 export interface CrosswordPuzzle {
-  size:number;theme:CrosswordTheme;seed:number;grid:(string|null)[][];numbers:number[][];
+  size:number;theme:CrosswordTheme;country:CountryFilter;seed:number;grid:(string|null)[][];numbers:number[][];
   entries:PlacedWord[];
 }
-export interface CrosswordSaved {theme:CrosswordTheme;seed:number;elapsedMs:number;fill:string[][];hints:number}
+export interface CrosswordSaved {theme:CrosswordTheme;country?:CountryFilter;seed:number;elapsedMs:number;fill:string[][];hints:number}
 export const CROSSWORD_SAVE_KEY='arcade:crossword:save-v1';
 export const CROSSWORD_BEST_KEY='arcade:crossword:best-v1';
 export function readCrosswordBest():number {
@@ -78,9 +78,9 @@ function candidates(word:CrosswordTerm,grid:(string|null)[][],mask:number[][],rn
   }
   return result;
 }
-function makeOnce(theme:CrosswordTheme,seed:number,rnd:()=>number):CrosswordPuzzle{
+function makeOnce(theme:CrosswordTheme,seed:number,rnd:()=>number,country:CountryFilter):CrosswordPuzzle{
   const grid=blank(),mask=emptyMask();
-  const topical=theme==='mixto'?shuffle(WORD_BANK,rnd):shuffle(WORDS_BY_TOPIC[theme],rnd);
+  const topical=shuffle(termsFor(country,theme),rnd);
   const pool=topical.filter(w=>w.answer.length>=3&&w.answer.length<=SIZE);
   const first=pool.find(w=>w.answer.length>=6&&w.answer.length<=11)??pool[0];
   if(!first)throw Error('Faltan palabras para la categoría '+theme);
@@ -109,14 +109,14 @@ function makeOnce(theme:CrosswordTheme,seed:number,rnd:()=>number):CrosswordPuzz
       for(const e of atStart)e.number=number;
     }
   }
-  return {size:SIZE,theme,seed,grid,numbers,entries};
+  return {size:SIZE,theme,country,seed,grid,numbers,entries};
 }
 /** Deterministic for the same seed; all answers share real crossed letters. */
-export function generateCrossword(theme:CrosswordTheme='mixto',seed=Math.floor(Math.random()*4294967295)):CrosswordPuzzle{
+export function generateCrossword(theme:CrosswordTheme='mixto',seed=Math.floor(Math.random()*4294967295),country:CountryFilter='todos'):CrosswordPuzzle{
   const rnd=seedRandom(seed);
-  let best=makeOnce(theme,seed,rnd);
+  let best=makeOnce(theme,seed,rnd,country);
   for(let pass=0;pass<3 && best.entries.length<10;pass++){
-    const another=makeOnce(theme,seed,rnd);
+    const another=makeOnce(theme,seed,rnd,country);
     if(another.entries.length>best.entries.length)best=another;
   }
   return best;
@@ -162,6 +162,7 @@ export function validSave(x:unknown):x is CrosswordSaved{
   if(!x||typeof x!=='object')return false;
   const d=x as Partial<CrosswordSaved>;
   return (d.theme==='mixto'||Object.keys(WORDS_BY_TOPIC).includes(String(d.theme)))
+    &&(d.country===undefined||isCountryFilter(d.country))
     &&Number.isInteger(d.seed)&&Number(d.seed)>=0&&Number(d.seed)<=4294967295
     &&typeof d.elapsedMs==='number'&&Number.isFinite(d.elapsedMs)&&d.elapsedMs>=0
     &&Number.isInteger(d.hints)&&Number(d.hints)>=0
