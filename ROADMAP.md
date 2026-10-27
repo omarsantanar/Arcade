@@ -62,3 +62,5 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [x] Siete segundos de efecto, 3,5 de espera, reaparición segura y límite de agujeros negros.
 - [x] Pruebas automatizadas adicionales de efectos, tiempo, azar y colisiones.
 - [ ] Confirmar CI/preview del código final y ajustar el balance tras partidas de prueba.
+
+- [x] Validación CI inicial de nodos especiales: 30/30 pruebas y build; estado Vercel `success` (ejecución 40494565328).
