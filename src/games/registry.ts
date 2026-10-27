@@ -18,6 +18,11 @@ export const catalog: readonly GameManifest[] = [
     tagline: 'De la guagua al merengue: descubre nuestras palabras e historias.',
     category: 'puzles', available: true, accent: 'cyan', symbol: '✎', orientation: 'portrait',
   },
+  {
+    id: 'sopa-letras-dominicana', title: 'Sopa de Letras Dominicana',
+    tagline: 'Encuentra nuestras voces, figuras y lugares escondidos.',
+    category: 'puzles', available: true, accent: 'violet', symbol: '▤', orientation: 'portrait',
+  },
 ];
 
 export function findGame(id: string): GameManifest | undefined {
@@ -40,6 +45,10 @@ export async function loadGame(id: string): Promise<GameFactory> {
   if (id === 'crucigrama-dominicano') {
     const module = await import('./crucigrama/Crossword');
     return module.createDominicanCrossword;
+  }
+  if (id === 'sopa-letras-dominicana') {
+    const module = await import('./sopa-letras/WordSearch');
+    return module.createDominicanWordSearch;
   }
   throw new Error(`Juego no disponible: ${id}`);
 }
