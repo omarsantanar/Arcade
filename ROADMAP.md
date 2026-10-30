@@ -101,3 +101,13 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Vercel pendiente por límite de builds; confirmar Ready del commit final.
 - [ ] Revisar 240 pistas editorialmente por región y probar UX móvil de todos los países.
 - [ ] Ampliar a otros territorios de habla española tras la curaduría de los primeros 14.
+
+### Manejo RD — simulación de conducción (2026-10-30)
+- [x] Investigar fuentes primarias Ley 63-17 y manual de Toyota Corolla 2001 automático; señalar excepciones/limitaciones.
+- [x] Sexto juego modular en Arcade, controles móviles y teclado, salida de P con freno, cinturón, espejos, transmisión automática y direccionales.
+- [x] Mundo 2D ficticio conectado, tráfico de bus y auto, semáforos, PARE, paso peatonal, velocidad señalizada, evaluación con artículos legales y ruta aleatoria.
+- [x] Cronómetro de cinco minutos desde salida, reinicio, pausa, récord local y feedback.
+- [ ] Validar CI, 5+ pruebas nuevas y build TypeScript/Vite y despliegue Ready.
+- [ ] Completar itinerario entero manualmente, probar giros, colisiones, señalización con mínimo de 50 m y UX táctil en teléfonos físicos.
+- [ ] Segunda fase: volante/ángulo y dinámica calibrada a ficha técnica Corolla 2001, geometría real de carriles, IA de tráfico y maniobras más fieles.
+- [ ] Revisión jurídica y de instructor de conducción antes de llamarlo «simulador educativo validado»; cualquier marca visual/logotipo requiere revisión de derechos.

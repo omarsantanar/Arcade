@@ -112,3 +112,19 @@ npm run build
 El filtro de país indica **referencia cultural**, no exclusividad de una palabra: muchas voces cruzan fronteras. ASALE (https://www.asale.org/obras-academicas/diccionarios/diccionario-de-americanismos) permite consultar variantes regionales; el DED (https://ded.igalex.org/Consultas/Index) continúa como referencia dominicana. Ninguna definición de esas obras fue copiada. Las entradas nuevas requieren revisión editorial individual antes de uso comercial.
 
 **Código:** PR #8, rama `feat/juegos-palabras-espanol-paises`. Ejecutar `git switch feat/juegos-palabras-espanol-paises && npm ci && npm run dev`; probar `npm run test && npm run build`. El último código pasó **78 pruebas**, TypeScript y Vite ([Actions 40583190074](https://github.com/omarsantanar/Arcade/actions/runs/40583190074)). Vercel todavía bloquea el despliegue por cuota, no se debe presentar como publicado.
+
+## Manejo RD — simulador educativo de conducción (beta 2026-10-30)
+Sexto juego jugable de Arcade. Usa como **referencia** el Toyota Corolla 2001 automático, con un sedán vectorial genérico creado para el juego (sin logos, imágenes ni modelo tridimensional de Toyota y sin afirmar fidelidad mecánica). Vías urbanas **ficticias** de RD, con recorrido de aproximadamente 2 km desde estacionamiento a un destino aleatorio y un **límite de cinco minutos de conducción activa**. Situaciones: cinturón, espejos, freno previo a D, incorporación, direccionales, giro, semáforo, señal PARE, paso peatonal, zona escolar y tráfico pesado. Velocidad/límites y evaluación de seguridad con registro pedagógico local.
+
+**Controles:** C cinturón, M espejos, S freno, G poner D, W acelerar, A/D dirigir, Q/E direccionales; P estacionar y R marcha atrás cuando esté detenido. En móviles están disponibles botones táctiles de pedal/volante/transmisión y preparación del automóvil. Comenzar con freno, cinturón, espejos y D; el reloj comienza tras salir del estacionamiento. Pausa, reinicio, sonido general y pantalla completa desde la barra de Arcade. Récord local, sin cuentas.
+
+**Código:** `src/games/conduccion-rd/{logic.ts,logic.test.ts,DriverGame.tsx,Driver.ts,score.ts,DESIGN.md}`. Rama `feat/simulador-conduccion-rd`; [PR #9](https://github.com/omarsantanar/Arcade/pull/9) basada en PR #8 sin alterar los cinco juegos existentes. Para correr:
+```bash
+git switch feat/simulador-conduccion-rd
+npm ci
+npm run dev
+npm run test
+npm run build
+```
+
+**Fuentes jurídicas:** Ley 63-17, texto oficial INTRANT https://intrant.gob.do/transparencia/marco-legal/leyes/ (arts. 133-138, 231, 235, 241, 264, 266). Reglas didácticas y limitaciones en `DESIGN.md`. **No es un simulador certificado, un examen ni un sustituto de clases reales o práctica supervisada.** Los límites del circuito son señalización particular ficticia, no límites generales atribuidos a todas las calles de RD. Para circulación con rojo hay excepciones legales bajo condiciones (art. 137): las intersecciones simuladas representan prohibición señalizada. Manual Corolla 2001 consultado para posiciones P/R/N/D; no se replican parámetros dinámicos exactos.
