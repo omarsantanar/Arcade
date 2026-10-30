@@ -48,3 +48,16 @@ No utiliza mapas reales ni modelos 3D, volante de dirección de grado simulació
 
 ## Riesgos
 Señales simplificadas, modelado del rojo con limitaciones, posible comportamiento contraintuitivo de giro, dificultad de 2 km en cinco minutos, ausencia de comprobación física móvil y falta de aprobación de un instructor de tránsito. **No desplegar como contenido formativo validado sin ese proceso.**
+
+## 2026-10-30 — Sustitución de la cámara aérea por vista desde la cabina
+**Requisito del producto:** el juego debe verse desde el interior de un sedán de conducción a la izquierda (carreteras de RD circulan por la derecha), no desde una cámara superior. Las **flechas del teclado son los mandos principales**, y en teléfono se necesitan controles táctiles funcionales para cambio automático, direccionales, pedales y preparación de seguridad.
+
+**Decisión implementada:** `cockpit.ts` dibuja en el Canvas 2D la perspectiva aproximada desde los ojos del conductor. La posición y orientación verdaderas del vehículo siguen almacenadas en `logic.ts` como coordenadas del plano, pero se transforman en el render mediante una **proyección de suelo 2.5D** (`projectDriverPoint`). La vista muestra parabrisas, pilares, espejo interior y lateral ilustrativos, calles con carriles y cruces vistos hacia adelante, edificios esquemáticos, tráfico en perspectiva, señales, mapa de ruta pequeño dentro del vehículo y un tablero con reloj de velocidad y selector. Un volante dibujado gira al sostener dirección. **No es una foto ni réplica fiel del interior de Corolla 2001**; es arte geométrico original.
+
+**Mandos en computadora:** ↑ acelera, ↓ frena, ← gira izquierda, → gira derecha; WASD se conserva como alternativa. C cinturón, M espejos, Q/E direccionales, G para seleccionar D con freno, P para P, R para reversa, N para neutral. El manejador escucha keydown/keyup y pone a cero los mandos retenidos si se pausa o se pierde el foco para evitar que el carro siga acelerando.
+
+**Mandos en celular:** botones visibles de cinturón, espejos, indicadores izquierdo/derecho, transmisión P/R/N/D, dirección a ambos lados, freno y acelerador. El freno deja una autorización para seleccionar marcha después de tocarlo, de forma que la persona pueda efectuar la maniobra sin teclado externo; se admite presión simultánea por multitouch. La pantalla permite desplazar el panel cuando la altura del teléfono es limitada. Los controles generales de pausa, reinicio y pantalla completa siguen en el shell común Arcade.
+
+**Rendimiento:** la física se actualiza por tiempo transcurrido y la cabina se pinta a un máximo cercano a 30 fps; los tramos alejados del circuito se descartan antes de pintarse. Se elige este punto medio entre una escena 3D completa (más pesada y costosa de calibrar) y la cámara cenital anterior (no muestra lo que un conductor novel debe observar).
+
+**Pruebas nuevas:** `cockpit.test.ts` comprueba proyección delantera, culling de obstáculos detrás, perspectiva izquierda/derecha, giro de cámara y mapeo de flechas/WASD. Requiere prueba visual real de la perspectiva, legibilidad de señales con distintos tamaños de pantalla, multitouch de dirección/freno y continuidad del recorrido de cinco minutos; los tests matemáticos no sustituyen esa validación.
