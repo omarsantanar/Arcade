@@ -22,7 +22,6 @@ export const SESSION_SECONDS=300;
 export const BLOCK_METERS=240;
 export const STREET_LIMIT_KMH=40;
 export const SCHOOL_LIMIT_KMH=20;
-const DEG=Math.PI/180;
 export const ZERO_CONTROLS:DrivingControls={throttle:false,brake:false,left:false,right:false};
 export const DISTRICTS=['Centro cultural','Biblioteca del barrio','Parque municipal','Centro de salud comunitario','Oficina de servicios','Mercado vecinal'];
 export const randomSeed=()=>Math.floor(Math.random()*4294967295);
