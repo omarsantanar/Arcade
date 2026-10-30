@@ -111,3 +111,13 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Completar itinerario entero manualmente, probar giros, colisiones, señalización con mínimo de 50 m y UX táctil en teléfonos físicos.
 - [ ] Segunda fase: volante/ángulo y dinámica calibrada a ficha técnica Corolla 2001, geometría real de carriles, IA de tráfico y maniobras más fieles.
 - [ ] Revisión jurídica y de instructor de conducción antes de llamarlo «simulador educativo validado»; cualquier marca visual/logotipo requiere revisión de derechos.
+
+### 2026-10-30 — Manejo RD desde interior
+- [x] Reemplazar vista superior por perspectiva desde parabrisas, con tablero, volante, retrovisores y señales al frente (Canvas 2.5D).
+- [x] Asignar ↑ acelerador, ↓ freno, ← izquierda, → derecha; mantener WASD como segunda opción.
+- [x] Proveer en celular transmisión P/R/N/D, direccionales, cinturón, espejos, dirección y pedales táctiles; admisión de pulsaciones retenidas y multitouch.
+- [x] Pruebas de proyección delantera, recorte trasero, perspectiva lateral, giro y flechas.
+- [x] Código validado: 92/92 tests, TypeScript/Vite y Vercel `success` para commit `fa2ecf36` (Actions 41123729799).
+- [ ] Completar ruta manual con teclado y teléfono real, comprobar las intersecciones y la experiencia multitouch.
+- [ ] Mejorar visibilidad de semáforos, señalética y motocicletas; revisar IA de tránsito en calles dominicanas ficticias.
+- [ ] Evaluar construcción 3D calibrada y interior fiel a ficha técnica del Corolla (derechos de marca/arte según uso).

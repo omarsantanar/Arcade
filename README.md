@@ -128,3 +128,12 @@ npm run build
 ```
 
 **Fuentes jurídicas:** Ley 63-17, texto oficial INTRANT https://intrant.gob.do/transparencia/marco-legal/leyes/ (arts. 133-138, 231, 235, 241, 264, 266). Reglas didácticas y limitaciones en `DESIGN.md`. **No es un simulador certificado, un examen ni un sustituto de clases reales o práctica supervisada.** Los límites del circuito son señalización particular ficticia, no límites generales atribuidos a todas las calles de RD. Para circulación con rojo hay excepciones legales bajo condiciones (art. 137): las intersecciones simuladas representan prohibición señalizada. Manual Corolla 2001 consultado para posiciones P/R/N/D; no se replican parámetros dinámicos exactos.
+
+## Manejo RD — POV de conductor y flechas (2026-10-30)
+**Vista nueva:** el juego ya no utiliza cámara superior. `src/games/conduccion-rd/cockpit.ts` presenta perspectiva desde el interior del sedán, con parabrisas, tablero analógico, volante, espejo lateral, retrovisor interior, calles y señales proyectadas hacia adelante, autobuses y minimapa incrustado en el tablero. Es una **cabina ilustrativa propia**, no una reproducción exacta ni licenciada del Corolla 2001.
+
+**Teclado principal:** flecha ↑ acelerador, ↓ freno, ← izquierda y → derecha; WASD permanece como alternativa. C cinturón, M espejos, Q/E intermitentes izquierdo/derecho, G selector D con freno, P estacionar, R reversa y N neutral. Los cuatro mandos de conducción se mantienen presionados para actuar y se liberan al soltar; al pausar o desenfocar la ventana se detienen las pulsaciones.
+
+**Celular:** cinturón, espejos, ambas direccionales, P/R/N/D y controles táctiles independientes de dirección, freno y acelerador. Puedes tocar primero FRENO y después D sin teclado. La pantalla conserva pausa, reinicio y pantalla completa. Para pantalla estrecha, el panel se desplaza verticalmente.
+
+**Estado técnico:** código funcional en commit `fa2ecf36b03ba2442f8d5ae50e40a0221c927ac5`, [Actions 41123729799](https://github.com/omarsantanar/Arcade/actions/runs/41123729799): **92/92 tests** (8 suites), TypeScript/Vite aprobados; Vercel `success` para esa revisión. Vista previa de la rama: https://arcade-git-feat-simulador-conduccion-rd-omar-santanas-projects.vercel.app. Desarrollo en [PR #9](https://github.com/omarsantanar/Arcade/pull/9), sin fusionar en `main`. Quedan pendientes pruebas visuales y multitáctiles en dispositivos reales, conducción completa de 300 segundos y revisión de un instructor de tránsito. Para instrucciones detalladas, ver `src/games/conduccion-rd/DESIGN.md`.
