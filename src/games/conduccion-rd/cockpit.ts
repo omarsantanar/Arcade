@@ -1,5 +1,5 @@
 import {BLOCK_METERS,currentNode,distance,lightColor,nextTurn,npcTraffic,pedestrianCrossing,
-  type DrivingControls,type DrivingState,type Point} from './logic';
+  type DrivingControls,type DrivingState} from './logic';
 
 /** Fictional procedural streets rendered from eye height with ground-plane projection.
  * Pure Canvas 2.5D, not a licensed 3D Toyota model and not a calibrated camera.
@@ -14,6 +14,11 @@ const camera=(s:DrivingState,p:Vertex):CameraVertex=>{
 const screen=(p:CameraVertex)=>({
   x:CX+(p.side*FOCAL)/p.ahead,y:HORIZON+(EYE-p.height)*FOCAL/p.ahead,
 });
+/** Testable driver-eye projection; points behind the vehicle are not visible. */
+export function projectDriverPoint(s:DrivingState,p:Vertex):{x:number;y:number}|null{
+  const c=camera(s,p);
+  return c.ahead>NEAR?screen(c):null;
+}
 const clipNear=(source:CameraVertex[]):CameraVertex[]=>{
   const out:CameraVertex[]=[];
   for(let i=0;i<source.length;i++){
@@ -51,7 +56,7 @@ function drawSky(ctx:CanvasRenderingContext2D,s:DrivingState){
   ctx.fillStyle='#597866';ctx.fillRect(0,HORIZON+37,W,H-HORIZON);
 }
 function drawStreets(ctx:CanvasRenderingContext2D,s:DrivingState){
-  const range=950;
+  const range=560;
   const startX=Math.floor((s.x-range)/BLOCK_METERS);
   const endX=Math.ceil((s.x+range)/BLOCK_METERS);
   const startY=Math.floor((s.y-range)/BLOCK_METERS);
