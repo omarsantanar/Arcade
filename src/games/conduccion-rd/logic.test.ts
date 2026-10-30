@@ -80,14 +80,14 @@ describe('Driving simulator: five-minute, deterministic, coherent neighbourhood'
   it('penalises unsafe PARE and red-light crossing, cites an article',()=>{
     let s=makeDrivingState(5);
     s={...s,gear:'D',belt:true,mirrorChecked:true,parked:false,
-      x:0,y:30,angle:-Math.PI/2,speed:6,elapsed:0,lastDistance:31};
+      x:0,y:29.25,angle:-Math.PI/2,speed:6,elapsed:0,lastDistance:30};
     s=advanceDrive(s,{...ZERO_CONTROLS,throttle:true},.06);
     expect(s.index).toBe(1);
     expect(s.infractions).toBeGreaterThan(0);
     expect(s.events.some(x=>x.includes('133'))).toBe(true);
     const n=s.route[1];
-    s={...s,index:1,x:n.x+30,y:n.y,angle:Math.PI,speed:6,
-      lastDistance:31,stopMet:false,elapsed:70};
+    s={...s,index:1,x:n.x+29.25,y:n.y,angle:Math.PI,speed:6,
+      lastDistance:30,stopMet:false,elapsed:70};
     const before=s.infractions;
     s=advanceDrive(s,{...ZERO_CONTROLS,throttle:true},.06);
     expect(s.index).toBe(2);
