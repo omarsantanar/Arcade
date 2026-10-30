@@ -1,4 +1,4 @@
-import {BLOCK_METERS,currentNode,distance,lightColor,nextTurn,npcTraffic,pedestrianCrossing,
+import {BLOCK_METERS,currentNode,distance,lightColor,nextTurn,npcTraffic,
   type DrivingControls,type DrivingState} from './logic';
 
 /** Fictional procedural streets rendered from eye height with ground-plane projection.
