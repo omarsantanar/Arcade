@@ -2,9 +2,9 @@ import {useEffect,useRef,useState,type PointerEvent} from 'react';
 import type {GameCallbacks} from '../types';
 import {
   advanceDrive,checkMirrors,currentLimit,currentNode,distance,driveGrade,lightColor,
-  makeDrivingState,nextTurn,npcTraffic,pedestrianCrossing,record,remainingTime,
+  makeDrivingState,nextTurn,npcTraffic,pedestrianCrossing,remainingTime,
   setIndicator,shiftGear,toggleBelt,ZERO_CONTROLS,BLOCK_METERS,
-  type DrivingControls,type DrivingState,type Gear,type Indicator,type Point,
+  type DrivingControls,type DrivingState,type Gear,
 } from './logic';
 
 export interface DriverController {pause:()=>void;resume:()=>void;restart:()=>void;setMuted:(value:boolean)=>void}
@@ -213,7 +213,7 @@ export default function DriverGame({callbacks,controller}:Props){
     (ped?'PASO PEATONAL OCUPADO':'CRUCE PEATONAL'):'TRÁNSITO PESADO';
   return <section className="driving-game" aria-label="Simulador educativo de conducción en República Dominicana">
     <div className="driving-top">
-      <div><strong>MANEJO RD · SEDÁN 2001 AUTOMÁTICO</strong>
+      <div><strong>MANEJO RD · COROLLA 2001 (REFERENCIA)</strong>
         <span>Trayecto didáctico · Destino: {destination}</span></div>
       <div className="driving-time">{formatSeconds(remainingTime(view))}<small>restantes</small></div>
     </div>
