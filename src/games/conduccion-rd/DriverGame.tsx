@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState,type PointerEvent} from 'react';
 import type {GameCallbacks} from '../types';
 import {drawCockpit} from './cockpit';
+import {pedalForKey} from './input';
 import {
   advanceDrive,checkMirrors,currentLimit,currentNode,distance,driveGrade,lightColor,
   makeDrivingState,nextTurn,npcTraffic,pedestrianCrossing,remainingTime,
@@ -37,12 +38,10 @@ export default function DriverGame({callbacks,controller}:Props){
   useEffect(()=>{
     const down=(event:KeyboardEvent)=>{
       const k=event.key.toLowerCase();
-      if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))event.preventDefault();
+      const pedal=pedalForKey(k);
+      if(pedal||k===' ')event.preventDefault();
       if(paused.current||engine.current.finished)return;
-      if(k==='w'||k==='arrowup')controls.current.throttle=true;
-      if(k==='s'||k==='arrowdown')controls.current.brake=true;
-      if(k==='a'||k==='arrowleft')controls.current.left=true;
-      if(k==='d'||k==='arrowright')controls.current.right=true;
+      if(pedal)controls.current[pedal]=true;
       if(event.repeat)return;
       if(k==='c')act(toggleBelt);
       if(k==='m')act(checkMirrors);
@@ -55,10 +54,8 @@ export default function DriverGame({callbacks,controller}:Props){
     };
     const up=(event:KeyboardEvent)=>{
       const k=event.key.toLowerCase();
-      if(k==='w'||k==='arrowup')controls.current.throttle=false;
-      if(k==='s'||k==='arrowdown')controls.current.brake=false;
-      if(k==='a'||k==='arrowleft')controls.current.left=false;
-      if(k==='d'||k==='arrowright')controls.current.right=false;
+      const pedal=pedalForKey(k);
+      if(pedal)controls.current[pedal]=false;
     };
     window.addEventListener('keydown',down);window.addEventListener('keyup',up);
     const blur=()=>{controls.current={...ZERO_CONTROLS};};
@@ -66,7 +63,7 @@ export default function DriverGame({callbacks,controller}:Props){
     return ()=>{window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);};
   },[]);
   useEffect(()=>{
-    let frame=0,last=performance.now(),display=0;
+    let frame=0,last=performance.now(),display=0,lastPaint=0;
     const loop=(now:number)=>{
       const dt=Math.min(.06,(now-last)/1000);last=now;
       if(!paused.current&&!engine.current.finished){
@@ -79,8 +76,11 @@ export default function DriverGame({callbacks,controller}:Props){
           callbacks.onScore(cur.score);callbacks.onStatus('gameover');
         }
       }
-      const context=canvas.current?.getContext('2d');
-      if(context)drawCockpit(context,engine.current,controls.current);
+      if(now-lastPaint>32){
+        const context=canvas.current?.getContext('2d');
+        if(context)drawCockpit(context,engine.current,controls.current);
+        lastPaint=now;
+      }
       if(now-display>140){setView({...engine.current});display=now;}
       frame=requestAnimationFrame(loop);
     };
@@ -88,7 +88,9 @@ export default function DriverGame({callbacks,controller}:Props){
     return ()=>cancelAnimationFrame(frame);
   },[callbacks]);
   const press=(name:keyof DrivingControls)=>(event:PointerEvent<HTMLButtonElement>)=>{
-    event.preventDefault();controls.current[name]=true;
+    event.preventDefault();
+    if(paused.current||engine.current.finished)return;
+    controls.current[name]=true;
     if(name==='brake')act(s=>({...s,brakeReady:true}));
     event.currentTarget.setPointerCapture(event.pointerId);
   };
