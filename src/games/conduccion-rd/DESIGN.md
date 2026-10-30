@@ -1,0 +1,50 @@
+# Manejo RD — simulador educativo urbano, beta 0.1 (2026-10-30)
+
+## Visión
+**Manejo RD** es el sexto título de Arcade y el primer prototipo de simulación de conducción. Busca enseñar a un conductor que comienza a practicar a reconocer situaciones viales de República Dominicana mediante decisiones que tienen consecuencias visibles, sin convertir el juego en una evaluación oficial ni sustituir escuela, instructor o entrenamiento supervisado.
+
+**Vehículo de referencia:** Toyota Corolla del año 2001, caja automática. El motor visual es un **sedán geométrico genérico** que evoca la forma de un automóvil compacto de principios de los años 2000. No se han usado logotipos, fotografías, diseños tridimensionales, planos ni activos de Toyota. **No se simulan curvas de potencia, distancias reales de frenada, radio exacto de giro, visibilidad del habitáculo ni geometría exacta del Corolla.** Para un simulador de vehículo real la segunda fase exige ficha técnica del mercado, medidas verificadas, pruebas de física y posiblemente licencias de marca para visuales. El manual Corolla 2001 muestra posiciones de transmisión P, R, N, D y bloqueo de salida de P con freno: https://manualzz.com/doc/53683127/toyota-2001-corolla-owner-s-manual .
+
+## Recorrido jugable
+- Duración máxima de **cinco minutos de conducción activa**, medidos a partir de la salida del puesto de estacionamiento, con trayecto completo de unos 2 km de longitud simulada.
+- Escenario 2D **ficticio**, sin pretensión de representar una calle real de Santo Domingo ni rutas de cartografía oficial. Mapa reticular de calles interconectadas, manzanas con edificios y árboles, líneas de carril, paso peatonal, semáforos y tráfico de autobuses y automóviles.
+- Destino seleccionado aleatoriamente entre biblioteca, mercado vecinal, parque, centro comunitario y otros servicios; recorridos alternativos conectados determinados por semilla.
+- Inicio detenido, transmisión en P, cinturón desabrochado y espejos sin comprobar. El usuario abrocha el cinturón (C), revisa espejos (M), pisa el freno (S) y coloca D con G o la tecla táctil; señaliza salida a la izquierda, acelera W, gira A/D y frena S. R y N también están disponibles para ejercicios auxiliares, sin necesidad de pasar marchas manuales.
+- En cada cruce hay una situación explicada y un registro de decisiones con penalizaciones educativas; se analiza el semáforo, señal PARE, paso peatonal, tráfico denso, escuela señalizada a 20 km/h y giro anunciado con al menos 50 m. Límite simulado general por señal de 40 km/h, no una afirmación de límite urbano universal.
+- No hay tráfico real ni localización GPS, no se registran datos de terceros. La mejor nota de seguridad se guarda en localStorage; la misión puede terminar por llegada o tiempo. Los cinco títulos anteriores conservan su código y funcionamiento.
+
+## Matriz jurídica — Ley 63-17 (consultada el 30 de octubre de 2026)
+**Fuente oficial primaria:** INTRANT https://intrant.gob.do/transparencia/marco-legal/leyes/ y PDF https://intrant.gob.do/phocadownload/SobreNosotros/MarcoLegal/Leyes/MARCO%20LEGAL-LEY%2063-17%20SOBRE%20TRANSITO%2C%20TRANSPORTE%2C%20Y%20SEGURIDAD%20VIAL.pdf . Versión accesible por artículos para contraste: https://ley.do/leyes/2017/ley-063-2017/ (fuente de lectura no oficial).
+
+| Artículo | Regla relevante | Decisión del simulador |
+| --- | --- | --- |
+| 133 y 134 | Acatar semáforos, detenerse en rojo y procurar no entrar con amarillo. | Se compara la fase del semáforo al entrar en la intersección; se descuenta por rojo/amarillo de alta velocidad. |
+| 135 y 136 | Respetar señalización y prioridad del peatón. | Un cruce presenta peatones y permite esperar a que termine su fase. |
+| 137, párrafos I–II | Bajo condiciones específicas, pueden permitirse ciertos giros con rojo, siempre cediendo paso y sin señal que lo prohíba. | Para simplificar, los semáforos del circuito **presentan prohibición expresa de virar con luz roja**, evitando enseñar que todo giro rojo está prohibido. No se codifican todas las excepciones; esto se explica al usuario. |
+| 138 | Señal PARE implica detenerse completamente y continuar solo si es seguro. | Se exige parada sostenida de al menos 0,65 s como comprobación del motor didáctico, no como tiempo legal exigido. |
+| 231, núm. 1 | Prohibición de conducir sin cinturón de seguridad. | La misión no permite iniciar marcha sin cinturón. |
+| 235 | Señal de giro con 50 m de anticipación, reducción gradual y posición de carril pertinente. | Se exige activación de direccional correcta durante al menos 50 m recorridos antes del cruce; evalúa velocidad de giro. **No se comprueba todavía la posición exacta del carril.** |
+| 241 | Inicio desde detención/estacionamiento únicamente con seguridad y revisión del entorno. | Comprobación de espejos y señalizar incorporación; los puntos ciegos no se reproducen físicamente. |
+| 264 y 266 | Velocidad según señales y reducción en intersecciones o condiciones de riesgo. | Zonas simuladas con señales de 40 o 20 km/h, advertencia en cruces densos. |
+
+**Nota normativa:** Los puntos del videojuego **no equivalen a multas, puntos reales de la licencia ni normas oficiales de evaluación**. Una regla física de juego (0,65 segundos parado) no debe confundirse con un requisito legal. Antes de comercializar un material de formación vial, exigir revisión por especialista legal, instructor acreditado y contraste con reglamentos vigentes, además de la propia ley.
+
+## Diseño técnico y UX
+- `logic.ts`: tipos para estado de coche, caja automática, cinturón/espejos/direccionales, ruta reproducible, física simplificada, 300 s, estados de luces, tránsito y puntaje; funciones puras testables.
+- `DriverGame.tsx`: representación Canvas 2D de calles y autos, panel de velocidad/límite/selector, retroalimentación, teclado/táctil, pausa/reinicio, informe de infracciones.
+- `Driver.ts`: adaptador al GameFactory común.
+- `score.ts`: récord local.
+- `logic.test.ts`: invariantes de ruta, intersecciones, fases semafóricas, maniobras, seguridad, transmisión, tiempo y puntuación.
+
+## Lo que aún NO hace esta beta
+No utiliza mapas reales ni modelos 3D, volante de dirección de grado simulación, sensores de espejo o ángulo muerto, peatones animados, IA vial completa, direccional automática real ni comportamiento preciso de tráfico dominicano. Los coches NPC siguen trayectorias esquemáticas. No se debe presentar como práctica suficiente para circular, prueba oficial, certificación o simulación de un Corolla real.
+
+## Fases siguientes
+1. Validar técnicamente CI y despliegue; jugar manualmente en Chrome móvil/Safari iOS/escritorio y comprobar maniobras, especialmente cambios de sentido al girar.
+2. Construir circuito pedagógico por unidades: arrancar, carril y esquina, semáforo, PARE, prioridad y tránsito pesado. Feedback claro antes de penalización, telemetría local de maniobras.
+3. Volante con ángulo y curva de dirección calibrable; caja automática funcional realista en D/R y marcha atrás de salida; distancia/frenada validadas y vehículo con dimensiones de ficha técnica.
+4. Intersecciones de dos carriles y tráfico bidireccional, paso peatonal animado, vehículos pesados, lluvia y circulación mixta de motocicletas; comprobar juridicidad de cada situación.
+5. Si se desea cartografía de RD, verificar licencias y condiciones de fuentes de datos antes de usarlas. Revisar también denominación e identidad visual con Toyota para distribución comercial.
+
+## Riesgos
+Señales simplificadas, modelado del rojo con limitaciones, posible comportamiento contraintuitivo de giro, dificultad de 2 km en cinco minutos, ausencia de comprobación física móvil y falta de aprobación de un instructor de tránsito. **No desplegar como contenido formativo validado sin ese proceso.**
