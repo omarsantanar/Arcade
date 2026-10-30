@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {advanceDrive,checkMirrors,currentLimit,driveGrade,lightColor,makeDrivingState,makeRoute,
   nextTurn,pedestrianCrossing,remainingTime,safeRoad,setIndicator,shiftGear,toggleBelt,
-  ZERO_CONTROLS,SESSION_SECONDS,type DrivingState} from './logic';
+  ZERO_CONTROLS,SESSION_SECONDS} from './logic';
 
 describe('Driving simulator: five-minute, deterministic, coherent neighbourhood',()=>{
   it('builds several variable but connected paths with a random destination',()=>{
@@ -70,7 +70,7 @@ describe('Driving simulator: five-minute, deterministic, coherent neighbourhood'
   });
   it('awards elapsed-time-only completion at 300 seconds even without reaching destination',()=>{
     let s=makeDrivingState(7);
-    s={...s,elapsed:299.99};
+    s={...s,elapsed:299.99,parked:false};
     s=advanceDrive(s,ZERO_CONTROLS,.1);
     expect(s.finished).toBe(true);
     expect(s.completed).toBe(false);
