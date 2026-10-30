@@ -113,9 +113,10 @@ export default function GameView({ manifest, onClose }: Props) {
             <div className="game-metrics"><div><span>PUNTUACIÓN</span><strong>{score.toString().padStart(4, '0')}</strong></div><div><span>MEJOR MARCA</span><strong>{best.toString().padStart(4, '0')}</strong></div></div>
             <div className="instructions"><h3>Cómo jugar</h3>
               {manifest.id === 'manejo-rd' ? <>
-                <p><strong>Simulador educativo de cinco minutos:</strong> aprende a salir de un estacionamiento y recorre calles ficticias con escenarios de semáforos, PARE, cruce peatonal y tránsito pesado.</p>
-                <p><strong>Conduce:</strong> cinturón C, espejos M, freno S y luego selector D (tecla G). Acelera con W, gira con A/D y frena con S. Señaliza con Q/E al menos 50 metros antes de doblar.</p>
-                <p>Se evalúan las decisiones conforme a los artículos 133–138, 235, 241, 264 y 266 de la Ley 63-17. Los límites son señales particulares del circuito. No es entrenamiento certificado ni reproduce calles reales o la dinámica exacta del Toyota Corolla 2001.</p>
+                <p><strong>Vista desde el conductor:</strong> observa el parabrisas, la carretera, el tráfico, el tablero, el volante, las señales y el retrovisor. Las calles son ficticias y la cabina es ilustrativa.</p>
+                <p><strong>Flechas:</strong> <kbd>↑</kbd> acelerar, <kbd>↓</kbd> frenar, <kbd>←</kbd> girar izquierda, <kbd>→</kbd> girar derecha. También funciona WASD.</p>
+                <p><strong>Antes de salir:</strong> cinturón C, espejos M, mantén freno ↓ y selecciona D con G o con el botón táctil. Q/E encienden direccionales. En celular utiliza cinturón, espejos, selector P/R/N/D, direccionales, pedal de freno y acelerador y giro, todos en pantalla.</p>
+                <p>Practica las decisiones de la Ley 63-17; avisa antes de girar y respeta PARE, semáforos, peatones y autobuses. No es un simulador certificado ni reproduce las medidas o la física exacta del Corolla 2001.</p>
               </> : manifest.id === 'sudoku' ? <>
                 <p><strong>Niveles 1–3:</strong> descubre las filas, columnas y bloques con ejemplos 4×4, teclado y opciones de ayuda.</p>
                 <p><strong>Desde el 4:</strong> tableros 9×9 aleatorios de solución única; desaparece la ayuda y se reducen las cifras iniciales. Cada nivel exige más concentración.</p>
