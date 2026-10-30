@@ -4,7 +4,7 @@ import {drawCockpit} from './cockpit';
 import {pedalForKey} from './input';
 import {
   advanceDrive,checkMirrors,currentLimit,currentNode,distance,driveGrade,lightColor,
-  makeDrivingState,nextTurn,npcTraffic,pedestrianCrossing,remainingTime,
+  makeDrivingState,nextTurn,pedestrianCrossing,remainingTime,
   setIndicator,shiftGear,toggleBelt,ZERO_CONTROLS,
   type DrivingControls,type DrivingState,type Gear,
 } from './logic';
