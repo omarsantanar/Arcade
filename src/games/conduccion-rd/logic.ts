@@ -124,7 +124,8 @@ export function advanceDrive(current:DrivingState,controls:DrivingControls,dt:nu
   if(current.finished||dt<=0)return current;
   const s:DrivingState={...current,events:[...current.events]};
   const step=Math.min(.06,dt);
-  s.elapsed=Math.min(SESSION_SECONDS,s.elapsed+step);
+  // The five-minute assessment starts only after leaving the parked position.
+  if(!current.parked)s.elapsed=Math.min(SESSION_SECONDS,s.elapsed+step);
   s.collisionCooldown=Math.max(0,s.collisionCooldown-step);
   if(controls.brake&&s.speed<.4)s.brakeReady=true;
   const target=currentNode(s);
