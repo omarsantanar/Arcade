@@ -119,12 +119,13 @@ export default function DriverGame({callbacks,controller}:Props){
     controller.resume=()=>{paused.current=false;callbacks.onStatus('playing');};
     controller.restart=()=>{
       engine.current=makeDrivingState();controls.current={...ZERO_CONTROLS};paused.current=false;
-      tilt.current.steer=0;
+      tilt.current.steer=0;tilt.current.neutral=null;
+      if(tilt.current.enabled)setTiltStatus('calibrate');
       setView({...engine.current});callbacks.onStatus('playing');callbacks.onScore(100);
     };
     controller.setMuted=value=>{muted.current=value;};
     return ()=>{controls.current={...ZERO_CONTROLS};};
-  });
+  },[controller,callbacks]); // Do not release held pedals on every visual re-render.
   useEffect(()=>{
     const down=(event:KeyboardEvent)=>{
       const k=event.key.toLowerCase();
