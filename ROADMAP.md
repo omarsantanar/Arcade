@@ -131,3 +131,7 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Confirmar GitHub Actions y compilación del último código; comprobar error de Vercel y recuperar Ready con permisos de equipo.
 - [ ] Jugar cinco minutos en móviles reales; contrastar calibración y dirección Android/iOS, multitouch y orientación horizontal.
 - [ ] Equilibrar dirección y guiado del itinerario tras pruebas de principiantes; no cambiar motor completo sin evidencia.
+
+
+- [x] Manejo RD 0.3: 99/99 tests, TypeScript/Vite y Vercel success en commit de código `667d056c46672bf8b91bd41cd9786757186824a4` (Actions 41210626709).
+- [ ] Validar con celular real el giro por inclinación, calibración y permisos en Safari iOS y Chrome Android; después ajustar sensibilidad y mapeo de ejes según resultados observados.
