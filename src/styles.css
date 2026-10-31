@@ -329,3 +329,13 @@
     top:3px;left:50%;transform:translateX(-50%);width:max-content;max-width:92%;
     background:#162c39ed;color:#fff7d2;padding:4px 8px;text-align:center;border-radius:8px;font:700 9px 'DM Sans',sans-serif;pointer-events:none}
 }
+
+
+/* Sensor prompts should not push the landscape pedal bar out of the viewport. */
+@media (pointer:coarse) and (orientation:landscape) and (max-height:650px){
+  .driving-road-top .driving-motion-state{position:absolute;top:45px;left:50%;
+    transform:translateX(-50%);max-width:260px;box-sizing:border-box;
+    background:#233b4bed;border:1px solid #d5c78b8f;color:#fff2c4;
+    border-radius:8px;padding:5px 8px;text-align:center;font-size:10px;pointer-events:none;
+    white-space:normal}
+}
