@@ -121,3 +121,13 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Completar ruta manual con teclado y teléfono real, comprobar las intersecciones y la experiencia multitouch.
 - [ ] Mejorar visibilidad de semáforos, señalética y motocicletas; revisar IA de tránsito en calles dominicanas ficticias.
 - [ ] Evaluar construcción 3D calibrada y interior fiel a ficha técnica del Corolla (derechos de marca/arte según uso).
+
+
+### 2026-10-31 — Inclinación en Manejo RD
+- [x] Módulo sensor por `DeviceOrientationEvent` con consentimiento opcional del navegador y fallback por botones.
+- [x] Dirección analógica proporcional, zona muerta, suavizado, calibración, sensibilidad e inversión.
+- [x] Vista horizontal inmersiva sin scroll, pedales y transmisión/direccionales en pantalla, flechas de PC intactas.
+- [x] Tests unitarios nuevos para la conversión del sensor y su integración en física.
+- [ ] Confirmar GitHub Actions y compilación del último código; comprobar error de Vercel y recuperar Ready con permisos de equipo.
+- [ ] Jugar cinco minutos en móviles reales; contrastar calibración y dirección Android/iOS, multitouch y orientación horizontal.
+- [ ] Equilibrar dirección y guiado del itinerario tras pruebas de principiantes; no cambiar motor completo sin evidencia.
