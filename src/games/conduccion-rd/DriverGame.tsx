@@ -2,6 +2,7 @@ import {useEffect,useRef,useState,type PointerEvent} from 'react';
 import type {GameCallbacks} from '../types';
 import {drawCockpit} from './cockpit';
 import {pedalForKey} from './input';
+import {tiltAxis,steeringFromTilt,smoothSteering,type TiltSample} from './tilt';
 import {
   advanceDrive,checkMirrors,currentLimit,currentNode,distance,driveGrade,lightColor,
   makeDrivingState,nextTurn,pedestrianCrossing,remainingTime,
@@ -18,9 +19,70 @@ const writeBest=(n:number)=>{try{localStorage.setItem(BEST_KEY,String(Math.max(s
 export default function DriverGame({callbacks,controller}:Props){
   const [view,setView]=useState<DrivingState>(()=>makeDrivingState());
   const [best,setBest]=useState(scoreBest);
+  const [tiltOn,setTiltOn]=useState(false);
+  const [tiltState,setTiltState]=useState<'off'|'asking'|'waiting'|'ready'|'denied'|'unsupported'>('off');
+  const [sensitivity,setSensitivity]=useState(1);
+  const [invertTilt,setInvertTilt]=useState(false);
+  const [tiltDisplay,setTiltDisplay]=useState(0);
+  const tiltEnabled=useRef(false);
+  const tiltStatus=useRef('off');
+  const latest=useRef<{value:number;angle:number;time:number}|null>(null);
+  const neutral=useRef<number|null>(null);
+  const filtered=useRef(0);
+  const startedAt=useRef(0);
+  const sensitivityRef=useRef(sensitivity),invertRef=useRef(invertTilt);
+  sensitivityRef.current=sensitivity;invertRef.current=invertTilt;
   const engine=useRef(view),controls=useRef<DrivingControls>({...ZERO_CONTROLS});
   const canvas=useRef<HTMLCanvasElement>(null),paused=useRef(false),muted=useRef(false);
   const {destination,score,gear,speed,indicator,belt,mirrorChecked,finished,completed}=view;
+  const updateTiltStatus=(status:typeof tiltState)=>{
+    if(tiltStatus.current!==status){tiltStatus.current=status;setTiltState(status);}
+  };
+  const disableTilt=()=>{
+    tiltEnabled.current=false;setTiltOn(false);neutral.current=null;
+    filtered.current=0;controls.current.steer=undefined;
+    latest.current=null;setTiltDisplay(0);updateTiltStatus('off');
+  };
+  const enableTilt=async()=>{
+    if(tiltEnabled.current)return;
+    if(!window.isSecureContext||!('DeviceOrientationEvent' in window)){
+      updateTiltStatus('unsupported');return;
+    }
+    updateTiltStatus('asking');
+    // iOS needs permission in a direct click/tap handler (never on page load).
+    const ctor=DeviceOrientationEvent as typeof DeviceOrientationEvent & {
+      requestPermission?:()=>Promise<'granted'|'denied'>};
+    try{
+      if(typeof ctor.requestPermission==='function'){
+        const permission=await ctor.requestPermission();
+        if(permission!=='granted'){updateTiltStatus('denied');return;}
+      }
+      latest.current=null;neutral.current=null;filtered.current=0;
+      startedAt.current=performance.now();tiltEnabled.current=true;
+      setTiltOn(true);updateTiltStatus('waiting');
+    }catch{updateTiltStatus('denied');}
+  };
+  const centerTilt=()=>{
+    if(latest.current){neutral.current=latest.current.value;filtered.current=0;
+      controls.current.steer=0;setTiltDisplay(0);}
+  };
+  useEffect(()=>{
+    if(!tiltOn)return;
+    const onOrientation=(event:DeviceOrientationEvent)=>{
+      const screenAngle=window.screen.orientation?.angle ??
+        ((window as Window & {orientation?:number}).orientation ?? 0);
+      const sample:TiltSample={beta:event.beta,gamma:event.gamma,screenAngle};
+      const value=tiltAxis(sample);
+      if(value===null)return;
+      const angle=((Math.round(screenAngle/90)*90)%360+360)%360;
+      if(latest.current?.angle!==angle){neutral.current=null;filtered.current=0;}
+      latest.current={value,angle,time:performance.now()};
+      if(neutral.current===null)neutral.current=value;
+      if(tiltStatus.current!=='ready')updateTiltStatus('ready');
+    };
+    window.addEventListener('deviceorientation',onOrientation);
+    return ()=>window.removeEventListener('deviceorientation',onOrientation);
+  },[tiltOn]);
   const act=(fn:(s:DrivingState)=>DrivingState)=>{
     engine.current=fn(engine.current);
     setView({...engine.current});callbacks.onScore(engine.current.score);
@@ -30,6 +92,7 @@ export default function DriverGame({callbacks,controller}:Props){
     controller.resume=()=>{paused.current=false;callbacks.onStatus('playing');};
     controller.restart=()=>{
       engine.current=makeDrivingState();controls.current={...ZERO_CONTROLS};paused.current=false;
+      filtered.current=0;neutral.current=latest.current?.value??null;setTiltDisplay(0);
       setView({...engine.current});callbacks.onStatus('playing');callbacks.onScore(100);
     };
     controller.setMuted=value=>{muted.current=value;};
@@ -58,7 +121,7 @@ export default function DriverGame({callbacks,controller}:Props){
       if(pedal)controls.current[pedal]=false;
     };
     window.addEventListener('keydown',down);window.addEventListener('keyup',up);
-    const blur=()=>{controls.current={...ZERO_CONTROLS};};
+    const blur=()=>{controls.current={...ZERO_CONTROLS};filtered.current=0;};
     window.addEventListener('blur',blur);
     return ()=>{window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);};
   },[]);
@@ -67,6 +130,20 @@ export default function DriverGame({callbacks,controller}:Props){
     const loop=(now:number)=>{
       const dt=Math.min(.06,(now-last)/1000);last=now;
       if(!paused.current&&!engine.current.finished){
+        if(tiltEnabled.current){
+          const sample=latest.current;
+          const good=!!sample&&now-sample.time<1600&&neutral.current!==null;
+          if(good&&sample){
+            const next=steeringFromTilt(sample.value,neutral.current!,sensitivityRef.current,invertRef.current);
+            filtered.current=smoothSteering(filtered.current,next,dt);
+            controls.current.steer=filtered.current;
+          }else{
+            filtered.current=smoothSteering(filtered.current,0,dt);
+            controls.current.steer=filtered.current;
+            if(now-startedAt.current>3000&&tiltStatus.current!=='waiting')
+              updateTiltStatus('waiting');
+          }
+        }else controls.current.steer=undefined;
         const prev=engine.current;
         engine.current=advanceDrive(prev,controls.current,dt);
         const cur=engine.current;
@@ -81,7 +158,11 @@ export default function DriverGame({callbacks,controller}:Props){
         if(context)drawCockpit(context,engine.current,controls.current);
         lastPaint=now;
       }
-      if(now-display>140){setView({...engine.current});display=now;}
+      if(now-display>140){
+        setView({...engine.current});
+        if(tiltEnabled.current)setTiltDisplay(Math.round(filtered.current*100));
+        display=now;
+      }
       frame=requestAnimationFrame(loop);
     };
     frame=requestAnimationFrame(loop);
@@ -105,11 +186,32 @@ export default function DriverGame({callbacks,controller}:Props){
   const need=node?.kind==='semaforo'?'SEMÁFORO '+(light??''):
     node?.kind==='pare'?'SEÑAL DE PARE':node?.kind==='peatones'?
     (ped?'PASO PEATONAL OCUPADO':'CRUCE PEATONAL'):'TRÁNSITO PESADO';
-  return <section className="driving-game" aria-label="Simulador educativo de conducción en República Dominicana">
+  return <section className="driving-game" data-steering={tiltOn?"tilt":"buttons"} aria-label="Simulador educativo de conducción en República Dominicana">
     <div className="driving-top">
       <div><strong>MANEJO RD · VISTA DEL CONDUCTOR</strong>
         <span>Interior ilustrativo tipo sedán automático 2001 · Destino: {destination}</span></div>
       <div className="driving-time">{formatSeconds(remainingTime(view))}<small>restantes</small></div>
+    </div>
+    <div className="driving-tilt-panel" aria-label="Controles de dirección del celular">
+      {!tiltOn?
+        <button type="button" onClick={enableTilt} disabled={tiltState==='asking'} className="driving-tilt-activate">
+          {tiltState==='asking'?'Solicitando permiso…':'Activar inclinación'}</button>:
+        <>
+          <span className="driving-tilt-meter" aria-live="off">Giro {tiltDisplay>0?'+':''}{tiltDisplay}%</span>
+          <button type="button" onClick={centerTilt} disabled={tiltState!=='ready'}>Centrar</button>
+          <button type="button" onClick={()=>setInvertTilt(v=>!v)} aria-pressed={invertTilt}>Invertir</button>
+          <button type="button" onClick={disableTilt}>Botones</button>
+        </>}
+      {tiltOn&&<label className="driving-tilt-sens">Sensibilidad
+        <input type="range" min="0.6" max="2" step="0.2" value={sensitivity}
+          onChange={e=>setSensitivity(Number(e.target.value))} aria-label="Sensibilidad de inclinación"/>
+      </label>}
+      <small role="status">{tiltState==='ready'?'Inclina el móvil para girar. Usa Centrar en tu posición cómoda.':
+        tiltState==='waiting'?'Buscando sensor… Si no responde, usa Botones.':
+        tiltState==='denied'?'Permiso denegado: activa sensores en los ajustes o usa los botones.':
+        tiltState==='unsupported'?'Sin sensor o HTTPS. Conduce con botones o teclado.':
+        tiltState==='asking'?'Confirma el permiso de movimiento del teléfono.':
+        'Móvil: activa la inclinación. Los pedales siguen siendo táctiles.'}</small>
     </div>
     <div className="driving-map"><canvas width={760} height={520} ref={canvas} role="img"
       aria-label="Vista desde el asiento del conductor, parabrisas, calle en perspectiva, tráfico, retrovisores, volante, tablero y navegación"/></div>
@@ -149,7 +251,7 @@ export default function DriverGame({callbacks,controller}:Props){
       </div>
     </div>
     <div className="driving-bottom">
-      <p><b>Flechas del teclado:</b> ↑ acelerar · ↓ frenar · ← girar a la izquierda · → girar a la derecha. También funcionan W/S/A/D. <b>Otras teclas:</b> C cinturón · M espejos · Q/E direccionales · G cambio D (con freno) · P aparcar. En celular puedes usar todos los mandos táctiles; mantén presionados pedales y dirección.</p>
+      <p><b>En móvil:</b> pulsa «Activar inclinación», mantén el teléfono cómodo y utiliza «Centrar». Inclínalo para girar; los botones Freno y Acelerador siguen disponibles con los pulgares. Si el navegador deniega el sensor, usa «Botones». El juego no conserva lecturas de orientación. <b>Flechas del teclado:</b> ↑ acelerar · ↓ frenar · ← girar a la izquierda · → girar a la derecha. También funcionan W/S/A/D. <b>Otras teclas:</b> C cinturón · M espejos · Q/E direccionales · G cambio D (con freno) · P aparcar. En celular puedes usar todos los mandos táctiles; mantén presionados pedales y dirección.</p>
       <details><summary>Registro de decisiones y normas</summary>
         <ol>{view.events.map((event,i)=><li key={i}>{event}</li>)}</ol>
         <p>Ley 63-17, artículos 133–138, 235, 241, 264 y 266. Simulador no certificado.</p>

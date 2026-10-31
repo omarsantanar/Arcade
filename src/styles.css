@@ -276,3 +276,60 @@
  .driving-pedals .pedal{min-height:55px}
 }
 @media(max-height:650px){.driving-game{gap:5px}.driving-map{max-width:540px}}
+
+/* Manejo RD / beta 0.3: sensor steering and landscape-first cockpit without scroll. */
+.driving-tilt-panel{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:7px;border-radius:8px;border:1px solid #5d8994;background:#142e3adf}
+.driving-tilt-panel button{border:1px solid #719c9c;border-radius:7px;background:#285361;color:#f6fffc;min-height:36px;padding:6px 10px;font-weight:700;font-size:11px}
+.driving-tilt-panel .driving-tilt-activate{background:#8ae5cd;color:#12332e;border:0;font-size:12px}
+.driving-tilt-panel small{color:#c5dedf;font-size:10px;flex:1;min-width:170px}
+.driving-tilt-meter{font-weight:800;font-variant-numeric:tabular-nums;color:#ffe1ab;font-size:12px}
+.driving-tilt-sens{display:flex;align-items:center;gap:5px;font-size:10px;color:#d9eded}
+.driving-tilt-sens input{accent-color:#85f5d6;width:90px}
+.driving-game[data-steering="tilt"] .pedal-left,
+.driving-game[data-steering="tilt"] .pedal-right{display:none}
+.driving-game[data-steering="tilt"] .driving-pedals{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (pointer:coarse) and (orientation:landscape){
+  .dialog-backdrop:has(.driving-game){padding:0}
+  .game-dialog:has(.driving-game){height:100dvh;max-height:100dvh;width:100vw;max-width:none;border:0;border-radius:0}
+  .game-dialog:has(.driving-game) .game-layout{display:grid;grid-template-columns:1fr;grid-template-rows:minmax(0,1fr)}
+  .game-dialog:has(.driving-game) .game-aside{display:none}
+  .game-dialog:has(.driving-game) .game-bar{padding:3px 8px;min-height:32px;gap:7px}
+  .game-dialog:has(.driving-game) .game-bar-title strong{font-size:12px}
+  .game-dialog:has(.driving-game) .game-bar-title span{display:none}
+  .game-dialog:has(.driving-game) .game-toolbar .icon-button,
+  .game-dialog:has(.driving-game) .game-bar>.icon-button{min-width:30px;height:30px;font-size:15px}
+  .driving-game{display:block;overflow:hidden;padding:0;position:relative}
+  .driving-map{position:absolute;inset:0;width:100%;height:100%;max-width:none;border:0;border-radius:0;box-shadow:none}
+  .driving-map canvas{height:100%;width:100%;aspect-ratio:auto;object-fit:fill}
+  .driving-top{position:absolute;z-index:2;top:4px;left:8px;right:8px;pointer-events:none}
+  .driving-top strong{font-size:10px;text-shadow:0 1px 4px #000}
+  .driving-top span{display:none}
+  .driving-time{font-size:15px;text-shadow:0 1px 4px #000}
+  .driving-time small{display:none}
+  .driving-dashboard{position:absolute;z-index:2;top:24px;right:8px;width:min(45%,280px);gap:2px;pointer-events:none}
+  .driving-dashboard>div{padding:3px 2px;background:#142737d9}
+  .driving-dashboard>div>small{font-size:7px;letter-spacing:0}
+  .driving-dashboard strong{font-size:13px}
+  .driving-dashboard strong small{font-size:7px}
+  .driving-guidance{position:absolute;z-index:2;left:7px;top:33px;max-width:37%;padding:5px 7px;background:#102634d9}
+  .driving-guidance span{font-size:8px}
+  .driving-guidance b{font-size:10px}
+  .driving-guidance p{display:none}
+  .driving-tilt-panel{position:absolute;top:80px;left:7px;z-index:3;max-width:min(58%,390px);padding:4px;gap:3px}
+  .driving-tilt-panel button{min-height:29px;padding:3px 6px;font-size:10px}
+  .driving-tilt-panel small{min-width:120px;font-size:9px}
+  .driving-tilt-sens input{width:66px}
+  .driving-safety{position:absolute;z-index:3;left:7px;bottom:79px;width:min(56%,340px);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
+  .driving-safety button{min-width:0;min-height:34px;font-size:9px;padding:3px}
+  .driving-controls{position:absolute;z-index:3;bottom:5px;left:6px;right:6px;display:flex;flex-direction:row;align-items:end;justify-content:space-between;gap:4px}
+  .driving-gears{flex:0 0 auto;gap:3px;padding:3px}
+  .driving-gears button{min-width:30px;min-height:43px;font-size:15px}
+  .driving-gears span{font-size:8px}
+  .driving-pedals{width:min(42%,256px);flex:0 0 auto;gap:5px}
+  .driving-pedals .pedal{min-height:57px;font-size:10px}
+  .driving-bottom{display:none}
+}
+@media(pointer:coarse) and (orientation:portrait){
+  .driving-game::before{content:'Para conducir con inclinación, gira el teléfono a horizontal.';display:block;
+    border:1px solid #cca96a;color:#fff1c3;background:#533d28;padding:7px;border-radius:6px;font-size:11px}
+}

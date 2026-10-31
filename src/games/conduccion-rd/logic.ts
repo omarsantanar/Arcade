@@ -8,7 +8,7 @@ export type Turn='recto'|'izquierda'|'derecha';
 export type NodeKind='semaforo'|'pare'|'peatones'|'trafico';
 export interface Point {x:number;y:number}
 export interface RouteNode extends Point {kind:NodeKind;name:string}
-export interface DrivingControls {throttle:boolean;brake:boolean;left:boolean;right:boolean}
+export interface DrivingControls {throttle:boolean;brake:boolean;left:boolean;right:boolean;steer?:number}
 export interface DrivingState {
   route:RouteNode[];destination:string;seed:number;
   x:number;y:number;angle:number;speed:number;elapsed:number;odometer:number;
@@ -144,7 +144,8 @@ export function advanceDrive(current:DrivingState,controls:DrivingControls,dt:nu
       const braking=controls.brake?5.8:0;
       s.speed=Math.max(0,Math.min(14.2,s.speed+(acceleration-braking-.65)*step));
       if(s.gear==='R')s.speed=Math.min(s.speed,2.3);
-      const steer=(Number(controls.right)-Number(controls.left));
+      const keys=Number(controls.right)-Number(controls.left);
+      const steer=keys!==0?keys:Math.max(-1,Math.min(1,controls.steer??0));
       // Illustrative bicycle-like steering: turning becomes difficult at a standstill.
       s.angle+=steer*direction*Math.min(1.4,s.speed*.22)*step;
       const traveled=s.speed*step*direction;

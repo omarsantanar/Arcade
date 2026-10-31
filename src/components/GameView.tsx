@@ -114,6 +114,7 @@ export default function GameView({ manifest, onClose }: Props) {
             <div className="instructions"><h3>Cómo jugar</h3>
               {manifest.id === 'manejo-rd' ? <>
                 <p><strong>Vista desde el conductor:</strong> observa el parabrisas, la carretera, el tráfico, el tablero, el volante, las señales y el retrovisor. Las calles son ficticias y la cabina es ilustrativa.</p>
+                <p><strong>En celular:</strong> pulsa «Activar inclinación», concede permiso si el navegador lo solicita y toca «Centrar» para definir la posición neutra. Inclina el teléfono para girar, con freno y acelerador táctiles. Puedes invertir el sentido y ajustar sensibilidad; si falla el sensor, usa los botones de dirección.</p>
                 <p><strong>Flechas:</strong> <kbd>↑</kbd> acelerar, <kbd>↓</kbd> frenar, <kbd>←</kbd> girar izquierda, <kbd>→</kbd> girar derecha. También funciona WASD.</p>
                 <p><strong>Antes de salir:</strong> cinturón C, espejos M, mantén freno ↓ y selecciona D con G o con el botón táctil. Q/E encienden direccionales. En celular utiliza cinturón, espejos, selector P/R/N/D, direccionales, pedal de freno y acelerador y giro, todos en pantalla.</p>
                 <p>Practica las decisiones de la Ley 63-17; avisa antes de girar y respeta PARE, semáforos, peatones y autobuses. No es un simulador certificado ni reproduce las medidas o la física exacta del Corolla 2001.</p>
