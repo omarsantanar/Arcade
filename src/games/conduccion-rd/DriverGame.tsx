@@ -41,7 +41,6 @@ export default function DriverGame({callbacks,controller}:Props){
   const engine=useRef(view),controls=useRef<DrivingControls>({...ZERO_CONTROLS});
   const canvas=useRef<HTMLCanvasElement>(null),paused=useRef(false),muted=useRef(false);
   const {destination,score,gear,speed,indicator,belt,mirrorChecked,finished,completed}=view;
-  const activeTilt=tiltStatus==='active';
   const disableTilt=()=>{
     tilt.current.enabled=false;tilt.current.neutral=null;tilt.current.steer=0;
     controls.current.steer=0;setTiltStatus('off');setTiltMeter(0);
@@ -97,6 +96,7 @@ export default function DriverGame({callbacks,controller}:Props){
       if(roll===null)return;
       current.lastRoll=roll;current.lastSampleAt=performance.now();
       if(current.neutral===null)return;
+      setTiltStatus(status=>status==='stale'?'active':status);
     };
     const orientationChange=()=>{
       if(tilt.current.enabled){
@@ -227,10 +227,14 @@ export default function DriverGame({callbacks,controller}:Props){
       <div className="driving-road-controls" aria-label="Mandos de conducción en pantalla horizontal">
         <div className="driving-road-top">
           <span>{Math.round(speed*3.6)} km/h · {formatSeconds(remainingTime(view))}</span>
-          <button type="button" onClick={activeTilt?disableTilt:()=>void enableTilt()}>
-            {activeTilt?'Inclinación activa':'Activar inclinación'}
+          <button type="button" onClick={tilt.current.enabled?disableTilt:()=>void enableTilt()}>
+            {tilt.current.enabled?'Desactivar inclinación':'Activar inclinación'}
           </button>
           {tilt.current.enabled&&<button type="button" onClick={calibrateTilt}>Centrar</button>}
+          {view.parked&&<><button type="button" onClick={()=>act(toggleBelt)}>
+            {belt?'✓ Cinturón':'Cinturón'}</button>
+            <button type="button" onClick={()=>act(checkMirrors)}>
+              {mirrorChecked?'✓ Espejos':'Espejos'}</button></>}
         </div>
         <div className="driving-road-bottom">
           <div className="driving-road-left">
