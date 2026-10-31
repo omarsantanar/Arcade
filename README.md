@@ -112,3 +112,39 @@ npm run build
 El filtro de país indica **referencia cultural**, no exclusividad de una palabra: muchas voces cruzan fronteras. ASALE (https://www.asale.org/obras-academicas/diccionarios/diccionario-de-americanismos) permite consultar variantes regionales; el DED (https://ded.igalex.org/Consultas/Index) continúa como referencia dominicana. Ninguna definición de esas obras fue copiada. Las entradas nuevas requieren revisión editorial individual antes de uso comercial.
 
 **Código:** PR #8, rama `feat/juegos-palabras-espanol-paises`. Ejecutar `git switch feat/juegos-palabras-espanol-paises && npm ci && npm run dev`; probar `npm run test && npm run build`. El último código pasó **78 pruebas**, TypeScript y Vite ([Actions 40583190074](https://github.com/omarsantanar/Arcade/actions/runs/40583190074)). Vercel todavía bloquea el despliegue por cuota, no se debe presentar como publicado.
+
+## Manejo RD — simulador educativo de conducción (beta 2026-10-30)
+Sexto juego jugable de Arcade. Usa como **referencia** el Toyota Corolla 2001 automático, con un sedán vectorial genérico creado para el juego (sin logos, imágenes ni modelo tridimensional de Toyota y sin afirmar fidelidad mecánica). Vías urbanas **ficticias** de RD, con recorrido de aproximadamente 2 km desde estacionamiento a un destino aleatorio y un **límite de cinco minutos de conducción activa**. Situaciones: cinturón, espejos, freno previo a D, incorporación, direccionales, giro, semáforo, señal PARE, paso peatonal, zona escolar y tráfico pesado. Velocidad/límites y evaluación de seguridad con registro pedagógico local.
+
+**Controles:** C cinturón, M espejos, S freno, G poner D, W acelerar, A/D dirigir, Q/E direccionales; P estacionar y R marcha atrás cuando esté detenido. En móviles están disponibles botones táctiles de pedal/volante/transmisión y preparación del automóvil. Comenzar con freno, cinturón, espejos y D; el reloj comienza tras salir del estacionamiento. Pausa, reinicio, sonido general y pantalla completa desde la barra de Arcade. Récord local, sin cuentas.
+
+**Código:** `src/games/conduccion-rd/{logic.ts,logic.test.ts,DriverGame.tsx,Driver.ts,score.ts,DESIGN.md}`. Rama `feat/simulador-conduccion-rd`; [PR #9](https://github.com/omarsantanar/Arcade/pull/9) basada en PR #8 sin alterar los cinco juegos existentes. Para correr:
+```bash
+git switch feat/simulador-conduccion-rd
+npm ci
+npm run dev
+npm run test
+npm run build
+```
+
+**Fuentes jurídicas:** Ley 63-17, texto oficial INTRANT https://intrant.gob.do/transparencia/marco-legal/leyes/ (arts. 133-138, 231, 235, 241, 264, 266). Reglas didácticas y limitaciones en `DESIGN.md`. **No es un simulador certificado, un examen ni un sustituto de clases reales o práctica supervisada.** Los límites del circuito son señalización particular ficticia, no límites generales atribuidos a todas las calles de RD. Para circulación con rojo hay excepciones legales bajo condiciones (art. 137): las intersecciones simuladas representan prohibición señalizada. Manual Corolla 2001 consultado para posiciones P/R/N/D; no se replican parámetros dinámicos exactos.
+
+## Manejo RD — POV de conductor y flechas (2026-10-30)
+**Vista nueva:** el juego ya no utiliza cámara superior. `src/games/conduccion-rd/cockpit.ts` presenta perspectiva desde el interior del sedán, con parabrisas, tablero analógico, volante, espejo lateral, retrovisor interior, calles y señales proyectadas hacia adelante, autobuses y minimapa incrustado en el tablero. Es una **cabina ilustrativa propia**, no una reproducción exacta ni licenciada del Corolla 2001.
+
+**Teclado principal:** flecha ↑ acelerador, ↓ freno, ← izquierda y → derecha; WASD permanece como alternativa. C cinturón, M espejos, Q/E intermitentes izquierdo/derecho, G selector D con freno, P estacionar, R reversa y N neutral. Los cuatro mandos de conducción se mantienen presionados para actuar y se liberan al soltar; al pausar o desenfocar la ventana se detienen las pulsaciones.
+
+**Celular:** cinturón, espejos, ambas direccionales, P/R/N/D y controles táctiles independientes de dirección, freno y acelerador. Puedes tocar primero FRENO y después D sin teclado. La pantalla conserva pausa, reinicio y pantalla completa. Para pantalla estrecha, el panel se desplaza verticalmente.
+
+**Estado técnico:** código funcional en commit `fa2ecf36b03ba2442f8d5ae50e40a0221c927ac5`, [Actions 41123729799](https://github.com/omarsantanar/Arcade/actions/runs/41123729799): **92/92 tests** (8 suites), TypeScript/Vite aprobados; Vercel `success` para esa revisión. Vista previa de la rama: https://arcade-git-feat-simulador-conduccion-rd-omar-santanas-projects.vercel.app. Desarrollo en [PR #9](https://github.com/omarsantanar/Arcade/pull/9), sin fusionar en `main`. Quedan pendientes pruebas visuales y multitáctiles en dispositivos reales, conducción completa de 300 segundos y revisión de un instructor de tránsito. Para instrucciones detalladas, ver `src/games/conduccion-rd/DESIGN.md`.
+
+
+## Manejo RD 0.3 — dirección por inclinación del móvil (2026-10-31)
+La versión experimental incorpora **dirección proporcional por sensores del celular**, conservando las flechas ↑/↓/←/→ y WASD en computadoras. En móvil, sostener el dispositivo horizontal, pulsar **«Activar inclinación»**, autorizar el sensor si el navegador lo solicita y usar **«Centrar»** para establecer la posición neutra de las manos. Inclinar a izquierda/derecha para girar; el coche emplea una zona muerta de 3°, movimiento suavizado y amplitud progresiva. Se puede ajustar sensibilidad (0,6–2), invertir el eje y volver a **«Botones»** sin perder la partida. Los pedales táctiles de freno/acelerador, direccionales, cinturón, espejos y selector P/R/N/D siguen disponibles. Vista de conducción horizontal inmersiva en teléfonos con pantalla y controles superpuestos, sin scroll durante la partida. Modo vertical disponible con aviso para girar el dispositivo.
+
+**Compatibilidad:** `DeviceOrientationEvent` requiere HTTPS y acceso al sensor; algunos navegadores, especialmente iOS, piden permiso a partir de un toque del usuario. La detección es progresiva y se conserva control por botones cuando no hay permiso/datos. **No se guarda, envía ni analiza información cruda de los sensores.** El bloqueo automático de pantalla horizontal no es universal: orientar el teléfono manualmente.
+
+**Código:** `src/games/conduccion-rd/tilt.ts`, `tilt.test.ts`, `logic.ts`, `DriverGame.tsx`, `src/styles.css` y las instrucciones de `GameView.tsx`. Rama `feat/simulador-conduccion-rd`, PR #9. Primer commit: `734620838beed6d41ca275b5b4ecbd3c4238d1cb`; revisar comprobación de CI de la revisión final y confirmar **Vercel Ready del SHA exacto** antes de anunciar un enlace de juego actualizado. Las cinco experiencias restantes permanecen intactas.
+
+
+**Validación posterior (31-oct-2026):** el commit de código `667d056c46672bf8b91bd41cd9786757186824a4` pasó **99/99 pruebas**, nueve suites, compilación `tsc --noEmit` y `vite build` ([GitHub Actions 41210626709](https://github.com/omarsantanar/Arcade/actions/runs/41210626709)). El estado de despliegue Vercel es **success** para ese mismo SHA, a pesar del fallo previo del primer commit. El enlace de la preview de rama sigue siendo https://arcade-git-feat-simulador-conduccion-rd-omar-santanas-projects.vercel.app. La jugabilidad y el sentido del sensor aún requieren pruebas humanas en iOS y Android. No se fusionó a producción.

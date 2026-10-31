@@ -41,7 +41,7 @@ export default function App() {
             </div>
           </section>
           <section className="catalog-section" id="juegos">
-            <div className="section-top"><div><div className="section-kicker">01 / EL CATÁLOGO</div><h2>Elige tu próxima <span>aventura.</span></h2><p>Cinco juegos para explorar: Neon Drift, Sudoku, Lumen Circuit, Crucigrama en Español y Sopa de Letras en Español. Elige un país y descubre sus palabras.</p></div><div className="catalog-count">{catalog.length.toString().padStart(2, '0')} <span>JUEGOS EN CATÁLOGO</span></div></div>
+            <div className="section-top"><div><div className="section-kicker">01 / EL CATÁLOGO</div><h2>Elige tu próxima <span>aventura.</span></h2><p>Seis juegos para explorar, incluido Manejo RD: aprende señales y decisiones viales con un sedán automático en un entorno simulado.</p></div><div className="catalog-count">{catalog.length.toString().padStart(2, '0')} <span>JUEGOS EN CATÁLOGO</span></div></div>
             <div className="filter-row" role="group" aria-label="Filtrar juegos por categoría">{filters.map(({ id, label }) => <button key={id} className={`filter-chip ${filter === id ? 'active' : ''}`} onClick={() => setFilter(id)} aria-pressed={filter === id}>{label}</button>)}</div>
             <div className="games-grid">{games.map((game) => <article className={`game-card accent-${game.accent}`} key={game.id}>
               <div className="card-art"><div className="card-art-grid" /><span className="card-big-symbol" aria-hidden="true">{game.symbol}</span><span className={`card-tag ${game.available ? 'tag-ready' : 'tag-soon'}`}>{game.available ? '● JUGABLE' : 'PRÓXIMAMENTE'}</span></div>

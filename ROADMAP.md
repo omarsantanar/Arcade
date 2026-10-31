@@ -101,3 +101,37 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Vercel pendiente por límite de builds; confirmar Ready del commit final.
 - [ ] Revisar 240 pistas editorialmente por región y probar UX móvil de todos los países.
 - [ ] Ampliar a otros territorios de habla española tras la curaduría de los primeros 14.
+
+### Manejo RD — simulación de conducción (2026-10-30)
+- [x] Investigar fuentes primarias Ley 63-17 y manual de Toyota Corolla 2001 automático; señalar excepciones/limitaciones.
+- [x] Sexto juego modular en Arcade, controles móviles y teclado, salida de P con freno, cinturón, espejos, transmisión automática y direccionales.
+- [x] Mundo 2D ficticio conectado, tráfico de bus y auto, semáforos, PARE, paso peatonal, velocidad señalizada, evaluación con artículos legales y ruta aleatoria.
+- [x] Cronómetro de cinco minutos desde salida, reinicio, pausa, récord local y feedback.
+- [ ] Validar CI, 5+ pruebas nuevas y build TypeScript/Vite y despliegue Ready.
+- [ ] Completar itinerario entero manualmente, probar giros, colisiones, señalización con mínimo de 50 m y UX táctil en teléfonos físicos.
+- [ ] Segunda fase: volante/ángulo y dinámica calibrada a ficha técnica Corolla 2001, geometría real de carriles, IA de tráfico y maniobras más fieles.
+- [ ] Revisión jurídica y de instructor de conducción antes de llamarlo «simulador educativo validado»; cualquier marca visual/logotipo requiere revisión de derechos.
+
+### 2026-10-30 — Manejo RD desde interior
+- [x] Reemplazar vista superior por perspectiva desde parabrisas, con tablero, volante, retrovisores y señales al frente (Canvas 2.5D).
+- [x] Asignar ↑ acelerador, ↓ freno, ← izquierda, → derecha; mantener WASD como segunda opción.
+- [x] Proveer en celular transmisión P/R/N/D, direccionales, cinturón, espejos, dirección y pedales táctiles; admisión de pulsaciones retenidas y multitouch.
+- [x] Pruebas de proyección delantera, recorte trasero, perspectiva lateral, giro y flechas.
+- [x] Código validado: 92/92 tests, TypeScript/Vite y Vercel `success` para commit `fa2ecf36` (Actions 41123729799).
+- [ ] Completar ruta manual con teclado y teléfono real, comprobar las intersecciones y la experiencia multitouch.
+- [ ] Mejorar visibilidad de semáforos, señalética y motocicletas; revisar IA de tránsito en calles dominicanas ficticias.
+- [ ] Evaluar construcción 3D calibrada y interior fiel a ficha técnica del Corolla (derechos de marca/arte según uso).
+
+
+### 2026-10-31 — Inclinación en Manejo RD
+- [x] Módulo sensor por `DeviceOrientationEvent` con consentimiento opcional del navegador y fallback por botones.
+- [x] Dirección analógica proporcional, zona muerta, suavizado, calibración, sensibilidad e inversión.
+- [x] Vista horizontal inmersiva sin scroll, pedales y transmisión/direccionales en pantalla, flechas de PC intactas.
+- [x] Tests unitarios nuevos para la conversión del sensor y su integración en física.
+- [ ] Confirmar GitHub Actions y compilación del último código; comprobar error de Vercel y recuperar Ready con permisos de equipo.
+- [ ] Jugar cinco minutos en móviles reales; contrastar calibración y dirección Android/iOS, multitouch y orientación horizontal.
+- [ ] Equilibrar dirección y guiado del itinerario tras pruebas de principiantes; no cambiar motor completo sin evidencia.
+
+
+- [x] Manejo RD 0.3: 99/99 tests, TypeScript/Vite y Vercel success en commit de código `667d056c46672bf8b91bd41cd9786757186824a4` (Actions 41210626709).
+- [ ] Validar con celular real el giro por inclinación, calibración y permisos en Safari iOS y Chrome Android; después ajustar sensibilidad y mapeo de ejes según resultados observados.

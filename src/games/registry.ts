@@ -23,6 +23,11 @@ export const catalog: readonly GameManifest[] = [
     tagline: 'Encuentra palabras de todos los rincones del español.',
     category: 'puzles', available: true, accent: 'violet', symbol: '▤', orientation: 'portrait',
   },
+  {
+    id: 'manejo-rd', title: 'Manejo RD · Simulador',
+    tagline: 'Aprende a conducir un sedán automático respetando la Ley 63-17.',
+    category: 'aventura', available: true, accent: 'cyan', symbol: '◈', orientation: 'landscape',
+  },
 ];
 
 export function findGame(id: string): GameManifest | undefined {
@@ -49,6 +54,10 @@ export async function loadGame(id: string): Promise<GameFactory> {
   if (id === 'sopa-letras-dominicana') {
     const module = await import('./sopa-letras/WordSearch');
     return module.createDominicanWordSearch;
+  }
+  if (id === 'manejo-rd') {
+    const module = await import('./conduccion-rd/Driver');
+    return module.createDrivingRD;
   }
   throw new Error(`Juego no disponible: ${id}`);
 }
