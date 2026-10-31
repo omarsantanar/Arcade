@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState,type PointerEvent} from 'react';
 import type {GameCallbacks} from '../types';
 import {drawCockpit} from './cockpit';
-import {pedalForKey} from './input';
+import {pedalForKey,type ButtonControl} from './input';
 import {tiltAxis,steeringFromTilt,smoothSteering,type TiltSample} from './tilt';
 import {
   advanceDrive,checkMirrors,currentLimit,currentNode,distance,driveGrade,lightColor,
@@ -168,14 +168,14 @@ export default function DriverGame({callbacks,controller}:Props){
     frame=requestAnimationFrame(loop);
     return ()=>cancelAnimationFrame(frame);
   },[callbacks]);
-  const press=(name:keyof DrivingControls)=>(event:PointerEvent<HTMLButtonElement>)=>{
+  const press=(name:ButtonControl)=>(event:PointerEvent<HTMLButtonElement>)=>{
     event.preventDefault();
     if(paused.current||engine.current.finished)return;
     controls.current[name]=true;
     if(name==='brake')act(s=>({...s,brakeReady:true}));
     event.currentTarget.setPointerCapture(event.pointerId);
   };
-  const release=(name:keyof DrivingControls)=>(event:PointerEvent<HTMLButtonElement>)=>{
+  const release=(name:ButtonControl)=>(event:PointerEvent<HTMLButtonElement>)=>{
     controls.current[name]=false;
     if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
   };
