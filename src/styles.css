@@ -276,3 +276,56 @@
  .driving-pedals .pedal{min-height:55px}
 }
 @media(max-height:650px){.driving-game{gap:5px}.driving-map{max-width:540px}}
+
+
+/* Manejo RD tilt-steering cockpit: the road remains visible while both thumbs drive. */
+.driving-map{position:relative}
+.driving-road-controls{display:none}
+.driving-tilt{display:flex;align-items:center;flex-wrap:wrap;gap:7px;border:1px solid #446f7b;background:#172f3b;border-radius:9px;padding:8px}
+.driving-tilt-heading{display:flex;flex:1 1 165px;min-width:120px;flex-direction:column;gap:3px}
+.driving-tilt-heading strong{font-size:12px;color:#a0f7d9}
+.driving-tilt-heading span{font-size:10px;color:#d2e6e4;line-height:1.35}
+.driving-tilt button{border:1px solid #5d9f9c;border-radius:7px;padding:9px 11px;background:#284b58;color:#f9fbef;font-weight:750;font-size:11px;min-height:40px}
+.driving-tilt label{font-size:10px;display:flex;gap:5px;align-items:center;color:#d9eddf}
+.driving-tilt input[type=range]{width:91px;accent-color:#8df0d4}
+.driving-tilt-meter{height:8px;flex:1 1 90px;min-width:70px;background:linear-gradient(to right,#b6a4df,#41665e 50%,#87ecca);border-radius:8px;position:relative}
+.driving-tilt-meter i{height:15px;width:6px;border:1px solid #112938;background:#fff3c4;position:absolute;top:-4px;transform:translateX(-50%);border-radius:4px;transition:left .10s}
+@media (pointer:coarse) and (orientation:landscape) and (max-height:650px){
+  .game-dialog:has(.driving-game){width:100dvw;max-width:none;height:100dvh;border-radius:0;border:0}
+  .game-dialog:has(.driving-game) .game-bar{padding:3px 8px;min-height:34px;gap:6px}
+  .game-dialog:has(.driving-game) .game-bar-title strong{font-size:12px}
+  .game-dialog:has(.driving-game) .game-bar-title span{display:none}
+  .game-dialog:has(.driving-game) .icon-button{height:33px;min-width:33px;font-size:16px}
+  .game-dialog:has(.driving-game) .game-layout{display:block;min-height:0}
+  .game-dialog:has(.driving-game) .game-stage-wrap{height:100%}
+  .game-dialog:has(.driving-game) .game-stage{height:100%}
+  .game-dialog:has(.driving-game) .game-aside{display:none}
+  .driving-game{height:100%;padding:0;gap:0;overflow:hidden}
+  .driving-top,.driving-dashboard,.driving-guidance,.driving-safety,.driving-controls,.driving-bottom,.driving-tilt{display:none}
+  .driving-map{width:100%;max-width:none;height:100%;max-height:none;flex:1;min-height:0;border:0;border-radius:0;box-shadow:none}
+  .driving-map canvas{width:100%;height:100%;aspect-ratio:auto;object-fit:fill}
+  .driving-road-controls{display:flex;position:absolute;inset:0;flex-direction:column;justify-content:space-between;pointer-events:none;
+    padding:7px max(9px,env(safe-area-inset-right)) 8px max(9px,env(safe-area-inset-left));box-sizing:border-box}
+  .driving-road-controls button{pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;
+    border:1px solid #aac9cd80;color:#f6fbfd;background:#142d3bdf;border-radius:11px;font-weight:800}
+  .driving-road-top{display:flex;align-items:center;justify-content:center;gap:6px;pointer-events:none}
+  .driving-road-top span{background:#152c3be0;border-radius:8px;padding:6px 9px;color:#ffedc3;font-size:12px;font-weight:800}
+  .driving-road-top button{min-height:34px;padding:6px 11px;font-size:11px}
+  .driving-road-bottom{display:flex;justify-content:space-between;align-items:flex-end}
+  .driving-road-left{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+  .driving-touch-dual{display:flex;gap:6px}
+  .driving-touch-dual button{height:37px;min-width:52px;font-size:18px}
+  .driving-touch-dual button.road-turn{height:52px;min-width:64px;font-size:25px}
+  .driving-mini-gears{display:flex;gap:4px}
+  .driving-mini-gears button{height:34px;width:35px;font-size:15px}
+  .driving-mini-gears button.active{background:#8ff5d9;color:#153a39}
+  .driving-road-right{display:flex;align-items:flex-end;gap:8px}
+  .driving-road-right .road-pedal{min-width:62px;height:86px;font-size:12px}
+  .driving-road-right .road-brake{height:64px;background:#8f4044ec}
+  .driving-road-right .road-throttle{background:#347f53ea}
+}
+@media (pointer:coarse) and (orientation:portrait) and (max-width:650px){
+  .driving-map::after{content:"Para conducir cómodamente, gira el móvil en horizontal";position:absolute;
+    top:3px;left:50%;transform:translateX(-50%);width:max-content;max-width:92%;
+    background:#162c39ed;color:#fff7d2;padding:4px 8px;text-align:center;border-radius:8px;font:700 9px 'DM Sans',sans-serif;pointer-events:none}
+}
