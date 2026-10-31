@@ -232,7 +232,8 @@ function cockpit(ctx:CanvasRenderingContext2D,s:DrivingState,controls:DrivingCon
     ctx.fillStyle='#ffdc73';ctx.font='bold 23px sans-serif';ctx.fillText(s.indicator==='left'?'◀':'▶',271,428);
   }
   // Simple steering wheel in driver's position; wheel tilts toward the held arrows.
-  ctx.save();ctx.translate(244,491);ctx.rotate((Number(controls.right)-Number(controls.left))*.38);
+  ctx.save();ctx.translate(244,491);ctx.rotate(((controls.left||controls.right)?Number(controls.right)-Number(controls.left):
+    (controls.steer??0))*.38);
   ctx.strokeStyle='#11171d';ctx.lineWidth=20;ctx.beginPath();ctx.arc(0,0,75,0,Math.PI*2);ctx.stroke();
   ctx.strokeStyle='#4b5d64';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,76,0,Math.PI*2);ctx.stroke();
   ctx.fillStyle='#202d35';
