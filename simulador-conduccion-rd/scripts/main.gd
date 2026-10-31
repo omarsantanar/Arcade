@@ -4,6 +4,7 @@ const MAX_TIME := 300.0
 const LIMIT_KMH := 30.0
 const STOP_Z := -12.0
 const GOAL_Z := -57.0
+const MotionAdapterScript = preload("res://scripts/sensor_bridge.gd")
 
 var car: Node3D
 var steering: Node3D
@@ -25,6 +26,9 @@ var brake_held := false
 var tilt_enabled := false
 var tilt_center := 0.0
 var tilt_value := 0.0
+var tilt_inverted := false
+var motion_adapter = MotionAdapterScript.new()
+var sensor_status := "Sensor sin activar"
 var previous_nose := 0.0
 
 var hud: Control
@@ -32,6 +36,7 @@ var speed_label: Label
 var time_label: Label
 var gear_label: Label
 var info_label: Label
+var sensor_label: Label
 var start_overlay: ColorRect
 var end_overlay: ColorRect
 var end_title: Label
@@ -41,6 +46,7 @@ var intro_panel: Panel
 var result_panel: Panel
 
 func _ready() -> void:
+	motion_adapter.initialize()
 	_build_world()
 	_build_car()
 	_build_ui()
@@ -64,6 +70,10 @@ func _process(delta: float) -> void:
 	speed_label.text = "%02d km/h   |   Máximo 30 km/h" % int(absf(speed) * 3.6)
 	time_label.text = "Tiempo %02d:%02d" % [int(maxf(left_time,0.0) / 60), int(maxf(left_time,0.0)) % 60]
 	gear_label.text = "Marcha: " + gear
+	if tilt_enabled:
+		sensor_label.text = "Dirección móvil: " + sensor_status
+	else:
+		sensor_label.text = "Móvil: pulse INCLINAR, permita el sensor y calibre"
 
 func _physics_process(delta: float) -> void:
 	if not playing:
@@ -72,10 +82,22 @@ func _physics_process(delta: float) -> void:
 	var braking := brake_held or Input.is_key_pressed(KEY_DOWN) or Input.is_key_pressed(KEY_SPACE)
 	var lr := float(int(right_held or Input.is_key_pressed(KEY_RIGHT)) - int(left_held or Input.is_key_pressed(KEY_LEFT)))
 	if tilt_enabled:
-		var g := Input.get_gravity()
-		if g.length() > 0.5:
-			tilt_value = lerpf(tilt_value, clampf((g.x - tilt_center) / 5.0, -1.0, 1.0), minf(delta * 7.0, 1.0))
-			lr = tilt_value
+		if OS.has_feature("web"):
+			var sample: Dictionary = motion_adapter.read()
+			sensor_status = str(sample.get("status", "Esperando movimiento"))
+			if bool(sample.get("ready", false)):
+				var measured: float = float(sample.get("steer", 0.0))
+				tilt_value = lerpf(tilt_value, measured, minf(delta * 9.0, 1.0))
+				if not (left_held or right_held or Input.is_key_pressed(KEY_LEFT) or Input.is_key_pressed(KEY_RIGHT)):
+					lr = tilt_value
+			else:
+				tilt_value = move_toward(tilt_value, 0.0, 3.0 * delta)
+		else:
+			var g := Input.get_gravity()
+			if g.length() > 0.5:
+				var sign_dir := -1.0 if tilt_inverted else 1.0
+				tilt_value = lerpf(tilt_value, clampf((g.x - tilt_center) / 5.0, -1.0, 1.0) * sign_dir, minf(delta * 7.0, 1.0))
+				lr = tilt_value
 	direction = move_toward(direction, lr, delta * 3.0)
 	if braking or gear == "P":
 		speed = move_toward(speed, 0.0, 10.0 * delta)
@@ -170,20 +192,42 @@ func _set_gear(value: String) -> void:
 
 func _toggle_tilt() -> void:
 	tilt_enabled = not tilt_enabled
+	tilt_value = 0.0
 	if tilt_enabled:
-		_calibrate()
+		if OS.has_feature("web"):
+			motion_adapter.activate()
+			sensor_status = "Solicitando acceso al sensor"
+			info_label.text = "Permita el movimiento del móvil y sosténgalo en horizontal."
+		else:
+			_calibrate()
 	else:
+		if OS.has_feature("web"):
+			motion_adapter.disable()
 		info_label.text = "Dirección por botones o flechas."
 
 func _calibrate() -> void:
+	if not tilt_enabled:
+		info_label.text = "Primero pulse INCLINAR para activar el movimiento."
+		return
+	tilt_value = 0.0
+	if OS.has_feature("web"):
+		motion_adapter.calibrate()
+		info_label.text = "Mantenga el teléfono en posición neutral un instante."
+		return
 	var g := Input.get_gravity()
 	if g.length() < 0.5:
 		tilt_enabled = false
-		info_label.text = "Sensor de inclinación no disponible; use los botones."
+		info_label.text = "Sensor no disponible; utilice los botones."
 		return
 	tilt_center = g.x
-	tilt_value = 0.0
 	info_label.text = "Inclinación calibrada."
+
+func _invert_tilt() -> void:
+	if OS.has_feature("web"):
+		motion_adapter.invert()
+	else:
+		tilt_inverted = not tilt_inverted
+	info_label.text = "Sentido del volante invertido. Pruebe inclinarlo."
 
 func _box(parent: Node3D, pos: Vector3, dimensions: Vector3, color: Color) -> MeshInstance3D:
 	var item := MeshInstance3D.new()
@@ -330,6 +374,7 @@ func _build_ui() -> void:
 	gear_label = _label(panel, "", 20, Vector2(15, 45), Vector2(210, 30))
 	time_label = _label(panel, "", 22, Vector2(400, 9), Vector2(250, 36))
 	info_label = _label(hud, "Use ↑ para acelerar y ↓ para frenar", 18, Vector2(200, 108), Vector2(760, 40))
+	sensor_label = _label(hud, "Móvil: pulse INCLINAR", 17, Vector2(12, 152), Vector2(930, 36))
 	_hold(hud, "◀", "left_held")
 	_hold(hud, "▶", "right_held")
 	_hold(hud, "ACELERAR", "gas_held")
@@ -339,6 +384,7 @@ func _build_ui() -> void:
 	buttons.append(_button(hud, "P", Vector2.ZERO, Vector2(45, 50), func() -> void: _set_gear("P")))
 	buttons.append(_button(hud, "INCLINAR", Vector2.ZERO, Vector2(115, 42), _toggle_tilt))
 	buttons.append(_button(hud, "CALIBRAR", Vector2.ZERO, Vector2(115, 42), _calibrate))
+	buttons.append(_button(hud, "INVERTIR", Vector2.ZERO, Vector2(115, 42), _invert_tilt))
 	start_overlay = _overlay(layer)
 	intro_panel = _dialog(start_overlay)
 	var intro := _label(intro_panel, "EXAMEN PRÁCTICO DE CONDUCCIÓN\n\nConduzca hasta la meta en cinco minutos.\nCada infracción detectada ocasiona descalificación inmediata, sin avisos previos.\n\nFlechas: acelerar, frenar y girar. D/R/P: selector automático.\nEn móvil use los botones; el sensor de inclinación puede no funcionar en navegador.", 20, Vector2(28, 22), Vector2(580, 280))
@@ -362,7 +408,9 @@ func _layout() -> void:
 	time_label.position.x = maxf(320.0, sz.x * 0.48)
 	info_label.position = Vector2(12, 111)
 	info_label.size = Vector2(sz.x - 24, 40)
-	if buttons.size() == 9:
+	sensor_label.position = Vector2(12, 150)
+	sensor_label.size = Vector2(sz.x - 24, 35)
+	if buttons.size() == 10:
 		var base := sz.y - 104.0
 		buttons[0].position = Vector2(12, base)
 		buttons[1].position = Vector2(108, base)
@@ -375,7 +423,8 @@ func _layout() -> void:
 			buttons[i + 4].size = Vector2(45, 50)
 		buttons[7].position = Vector2(sz.x * 0.36, base - 37)
 		buttons[8].position = Vector2(sz.x * 0.36 + 127, base - 37)
-		for i in [7, 8]:
+		buttons[9].position = Vector2(sz.x * 0.36 + 254, base - 37)
+		for i in [7, 8, 9]:
 			buttons[i].size = Vector2(118, 34)
 	for layer in [start_overlay, end_overlay]:
 		layer.size = sz
