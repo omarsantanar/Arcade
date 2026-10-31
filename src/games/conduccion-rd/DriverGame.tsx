@@ -231,6 +231,14 @@ export default function DriverGame({callbacks,controller}:Props){
             {tilt.current.enabled?'Desactivar inclinación':'Activar inclinación'}
           </button>
           {tilt.current.enabled&&<button type="button" onClick={calibrateTilt}>Centrar</button>}
+          {tilt.current.enabled&&<button type="button" title="Invertir el sentido de inclinación"
+            aria-pressed={tiltSettings.inverted}
+            onClick={()=>updateTiltSettings({...tiltSettings,inverted:!tiltSettings.inverted})}>Invertir</button>}
+          {tiltStatus!=='off'&&tiltStatus!=='active'&&<span className="driving-motion-state" role="status">
+            {tiltStatus==='awaiting'?'Sensor: toca Centrar':
+              tiltStatus==='calibrate'?'Centrar otra vez':
+              tiltStatus==='stale'?'Sensor interrumpido':
+              'Usa ◀ ▶ si el sensor no funciona'}</span>}
           {view.parked&&<><button type="button" onClick={()=>act(toggleBelt)}>
             {belt?'✓ Cinturón':'Cinturón'}</button>
             <button type="button" onClick={()=>act(checkMirrors)}>
