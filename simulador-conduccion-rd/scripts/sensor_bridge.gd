@@ -28,6 +28,7 @@ func initialize() -> void:
   }
   function ingest(value, source) {
     if (!m.enabled || !Number.isFinite(value)) return;
+    if (m.source && m.source !== source) m.needsCenter = true;
     m.angle = value;
     m.last = Date.now();
     m.ready = true;
