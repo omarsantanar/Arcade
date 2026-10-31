@@ -121,3 +121,14 @@ Fuera de alcance hasta autorización: anuncios, cobros, registros, backend y mul
 - [ ] Completar ruta manual con teclado y teléfono real, comprobar las intersecciones y la experiencia multitouch.
 - [ ] Mejorar visibilidad de semáforos, señalética y motocicletas; revisar IA de tránsito en calles dominicanas ficticias.
 - [ ] Evaluar construcción 3D calibrada y interior fiel a ficha técnica del Corolla (derechos de marca/arte según uso).
+
+### 2026-10-31 — Manejo RD 0.2 con inclinación
+- [x] Implementar modo de dirección por inclinación a través de DeviceOrientationEvent con consentimiento y calibración explícita.
+- [x] Mantener controles de transmisión automática, direccionales, cinturón, espejos, freno, gas y alternativa de flechas táctiles/teclado.
+- [x] Añadir deadzone, sensibilidad graduable, inversión, suavizado, caducidad de lectura y centrado cuando cambia orientación.
+- [x] Reorganizar pantalla apaisada para conducción sin scroll, con pedales y mandos sobre el parabrisas.
+- [x] Añadir siete pruebas unitarias sobre sensores y prioridad de teclas; registro de decisiones en ADR-019.
+- [ ] Verificar GitHub Actions 99/99 tests esperados y TypeScript/Vite del SHA final (pendiente ejecución).
+- [ ] Resolver Vercel error de despliegue / acceso 403 antes de publicar enlace como beta actualizada.
+- [ ] QA en móviles Android/iPhone reales: permisos, giros a ambos lados, orientación, mano dominante, latencia y acelerador+freno simultáneos.
+- [ ] Calibrar asistencia de dirección, dificultad de curvas, señalización y pedagogía sin hacer la conducción artificialmente fácil.
